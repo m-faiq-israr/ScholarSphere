@@ -1,0 +1,21 @@
+
+.ant-pagination-item-active {
+    border-color: #000235 !important; 
+    border-width: 1px !important; 
+    border-radius: 6px !important; 
+  }
+  
+  .ant-pagination-item-active a {
+    color: #000235 !important; 
+  }
+  
+  
+  .ant-pagination-item:hover {
+    border-color: #000235 !important; 
+    background-color: #ffffff !important;
+  }
+
+  /* spinner */
+  .custom-spin .ant-spin-dot-item {
+    background-color: #000235; 
+  }

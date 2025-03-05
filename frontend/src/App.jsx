@@ -2,30 +2,34 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider } from "./contexts/authContext";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoutes";
-import HomePage from "./pages/HomePage";
+import MainPage from "./pages/MainPage";
 import SignIn from "./pages/SigninPage";
 import SignUp from "./pages/SignupPage";
 import UserPage from "./pages/UserPage";
+import { AppProvider } from "./contexts/AppContext";
+import HomePage from "./pages/HomePage";
 
 function App() {
-    return (
-        <Router>
-            <AuthProvider>
-                <Routes>
-                    {/* Public Routes */}
-                    <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
-                    <Route path="/signin" element={<PublicRoute><SignIn /></PublicRoute>} />
-                    <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
+  return (
+    <Router>
+      <AppProvider>
+        <AuthProvider>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<PublicRoute><MainPage /></PublicRoute>} />
+            <Route path="/signin" element={<PublicRoute><SignIn /></PublicRoute>} />
+            <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
 
-                    {/* Protected Routes */}
-                    <Route path="/dashboard" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />
+            {/* Protected Routes */}
+            <Route path="/dashboard" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
 
-                    {/* Catch-all */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-            </AuthProvider>
-        </Router>
-    );
+            {/* Catch-all */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </AuthProvider>
+      </AppProvider>
+    </Router>
+  );
 }
 
 export default App;
