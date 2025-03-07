@@ -1,13 +1,12 @@
 import React, { useContext } from 'react';
 import { AppContext } from '../../contexts/AppContext';
-import { NavSearchField } from '../InputFields/NavSearchField';
 
 const Nav = () => {
   const { navItem, setNavItem } = useContext(AppContext);
 
   const navItemClicked = (item) => {
-    console.log('Clicked:', item); // Log the clicked item
-    setNavItem(item); // Update navItem state
+    console.log('Clicked:', item); 
+    setNavItem(item); 
   };
 
   return (
@@ -48,7 +47,6 @@ const Nav = () => {
 
         {/* Right Section: Buttons */}
         <div className="flex items-center space-x-2 flex-1 justify-end">
-          <NavSearchField/>
         </div>
       </div>
     </nav>

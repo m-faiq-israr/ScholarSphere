@@ -3,39 +3,44 @@ import { UkriGrants } from "../Models/GrantsModels/ukri.js";
 
 const fetchAllGrants = async (req, res) => {
   try {
-    // Extract pagination parameters from the query string
-    const page = parseInt(req.query.page) || 1; // Default to page 1
-    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
-    const skip = (page - 1) * limit; // Calculate the number of documents to skip
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const searchQuery = req.query.search || ''; // Get search query
 
-    // Fetch all grants from both collections
+    // Build search filter
+    const searchFilter = searchQuery
+      ? {
+          $or: [
+            { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search
+            // { description: { $regex: searchQuery, $options: 'i' } },
+          ],
+        }
+      : {};
+
+    // Fetch grants with search filter
     const [grantForwardData, ukriGrantsData] = await Promise.all([
-      GrantForward.find({}), // Fetch all GrantForward data
-      UkriGrants.find({}), // Fetch all UkriGrants data
+      GrantForward.find(searchFilter),
+      UkriGrants.find(searchFilter),
     ]);
 
-    // Combine the data into a single array
+    // Combine and sort data
     const allGrants = [...grantForwardData, ...ukriGrantsData];
+    allGrants.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    // Sort the combined array 
-    allGrants.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Example: Sort by createdAt
-
-    // Apply pagination to the combined array
+    // Paginate results
     const paginatedGrants = allGrants.slice(skip, skip + limit);
-
-    // Get the total number of grants
     const totalGrants = allGrants.length;
 
-    // Send the response
     res.status(200).json({
-      grants: paginatedGrants, // Paginated grants
-      total: totalGrants, // Total number of grants
-      page, // Current page
-      limit, // Items per page
+      grants: paginatedGrants,
+      total: totalGrants,
+      page,
+      limit,
     });
   } catch (error) {
-    console.error('Error fetching data from grants:', error);
-    res.status(500).json({ message: 'Error fetching data from one or more collections.' });
+    console.error('Error fetching grants:', error);
+    res.status(500).json({ message: 'Error fetching grants data.' });
   }
 };
 

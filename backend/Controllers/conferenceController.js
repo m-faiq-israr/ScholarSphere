@@ -7,18 +7,30 @@ import { WasetConference } from '../Models/ConferenceModels/wasetConferenceModel
 
 const fetchAllConferences = async (req, res) => {
   try {
-    // Extract pagination parameters from the query string
+    // Extract pagination and search parameters from the query string
     const page = parseInt(req.query.page) || 1; // Default to page 1
     const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
     const skip = (page - 1) * limit; // Calculate the number of documents to skip
+    const searchQuery = req.query.search || ''; // Get search query
 
-    // Fetch all conferences from all collections
+    // Build search filter
+    const searchFilter = searchQuery
+      ? {
+          $or: [
+            { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on title
+            // { description: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on description
+            { location: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on location
+          ],
+        }
+      : {};
+
+    // Fetch all conferences from all collections with search filter
     const [conference365Data, conferenceListsData, conferenceMonkeyData, conferenceServiceData, wasetConferenceData] = await Promise.all([
-      Conference365.find({}),
-      ConferenceLists.find({}),
-      ConferenceMonkey.find({}),
-      ConferenceService.find({}),
-      WasetConference.find({})
+      Conference365.find(searchFilter),
+      ConferenceLists.find(searchFilter),
+      ConferenceMonkey.find(searchFilter),
+      ConferenceService.find(searchFilter),
+      WasetConference.find(searchFilter),
     ]);
 
     // Combine the data into a single array
@@ -27,7 +39,7 @@ const fetchAllConferences = async (req, res) => {
       ...conferenceListsData,
       ...conferenceMonkeyData,
       ...conferenceServiceData,
-      ...wasetConferenceData
+      ...wasetConferenceData,
     ];
 
     // Sort the combined array (example: sort by createdAt in descending order)
