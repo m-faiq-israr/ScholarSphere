@@ -6,7 +6,7 @@ const SearchInput = ({ placeholder, value, onChange }) => {
     <div className="relative w-72">
       <input
         type="text"
-        className="w-full bg-white rounded-2xl px-2 py-2 text-heading-1 placeholder:font-outfit font-outfit text-sm outline-none"
+        className="w-full bg-white rounded-xl px-2 py-2 text-heading-1 placeholder:font-outfit font-outfit text-sm outline-none"
         placeholder={placeholder}
         value={value}
         onChange={onChange}

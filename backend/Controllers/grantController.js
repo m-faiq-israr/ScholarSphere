@@ -13,7 +13,7 @@ const fetchAllGrants = async (req, res) => {
       ? {
           $or: [
             { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search
-            // { description: { $regex: searchQuery, $options: 'i' } },
+            { description: { $regex: searchQuery, $options: 'i' } },
           ],
         }
       : {};

@@ -4,7 +4,7 @@ const ConferenceItem = ({conference}) => {
   return (
     <div className='flex justify-between font-outfit p-1 h-full'>
 <div className='w-[70%]'>
-  <h1 className='font-bold text-heading-1 pb-3 line-clamp-1'>{conference.title}</h1>
+  <h1 className='font-bold text-heading-1 pb-3 line-clamp-2'>{conference.title}</h1>
   <p className='text-gray-600 '>
   {conference.location}
   </p>

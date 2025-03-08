@@ -32,10 +32,9 @@ const GrantsPage = () => {
     fetchGrants();
   }, [currentPage, itemsPerPage, searchQuery]);
 
-  // Handle search input change
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset to the first page when searching
+    setCurrentPage(1); 
   };
 
   // Handle page change for pagination
@@ -58,16 +57,13 @@ const GrantsPage = () => {
   return (
     <div>
       <div className="m-24 p-6 rounded-xl bg-gray-200">
-        {/* Search and Total Grants Header */}
         <div className="flex justify-between items-center mb-6">
-          {/* Reusable SearchInput Component */}
           <SearchInput
-            placeholder="Search by title"
+            placeholder="Search by title or keywords"
             value={searchQuery}
             onChange={handleSearch}
           />
 
-          {/* Total Grants Count */}
           <div className="font-semibold text-heading-1 font-outfit">
             Total Grants: {totalGrants}
           </div>
@@ -84,7 +80,6 @@ const GrantsPage = () => {
           <div className="text-center text-gray-500">No grants found.</div>
         )}
 
-        {/* Pagination */}
         <div className="flex justify-center mt-6 custom-pagination font-outfit">
           <Pagination
             defaultCurrent={1}

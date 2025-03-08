@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ConferenceItem from '../components/ListItems/ConferenceItem'; // Assuming you have a ConferenceItem component
+import ConferenceItem from '../components/ListItems/ConferenceItem'; 
 import axios from 'axios';
 import { Pagination, Spin, Input } from 'antd';
 import '../components/css/Pagination.css';
@@ -33,13 +33,11 @@ const ConferencesPage = () => {
     fetchConferences();
   }, [currentPage, itemsPerPage, searchQuery]);
 
-  // Handle search input change
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset to the first page when searching
+    setCurrentPage(1); 
   };
 
-  // Handle page change for pagination
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -59,22 +57,18 @@ const ConferencesPage = () => {
   return (
     <div>
       <div className="m-24 p-6 rounded-xl bg-gray-200">
-        {/* Search and Total Conferences Header */}
         <div className="flex justify-between items-center mb-6">
-          {/* Reusable SearchInput Component */}
           <SearchInput
             placeholder="Search by title or location"
             value={searchQuery}
             onChange={handleSearch}
           />
 
-          {/* Total Grants Count */}
           <div className="font-semibold text-heading-1 font-outfit">
             Total Conferences: {totalConferences}
           </div>
         </div>
 
-        {/* Display Conferences */}
         {conferences.length > 0 ? (
           conferences.map((conference, index) => (
             <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
@@ -85,7 +79,6 @@ const ConferencesPage = () => {
           <div className="text-center text-gray-500">No conferences found.</div>
         )}
 
-        {/* Pagination */}
         <div className="flex justify-center mt-6 custom-pagination font-outfit">
           <Pagination
             defaultCurrent={1}

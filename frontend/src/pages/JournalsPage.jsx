@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import JournalItem from '../components/ListItems/JournalItem'; // Assuming you have a JournalItem component
+import JournalItem from '../components/ListItems/JournalItem';
 import axios from 'axios';
-import { Pagination, Spin, Input } from 'antd';
+import { Pagination, Spin } from 'antd';
 import '../components/css/Pagination.css';
+import FilterDropdown from '../components/FilterDropdown';
 import SearchInput from '../components/InputFields/SearchInput';
-
 const JournalsPage = () => {
   const [journals, setJournals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,12 +13,13 @@ const JournalsPage = () => {
   const [itemsPerPage] = useState(10);
   const [totalJournals, setTotalJournals] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState({});
 
   useEffect(() => {
     const fetchJournals = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:4000/api/journals?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`
+          `http://localhost:4000/api/journals?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}&country_flag=${filters.country || ''}&publisher=${filters.publisher || ''}&subject_area=${filters.subjectArea || ''}`
         );
 
         setJournals(response.data.journals || []);
@@ -31,17 +32,25 @@ const JournalsPage = () => {
     };
 
     fetchJournals();
-  }, [currentPage, itemsPerPage, searchQuery]);
+  }, [currentPage, itemsPerPage, searchQuery, filters]);
 
-  // Handle search input change
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset to the first page when searching
+    setCurrentPage(1); 
   };
 
-  // Handle page change for pagination
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const handleApplyFilters = (appliedFilters) => {
+    setFilters(appliedFilters);
+    setCurrentPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({});
+    setCurrentPage(1); 
   };
 
   if (loading) {
@@ -59,16 +68,20 @@ const JournalsPage = () => {
   return (
     <div>
       <div className="m-24 p-6 rounded-xl bg-gray-200">
-        {/* Search and Total Journals Header */}
         <div className="flex justify-between items-center mb-6">
-          {/* Reusable SearchInput Component */}
-          <SearchInput
-            placeholder="Search by title or subject area"
-            value={searchQuery}
-            onChange={handleSearch}
-          />
+          <div className="flex items-center gap-4">
+            <SearchInput
+              placeholder="Search by title or subject area"
+              value={searchQuery}
+              onChange={handleSearch}
+            />
 
-          {/* Total Grants Count */}
+            <FilterDropdown
+              onApplyFilters={handleApplyFilters}
+              onClearFilters={handleClearFilters}
+            />
+          </div>
+
           <div className="font-semibold text-heading-1 font-outfit">
             Total Journals: {totalJournals}
           </div>
@@ -85,7 +98,6 @@ const JournalsPage = () => {
           <div className="text-center text-gray-500">No journals found.</div>
         )}
 
-        {/* Pagination */}
         <div className="flex justify-center mt-6 custom-pagination font-outfit">
           <Pagination
             defaultCurrent={1}
