@@ -4,6 +4,7 @@ import { Pagination, Spin } from "antd";
 import ConferenceItem from "../components/ListItems/ConferenceItem";
 import SearchInput from "../components/InputFields/SearchInput";
 import ConferenceFilterDropdown from "../components/Filters/ConferenceFilterDropdown";
+
 const ConferencesPage = () => {
   const [conferences, setConferences] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,25 +15,27 @@ const ConferencesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [location, setLocation] = useState(""); 
 
   useEffect(() => {
     const fetchConferences = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(
-          `http://localhost:4000/api/conferences?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}&startDate=${startDate || ""}&endDate=${endDate || ""}`
+          `http://localhost:4000/api/conferences?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}&startDate=${startDate || ""}&endDate=${endDate || ""}&location=${location || ""}`
         );
 
         setConferences(response.data.conferences || []);
         setTotalConferences(response.data.total || 0);
-        setLoading(false);
       } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchConferences();
-  }, [currentPage, itemsPerPage, searchQuery, startDate, endDate]);
+  }, [currentPage, itemsPerPage, searchQuery, startDate, endDate, location]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -43,15 +46,17 @@ const ConferencesPage = () => {
     setCurrentPage(page);
   };
 
-  const applyFilters = (start, end) => {
+  const applyFilters = (start, end, loc) => {
     setStartDate(start);
     setEndDate(end);
+    setLocation(loc); 
     setCurrentPage(1);
   };
 
   const clearFilters = () => {
     setStartDate(null);
     setEndDate(null);
+    setLocation(""); 
     setCurrentPage(1);
   };
 
@@ -72,15 +77,13 @@ const ConferencesPage = () => {
       <div className="m-24 p-6 rounded-xl bg-gray-200">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-
-          <SearchInput
-            placeholder="Search by title or location"
-            value={searchQuery}
-            onChange={handleSearch}
+            <SearchInput
+              placeholder="Search by title or location"
+              value={searchQuery}
+              onChange={handleSearch}
             />
-
-          <ConferenceFilterDropdown onApply={applyFilters} onClear={clearFilters} />
-            </div>
+            <ConferenceFilterDropdown onApply={applyFilters} onClear={clearFilters} />
+          </div>
 
           <div className="font-semibold text-heading-1 font-outfit select-none">
             Total Conferences: {totalConferences}

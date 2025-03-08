@@ -25,7 +25,7 @@ const fetchAllGrants = async (req, res) => {
     ]);
 
     // Combine and sort data
-    const allGrants = [...grantForwardData, ...ukriGrantsData];
+    const allGrants = [...ukriGrantsData, ...grantForwardData];
     allGrants.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     // Paginate results

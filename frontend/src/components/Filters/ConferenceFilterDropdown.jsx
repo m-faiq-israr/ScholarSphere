@@ -5,16 +5,18 @@ const ConferenceFilterDropdown = ({ onApply, onClear }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [location, setLocation] = useState(""); 
   const dropdownRef = useRef(null);
 
   const handleApplyFilters = () => {
-    onApply(startDate, endDate);
+    onApply(startDate, endDate, location); 
     setIsOpen(false);
   };
 
   const handleClearFilters = () => {
     setStartDate("");
     setEndDate("");
+    setLocation(""); 
     onClear();
     setIsOpen(false);
   };
@@ -65,6 +67,16 @@ const ConferenceFilterDropdown = ({ onApply, onClear }) => {
                 className="w-full rounded-md border border-gray-300 focus:outline-blue-500 p-1 text-heading-1"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-heading-1">Location</label>
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Enter location"
+                className="w-full rounded-md border border-gray-300 focus:outline-blue-500 p-1 text-heading-1"
+              />
+            </div>
             <div className="flex items-center justify-between">
               <button
                 onClick={handleClearFilters}
@@ -87,3 +99,4 @@ const ConferenceFilterDropdown = ({ onApply, onClear }) => {
 };
 
 export default ConferenceFilterDropdown;
+

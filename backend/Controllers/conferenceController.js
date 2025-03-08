@@ -10,23 +10,22 @@ const fetchAllConferences = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     const searchQuery = req.query.search || '';
-    const countryFilter = req.query.country || '';
+    const locationFilter = req.query.location || ''; 
 
     const startDateFilter = req.query.startDate ? new Date(req.query.startDate) : null;
     const endDateFilter = req.query.endDate ? new Date(req.query.endDate) : null;
 
-    const searchFilter = searchQuery
-      ? {
-          $or: [
-            { title: { $regex: searchQuery, $options: 'i' } },
-            { location: { $regex: searchQuery, $options: 'i' } },
-          ],
-        }
-      : {};
+    const searchFilter = {};
 
-    // Country filter
-    if (countryFilter) {
-      searchFilter.location = { $regex: countryFilter, $options: 'i' };
+    if (searchQuery) {
+      searchFilter.$or = [
+        { title: { $regex: searchQuery, $options: 'i' } },
+        { location: { $regex: searchQuery, $options: 'i' } },
+      ];
+    }
+
+    if (locationFilter) {
+      searchFilter.location = { $regex: locationFilter, $options: 'i' };
     }
 
     const [conference365Data, conferenceListsData, conferenceServiceData, wasetConferenceData] = await Promise.all([
@@ -90,12 +89,11 @@ const fetchAllConferences = async (req, res) => {
 
     filteredConferences.sort((a, b) => a.startDate - b.startDate);
 
-    const finalConferences = [...filteredConferences];
-    const paginatedConferences = finalConferences.slice(skip, skip + limit);
+    const paginatedConferences = filteredConferences.slice(skip, skip + limit);
 
     res.status(200).json({
       conferences: paginatedConferences,
-      total: finalConferences.length,
+      total: filteredConferences.length,
       page,
       limit,
     });
@@ -104,6 +102,7 @@ const fetchAllConferences = async (req, res) => {
     res.status(500).json({ message: 'Error fetching data from one or more collections.' });
   }
 };
+
 
 
 

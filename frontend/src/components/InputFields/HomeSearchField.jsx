@@ -6,7 +6,7 @@ const HomeSearchField = () => {
     <div className="relative w-72 ">
       <input
         type="text"
-        className="w-full bg-heading-1 rounded-xl px-4 py-3 text-white placeholder:text-white placeholder:text-base placeholder:font-semibold text-sm outline-none"
+        className="w-full bg-heading-1 rounded-xl px-4 py-3 text-white placeholder:select-none placeholder:text-white placeholder:text-base placeholder:font-semibold text-sm outline-none"
         placeholder="Grants, conferences, journals"
       />
       {/* Search Icon */}
