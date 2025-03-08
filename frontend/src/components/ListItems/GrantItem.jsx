@@ -13,7 +13,7 @@ const GrantItem = ({ grant }) => {
           Amount: {grant.total_fund ? `${grant.total_fund}` : 'N/A'}
         </div>
 
-        <button className='flex items-center justify-center mt-6 text-sm w-28 bg-green-500 text-white px-1 py-1 rounded-md hover:bg-green-600 transition-colors'>
+        <button className='flex select-none items-center justify-center mt-6 text-sm w-28 bg-green-500 text-white px-1 py-1 rounded-md hover:bg-green-600 transition-colors'>
           See details
           <svg
             xmlns='http://www.w3.org/2000/svg'

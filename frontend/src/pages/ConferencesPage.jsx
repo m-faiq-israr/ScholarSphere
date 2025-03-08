@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import ConferenceItem from '../components/ListItems/ConferenceItem'; 
-import axios from 'axios';
-import { Pagination, Spin, Input } from 'antd';
-import '../components/css/Pagination.css';
-import SearchInput from '../components/InputFields/SearchInput';
-
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Pagination, Spin } from "antd";
+import ConferenceItem from "../components/ListItems/ConferenceItem";
+import SearchInput from "../components/InputFields/SearchInput";
+import ConferenceFilterDropdown from "../components/Filters/ConferenceFilterDropdown";
 const ConferencesPage = () => {
   const [conferences, setConferences] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,13 +11,15 @@ const ConferencesPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [totalConferences, setTotalConferences] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   useEffect(() => {
     const fetchConferences = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:4000/api/conferences?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}`
+          `http://localhost:4000/api/conferences?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}&startDate=${startDate || ""}&endDate=${endDate || ""}`
         );
 
         setConferences(response.data.conferences || []);
@@ -31,15 +32,27 @@ const ConferencesPage = () => {
     };
 
     fetchConferences();
-  }, [currentPage, itemsPerPage, searchQuery]);
+  }, [currentPage, itemsPerPage, searchQuery, startDate, endDate]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const applyFilters = (start, end) => {
+    setStartDate(start);
+    setEndDate(end);
+    setCurrentPage(1);
+  };
+
+  const clearFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setCurrentPage(1);
   };
 
   if (loading) {
@@ -58,13 +71,18 @@ const ConferencesPage = () => {
     <div>
       <div className="m-24 p-6 rounded-xl bg-gray-200">
         <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-4">
+
           <SearchInput
             placeholder="Search by title or location"
             value={searchQuery}
             onChange={handleSearch}
-          />
+            />
 
-          <div className="font-semibold text-heading-1 font-outfit">
+          <ConferenceFilterDropdown onApply={applyFilters} onClear={clearFilters} />
+            </div>
+
+          <div className="font-semibold text-heading-1 font-outfit select-none">
             Total Conferences: {totalConferences}
           </div>
         </div>

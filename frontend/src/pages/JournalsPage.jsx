@@ -3,7 +3,7 @@ import JournalItem from '../components/ListItems/JournalItem';
 import axios from 'axios';
 import { Pagination, Spin } from 'antd';
 import '../components/css/Pagination.css';
-import FilterDropdown from '../components/FilterDropdown';
+import JournalsFilterDropdown from '../components/Filters/JournalsFilterDropdown';
 import SearchInput from '../components/InputFields/SearchInput';
 const JournalsPage = () => {
   const [journals, setJournals] = useState([]);
@@ -76,13 +76,13 @@ const JournalsPage = () => {
               onChange={handleSearch}
             />
 
-            <FilterDropdown
+            <JournalsFilterDropdown
               onApplyFilters={handleApplyFilters}
               onClearFilters={handleClearFilters}
             />
           </div>
 
-          <div className="font-semibold text-heading-1 font-outfit">
+          <div className="font-semibold text-heading-1 font-outfit select-none">
             Total Journals: {totalJournals}
           </div>
         </div>

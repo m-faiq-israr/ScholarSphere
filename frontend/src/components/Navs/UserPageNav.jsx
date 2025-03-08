@@ -10,7 +10,7 @@ const Nav = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 font-outfit px-8 py-3 z-10 bg-white">
+    <nav className="fixed top-0 left-0 right-0 font-outfit px-8 py-3 z-10 bg-white select-none">
       <div className="container mx-auto flex items-center justify-between">
         {/* Left Section: Heading */}
         <div className="text-3xl font-bold flex-1">

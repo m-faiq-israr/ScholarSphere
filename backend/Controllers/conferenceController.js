@@ -1,67 +1,110 @@
 import express from 'express';
 import { Conference365 } from '../Models/ConferenceModels/conference365Model.js';
 import { ConferenceLists } from '../Models/ConferenceModels/conferenceListsModel.js';
-import { ConferenceMonkey } from '../Models/ConferenceModels/conferenceMonkeyModel.js';
 import { ConferenceService } from '../Models/ConferenceModels/conference_serviceModel.js';
 import { WasetConference } from '../Models/ConferenceModels/wasetConferenceModel.js';
 
 const fetchAllConferences = async (req, res) => {
   try {
-    // Extract pagination and search parameters from the query string
-    const page = parseInt(req.query.page) || 1; // Default to page 1
-    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
-    const skip = (page - 1) * limit; // Calculate the number of documents to skip
-    const searchQuery = req.query.search || ''; // Get search query
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const searchQuery = req.query.search || '';
+    const countryFilter = req.query.country || '';
 
-    // Build search filter
+    const startDateFilter = req.query.startDate ? new Date(req.query.startDate) : null;
+    const endDateFilter = req.query.endDate ? new Date(req.query.endDate) : null;
+
     const searchFilter = searchQuery
       ? {
           $or: [
-            { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on title
-            // { description: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on description
-            { location: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on location
+            { title: { $regex: searchQuery, $options: 'i' } },
+            { location: { $regex: searchQuery, $options: 'i' } },
           ],
         }
       : {};
 
-    // Fetch all conferences from all collections with search filter
-    const [conference365Data, conferenceListsData, conferenceMonkeyData, conferenceServiceData, wasetConferenceData] = await Promise.all([
+    // Country filter
+    if (countryFilter) {
+      searchFilter.location = { $regex: countryFilter, $options: 'i' };
+    }
+
+    const [conference365Data, conferenceListsData, conferenceServiceData, wasetConferenceData] = await Promise.all([
       Conference365.find(searchFilter),
       ConferenceLists.find(searchFilter),
-      ConferenceMonkey.find(searchFilter),
       ConferenceService.find(searchFilter),
       WasetConference.find(searchFilter),
     ]);
 
-    // Combine the data into a single array
-    const allConferences = [
+    const parseConferenceDate = (dateString) => {
+      if (!dateString) return null;
+      const rangePattern = /(\d{1,2}\s\w+\s\d{4})\s*-\s*(\d{1,2}\s\w+\s\d{4})/;
+      const singleDatePattern = /(\d{1,2}\s\w+\s\d{4})/;
+      const wasetPattern = /\((\w+\s\d{1,2}-\d{1,2},\s\d{4})\)/;
+
+      let startDate, endDate;
+
+      if (rangePattern.test(dateString)) {
+        const [, start, end] = dateString.match(rangePattern);
+        startDate = new Date(start);
+        endDate = new Date(end);
+      } else if (wasetPattern.test(dateString)) {
+        const [, date] = dateString.match(wasetPattern);
+        const [month, dayRange, year] = date.replace(",", "").split(" ");
+        const [startDay, endDay] = dayRange.split("-");
+        startDate = new Date(`${month} ${startDay}, ${year}`);
+        endDate = new Date(`${month} ${endDay}, ${year}`);
+      } else if (singleDatePattern.test(dateString)) {
+        const [date] = dateString.match(singleDatePattern);
+        startDate = new Date(date);
+        endDate = new Date(date);
+      } else {
+        return null;
+      }
+
+      return { startDate, endDate };
+    };
+
+    const filteredConferences = [
       ...conference365Data,
-      ...conferenceListsData,
-      ...conferenceMonkeyData,
       ...conferenceServiceData,
+      ...conferenceListsData,
       ...wasetConferenceData,
-    ];
+    ]
+      .map((conf) => {
+        const dateField = conf.dates || conf.date;
+        const parsedDates = parseConferenceDate(dateField);
 
-    // Sort the combined array (example: sort by createdAt in descending order)
-    allConferences.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        if (!parsedDates) return null;
+        conf.startDate = parsedDates.startDate;
+        conf.endDate = parsedDates.endDate;
+        return conf;
+      })
+      .filter(Boolean)
+      .filter((conf) => {
+        if (!conf.startDate || !conf.endDate) return false;
+        if (startDateFilter && conf.endDate < startDateFilter) return false;
+        if (endDateFilter && conf.startDate > endDateFilter) return false;
+        return true;
+      });
 
-    // Apply pagination to the combined array
-    const paginatedConferences = allConferences.slice(skip, skip + limit);
+    filteredConferences.sort((a, b) => a.startDate - b.startDate);
 
-    // Get the total number of conferences
-    const totalConferences = allConferences.length;
+    const finalConferences = [...filteredConferences];
+    const paginatedConferences = finalConferences.slice(skip, skip + limit);
 
-    // Send the response
     res.status(200).json({
-      conferences: paginatedConferences, // Paginated conferences
-      total: totalConferences, // Total number of conferences
-      page, // Current page
-      limit, // Items per page
+      conferences: paginatedConferences,
+      total: finalConferences.length,
+      page,
+      limit,
     });
   } catch (error) {
-    console.error('Error fetching data from conferences:', error);
+    console.error('Error fetching conferences:', error);
     res.status(500).json({ message: 'Error fetching data from one or more collections.' });
   }
 };
+
+
 
 export { fetchAllConferences };

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FunnelIcon } from '@heroicons/react/24/outline'; 
 
-const FilterDropdown = ({ onApplyFilters, onClearFilters }) => {
+const JournalsFilterDropdown = ({ onApplyFilters, onClearFilters }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [country, setCountry] = useState('');
   const [publisher, setPublisher] = useState('');
@@ -44,7 +44,7 @@ const FilterDropdown = ({ onApplyFilters, onClearFilters }) => {
       {/* Dropdown Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-2 rounded-xl bg-heading-1 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
+        className="inline-flex select-none items-center gap-2 rounded-xl bg-heading-1 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
       >
         <FunnelIcon className="size-4 fill-white" /> 
         Filters
@@ -109,4 +109,4 @@ const FilterDropdown = ({ onApplyFilters, onClearFilters }) => {
   );
 };
 
-export default FilterDropdown;
+export default JournalsFilterDropdown;
