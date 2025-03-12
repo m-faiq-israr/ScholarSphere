@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import JournalItem from '../components/ListItems/JournalItem';
 import axios from 'axios';
-import { Pagination, Spin } from 'antd';
+import { Pagination, Spin, Button, Skeleton } from 'antd';
 import '../components/css/Pagination.css';
 import JournalsFilterDropdown from '../components/Filters/JournalsFilterDropdown';
 import SearchInput from '../components/InputFields/SearchInput';
+
 const JournalsPage = () => {
   const [journals, setJournals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +14,7 @@ const JournalsPage = () => {
   const [itemsPerPage] = useState(10);
   const [totalJournals, setTotalJournals] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const [tempSearchQuery, setTempSearchQuery] = useState('');
   const [filters, setFilters] = useState({});
 
   useEffect(() => {
@@ -34,9 +36,13 @@ const JournalsPage = () => {
     fetchJournals();
   }, [currentPage, itemsPerPage, searchQuery, filters]);
 
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1); 
+  const handleSearchChange = (e) => {
+    setTempSearchQuery(e.target.value);
+  };
+
+  const handleSearch = () => {
+    setSearchQuery(tempSearchQuery);
+    setCurrentPage(1);
   };
 
   const handlePageChange = (page) => {
@@ -50,13 +56,16 @@ const JournalsPage = () => {
 
   const handleClearFilters = () => {
     setFilters({});
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spin className="custom-spin" size="large" />
+      // <div className="flex justify-center items-center h-screen">
+      //   <Spin className="custom-spin" size="large" />
+      // </div>
+      <div className="m-24 p-6">
+        <Skeleton active paragraph={{ rows: 15, width: ['60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '100%', '60%', '80%', '100%', '60%', '80%', '100%'] }} />
       </div>
     );
   }
@@ -71,9 +80,10 @@ const JournalsPage = () => {
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
             <SearchInput
-              placeholder="Search by title or subject area"
-              value={searchQuery}
-              onChange={handleSearch}
+              placeholder="Search by title"
+              value={tempSearchQuery}
+              onChange={handleSearchChange}
+              onSearch={handleSearch}
             />
 
             <JournalsFilterDropdown

@@ -16,7 +16,7 @@ const fetchAllJournals = async (req, res) => {
       ? {
           $or: [
             { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on title
-            { subject_areas: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on subject areas
+            // { subject_areas: { $regex: searchQuery, $options: 'i' } }, 
           ],
         }
       : {};

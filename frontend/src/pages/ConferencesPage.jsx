@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Pagination, Spin } from "antd";
+import { Pagination, Spin, Button, Skeleton } from "antd";
 import ConferenceItem from "../components/ListItems/ConferenceItem";
 import SearchInput from "../components/InputFields/SearchInput";
 import ConferenceFilterDropdown from "../components/Filters/ConferenceFilterDropdown";
@@ -13,33 +13,35 @@ const ConferencesPage = () => {
   const [itemsPerPage] = useState(10);
   const [totalConferences, setTotalConferences] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [tempSearchQuery, setTempSearchQuery] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [location, setLocation] = useState(""); 
+  const [location, setLocation] = useState("");
+
+  const fetchConferences = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:4000/api/conferences?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}&startDate=${startDate || ""}&endDate=${endDate || ""}&location=${location || ""}`
+      );
+
+      setConferences(response.data.conferences || []);
+      setTotalConferences(response.data.total || 0);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchConferences = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `http://localhost:4000/api/conferences?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}&startDate=${startDate || ""}&endDate=${endDate || ""}&location=${location || ""}`
-        );
-
-        setConferences(response.data.conferences || []);
-        setTotalConferences(response.data.total || 0);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchConferences();
   }, [currentPage, itemsPerPage, searchQuery, startDate, endDate, location]);
 
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+  const handleSearch = () => {
+    setSearchQuery(tempSearchQuery);
     setCurrentPage(1);
+
   };
 
   const handlePageChange = (page) => {
@@ -49,22 +51,24 @@ const ConferencesPage = () => {
   const applyFilters = (start, end, loc) => {
     setStartDate(start);
     setEndDate(end);
-    setLocation(loc); 
+    setLocation(loc);
     setCurrentPage(1);
+    fetchConferences(); 
   };
 
   const clearFilters = () => {
     setStartDate(null);
     setEndDate(null);
-    setLocation(""); 
+    setLocation("");
     setCurrentPage(1);
+    fetchConferences(); 
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spin className="custom-spin" size="large" />
-      </div>
+      <div className="m-24 p-6">
+      <Skeleton active paragraph={{ rows: 15, width: ['60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '100%', '60%', '80%', '100%', '60%', '80%', '100%'] }} />
+    </div>
     );
   }
 
@@ -79,8 +83,9 @@ const ConferencesPage = () => {
           <div className="flex items-center gap-4">
             <SearchInput
               placeholder="Search by title or location"
-              value={searchQuery}
-              onChange={handleSearch}
+              value={tempSearchQuery}
+              onChange={(e) => setTempSearchQuery(e.target.value)}
+              onSearch={handleSearch}
             />
             <ConferenceFilterDropdown onApply={applyFilters} onClear={clearFilters} />
           </div>

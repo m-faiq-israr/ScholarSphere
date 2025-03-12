@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Pagination, Spin } from "antd";
+import { Pagination, Spin, Skeleton, Input, Button } from "antd";
 import GrantItem from "../components/ListItems/GrantItem";
-import SearchInput from "../components/InputFields/SearchInput";
 import GrantFilterDropdown from "../components/Filters/GrantsFilterDropdown";
-import { Skeleton } from 'antd';
+import SearchInput from "../components/InputFields/SearchInput";
 
 const GrantsPage = () => {
   const [grants, setGrants] = useState([]);
@@ -13,61 +12,57 @@ const GrantsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [totalGrants, setTotalGrants] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const fetchGrants = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:4000/api/grants?page=${currentPage}&limit=${itemsPerPage}&minAmount=${minAmount || ""}&maxAmount=${maxAmount || ""}&search=${searchTerm}`
+      );
+
+      setGrants(response.data.grants || []);
+      setTotalGrants(response.data.total || 0);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchGrants = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `http://localhost:4000/api/grants?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}&minAmount=${minAmount || ""}&maxAmount=${maxAmount || ""}`
-        );
-  
-        setGrants(response.data.grants || []);
-        setTotalGrants(response.data.total || 0);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
     fetchGrants();
-  }, [currentPage, itemsPerPage, searchQuery, minAmount, maxAmount]);
-
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-  };
+  }, [currentPage, itemsPerPage, minAmount, maxAmount]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const applyFilters = (min, max, description) => {
+  const applyFilters = (min, max) => {
     setMinAmount(min);
     setMaxAmount(max);
-    setSearchQuery(description || ""); 
     setCurrentPage(1);
+    fetchGrants(); 
   };
-  
+
   const clearFilters = () => {
     setMinAmount("");
     setMaxAmount("");
-    setSearchQuery(""); 
     setCurrentPage(1);
+    fetchGrants(); 
+  };
+
+  const handleSearch = () => {
+    setCurrentPage(1); 
+    fetchGrants(); 
   };
 
   if (loading) {
     return (
-      // <div className="flex justify-center items-center h-screen">
-      //   <Spin className="custom-spin" size="large" />
-      // </div>
       <div className="m-24 p-6">
-
-      <Skeleton active   paragraph={{ rows: 15, width: ['60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%','100%', '60%', '80%', '100%', '60%', '80%', '100%'] }}   />
+        <Skeleton active paragraph={{ rows: 15, width: ['60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '100%', '60%', '80%', '100%', '60%', '80%', '100%'] }} />
       </div>
     );
   }
@@ -81,14 +76,15 @@ const GrantsPage = () => {
       <div className="m-24 p-6 rounded-xl bg-gray-200">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
+          
             <SearchInput
-              placeholder="Search by title or keywords"
-              value={searchQuery}
-              onChange={handleSearch}
+            placeholder="Search by title"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onSearch={handleSearch}
             />
             <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
           </div>
-
           <div className="font-semibold text-heading-1 font-outfit select-none">
             Total Grants: {totalGrants}
           </div>
