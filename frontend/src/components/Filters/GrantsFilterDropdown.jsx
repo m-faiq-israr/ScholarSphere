@@ -37,7 +37,7 @@ const GrantFilterDropdown = ({ onApply, onClear }) => {
     <div className="relative inline-block text-left font-outfit" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex select-none items-center gap-2 rounded-xl bg-heading-1 py-1.5 px-3 text-sm font-semibold text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
+        className="inline-flex select-none items-center gap-2 rounded-xl bg-heading-1 py-2 px-3 text-sm font-semibold text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
       >
         <FunnelIcon className="size-4 fill-white" />
         Filters

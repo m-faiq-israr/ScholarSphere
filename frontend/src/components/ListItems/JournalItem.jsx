@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
+import JournalsModal from '../Modals/JournalsModal';
 
 const JournalItem = ({ journal }) => {
+        const [open, setOpen] = useState(false);
+    
     return (
         <div className='flex justify-between font-outfit p-1 h-full'>
             <div className='w-[70%]'>
@@ -14,7 +17,7 @@ const JournalItem = ({ journal }) => {
                     </span>
                      {journal.publisher}
                 </p>
-                <button className='flex items-center justify-center select-none mt-3 text-sm w-28 bg-green-500 text-white px-1 py-1 rounded-md hover:bg-green-600 transition-colors'>
+                <button onClick={() => setOpen(true)} className='flex items-center justify-center select-none mt-3 text-sm w-28 bg-green-500 text-white px-1 py-1 rounded-md hover:bg-green-600 transition-colors'>
                     See details
                     <svg
                         xmlns='http://www.w3.org/2000/svg'
@@ -40,6 +43,7 @@ const JournalItem = ({ journal }) => {
 
 
             </div>
+            <JournalsModal open={open} onClose={() => setOpen(false)} journal={journal}/>
         </div>
     )
 }

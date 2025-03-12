@@ -4,6 +4,7 @@ import { Pagination, Spin } from "antd";
 import GrantItem from "../components/ListItems/GrantItem";
 import SearchInput from "../components/InputFields/SearchInput";
 import GrantFilterDropdown from "../components/Filters/GrantsFilterDropdown";
+import { Skeleton } from 'antd';
 
 const GrantsPage = () => {
   const [grants, setGrants] = useState([]);
@@ -61,8 +62,12 @@ const GrantsPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spin className="custom-spin" size="large" />
+      // <div className="flex justify-center items-center h-screen">
+      //   <Spin className="custom-spin" size="large" />
+      // </div>
+      <div className="m-24 p-6">
+
+      <Skeleton active   paragraph={{ rows: 15, width: ['60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%','100%', '60%', '80%', '100%', '60%', '80%', '100%'] }}   />
       </div>
     );
   }
