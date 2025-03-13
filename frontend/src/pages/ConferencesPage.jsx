@@ -33,11 +33,10 @@ const ConferencesPage = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchConferences();
-  }, [currentPage, itemsPerPage, searchQuery, startDate, endDate, location]);
-
+  }, [currentPage, searchQuery, startDate, endDate, location]);
+  
   const handleSearch = () => {
     setSearchQuery(tempSearchQuery);
     setCurrentPage(1);
@@ -52,17 +51,16 @@ const ConferencesPage = () => {
     setStartDate(start);
     setEndDate(end);
     setLocation(loc);
-    setCurrentPage(1);
-    fetchConferences(); 
+    setCurrentPage(1); 
   };
-
+  
   const clearFilters = () => {
     setStartDate(null);
     setEndDate(null);
     setLocation("");
     setCurrentPage(1);
-    fetchConferences(); 
   };
+  
 
   if (loading) {
     return (
@@ -82,7 +80,7 @@ const ConferencesPage = () => {
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
             <SearchInput
-              placeholder="Search by title or location"
+              placeholder="Search by title"
               value={tempSearchQuery}
               onChange={(e) => setTempSearchQuery(e.target.value)}
               onSearch={handleSearch}

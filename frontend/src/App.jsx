@@ -12,8 +12,8 @@ import HomePage from "./pages/HomePage";
 function App() {
   return (
     <Router>
-      <AppProvider>
         <AuthProvider>
+      <AppProvider>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<PublicRoute><MainPage /></PublicRoute>} />
@@ -26,8 +26,8 @@ function App() {
             {/* Catch-all */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </AuthProvider>
       </AppProvider>
+        </AuthProvider>
     </Router>
   );
 }

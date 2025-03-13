@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Pagination, Spin, Skeleton, Input, Button } from "antd";
+import { Pagination, Skeleton } from "antd";
 import GrantItem from "../components/ListItems/GrantItem";
 import GrantFilterDropdown from "../components/Filters/GrantsFilterDropdown";
 import SearchInput from "../components/InputFields/SearchInput";
@@ -15,12 +15,14 @@ const GrantsPage = () => {
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [appliedSearchTerm, setAppliedSearchTerm] = useState(""); 
+  const [descriptionFilter, setDescriptionFilter] = useState("");
 
   const fetchGrants = async () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:4000/api/grants?page=${currentPage}&limit=${itemsPerPage}&minAmount=${minAmount || ""}&maxAmount=${maxAmount || ""}&search=${searchTerm}`
+        `http://localhost:4000/api/grants?page=${currentPage}&limit=${itemsPerPage}&minAmount=${minAmount || ""}&maxAmount=${maxAmount || ""}&search=${appliedSearchTerm || ""}&descriptionFilter=${descriptionFilter || ""}`
       );
 
       setGrants(response.data.grants || []);
@@ -34,35 +36,35 @@ const GrantsPage = () => {
 
   useEffect(() => {
     fetchGrants();
-  }, [currentPage, itemsPerPage, minAmount, maxAmount]);
+  }, [currentPage, itemsPerPage, minAmount, maxAmount, appliedSearchTerm, descriptionFilter]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const applyFilters = (min, max) => {
+  const applyFilters = (min, max, descriptionFilter) => {
     setMinAmount(min);
     setMaxAmount(max);
+    setDescriptionFilter(descriptionFilter);
     setCurrentPage(1);
-    fetchGrants(); 
   };
 
   const clearFilters = () => {
     setMinAmount("");
     setMaxAmount("");
+    setDescriptionFilter("");
     setCurrentPage(1);
-    fetchGrants(); 
   };
 
   const handleSearch = () => {
-    setCurrentPage(1); 
-    fetchGrants(); 
+    setAppliedSearchTerm(searchTerm); 
+    setCurrentPage(1);
   };
 
   if (loading) {
     return (
       <div className="m-24 p-6">
-        <Skeleton active paragraph={{ rows: 15, width: ['60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '100%', '60%', '80%', '100%', '60%', '80%', '100%'] }} />
+        <Skeleton active paragraph={{ rows: 15, width: ["60%", "80%", "100%"] }} />
       </div>
     );
   }
@@ -76,13 +78,14 @@ const GrantsPage = () => {
       <div className="m-24 p-6 rounded-xl bg-gray-200">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-          
+            {/* Search Input Field */}
             <SearchInput
-            placeholder="Search by title"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onSearch={handleSearch}
+              placeholder="Search by title"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onSearch={handleSearch}
             />
+            {/* Filters Dropdown */}
             <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
           </div>
           <div className="font-semibold text-heading-1 font-outfit select-none">

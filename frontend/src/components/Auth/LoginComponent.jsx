@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import CredentialInputField from '../InputFields/CredentialInputField'
+import React, { useState } from 'react';
+import CredentialInputField from '../InputFields/CredentialInputField';
 import SignInButton from '../Buttons/SignInButton';
 import { Link, useNavigate } from 'react-router-dom';
 import { doSignInWithEmailAndPassword } from '../../firebase/auth';
@@ -7,10 +7,11 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from '../../contexts/authContext';
 
 const LoginComponent = () => {
-
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const onChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -18,14 +19,18 @@ const LoginComponent = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setLoading(true); 
+        setError('');
+
         try {
             await doSignInWithEmailAndPassword(credentials.email, credentials.password);
-            navigate('/dashboard'); 
+            navigate('/dashboard');
         } catch (err) {
             setError(err.message);
+        } finally {
+            setLoading(false); // Stop loading
         }
     };
-    const { user } = useAuth();
 
     if (user) return <Navigate to="/dashboard" />;
 
@@ -50,7 +55,7 @@ const LoginComponent = () => {
                     {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                     <div className="text-right text-sm text-white font-outfit hover:cursor-pointer">Forgot Password?</div>
                     <div className="flex flex-col items-center justify-center mt-4">
-                        <SignInButton name="Sign In" />
+                        <SignInButton name="Sign In" loading={loading} />
                         <div className="text-xs text-white mt-2">OR</div>
                         <Link to="/signup" className="text-sm text-white hover:underline mt-2">Create a new account</Link>
                     </div>

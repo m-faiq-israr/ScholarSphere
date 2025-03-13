@@ -33,7 +33,7 @@ export function AuthProvider({ children }) {
     const logout = async () => {
         await signOut(auth);
         setUserLoggedIn(false);
-        navigate("/signin"); // Ensure user is redirected after logging out
+        navigate("/"); 
     };
 
     return (

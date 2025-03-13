@@ -15,6 +15,8 @@ const SignupComponent = () => {
     });
     const [error, setError] = useState('');
     const navigate = useNavigate();
+        const [loading, setLoading] = useState(false);
+    
 
     const onChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -22,6 +24,7 @@ const SignupComponent = () => {
 
     const handleSignup = async (e) => {
         e.preventDefault();
+        setLoading(true); 
         if (credentials.password !== credentials.confirmPassword) {
             setError("Passwords do not match");
             return;
@@ -29,8 +32,12 @@ const SignupComponent = () => {
         try {
             await doCreateUserWithEmailAndPassword(credentials.email, credentials.password);
             navigate('/dashboard');
+        setLoading(false); 
+
         } catch (err) {
             setError(err.message);
+        setLoading(false); 
+
         }
     };
 
@@ -72,7 +79,7 @@ const SignupComponent = () => {
                     </div>
                     {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                     <div className="flex flex-col items-center justify-center mt-4">
-                        <SignInButton name="Sign Up" />
+                        <SignInButton name="Sign Up" loading={loading} />
                         <div className="text-xs text-white mt-2">OR</div>
                         <div className="flex items-center gap-1 mt-4 hover:cursor-pointer">
                             <Link to="/signin" className="text-sm text-white hover:underline ">Already have an account?</Link>

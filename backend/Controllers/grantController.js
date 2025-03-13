@@ -10,6 +10,7 @@ const fetchAllGrants = async (req, res) => {
     const minAmount = req.query.minAmount ? parseFloat(req.query.minAmount) : null;
     const maxAmount = req.query.maxAmount ? parseFloat(req.query.maxAmount) : null;
     const searchQuery = req.query.search ? req.query.search.trim().toLowerCase() : null;
+    const descriptionFilter = req.query.descriptionFilter ? req.query.descriptionFilter.trim().toLowerCase() : null; // Add this line
 
     // Fetch all grants
     const [grantForwardData, ukriGrantsData] = await Promise.all([
@@ -49,6 +50,13 @@ const fetchAllGrants = async (req, res) => {
       );
     }
 
+    // Apply description filtering
+    if (descriptionFilter) {
+      allGrants = allGrants.filter((grant) =>
+        grant.description?.toLowerCase().includes(descriptionFilter)
+      );
+    }
+
     // Sort by latest createdAt
     allGrants.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -66,5 +74,4 @@ const fetchAllGrants = async (req, res) => {
     res.status(500).json({ message: "Error fetching grants data." });
   }
 };
-
 export { fetchAllGrants };

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { auth } from './firebase';
 import { 
     createUserWithEmailAndPassword, 
@@ -6,6 +7,7 @@ import {
     sendPasswordResetEmail,
     signOut 
 } from 'firebase/auth';
+
 
 export const doCreateUserWithEmailAndPassword = async (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -16,7 +18,9 @@ export const doSignInWithEmailAndPassword = (email, password) => {
 };
 
 export const doSignOut = () => {
-    return signOut(auth);
+    return (signOut(auth));
+    
+
 };
 
 export const doPasswordReset = (email) => {

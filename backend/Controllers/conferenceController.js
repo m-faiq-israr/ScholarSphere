@@ -11,7 +11,6 @@ const fetchAllConferences = async (req, res) => {
     const skip = (page - 1) * limit;
     const searchQuery = req.query.search || '';
     const locationFilter = req.query.location || ''; 
-
     const startDateFilter = req.query.startDate ? new Date(req.query.startDate) : null;
     const endDateFilter = req.query.endDate ? new Date(req.query.endDate) : null;
 
@@ -20,14 +19,18 @@ const fetchAllConferences = async (req, res) => {
     if (searchQuery) {
       searchFilter.$or = [
         { title: { $regex: searchQuery, $options: 'i' } },
-        { location: { $regex: searchQuery, $options: 'i' } },
+        // { location: { $regex: searchQuery, $options: 'i' } },
       ];
     }
 
     if (locationFilter) {
-      searchFilter.location = { $regex: locationFilter, $options: 'i' };
+      searchFilter.$or = [
+        { location: { $regex: locationFilter, $options: 'i' } },
+        { type: { $regex: locationFilter, $options: 'i' } }, 
+      ];
     }
 
+    // Fetch all data in parallel
     const [conference365Data, conferenceListsData, conferenceServiceData, wasetConferenceData] = await Promise.all([
       Conference365.find(searchFilter),
       ConferenceLists.find(searchFilter),
@@ -35,39 +38,52 @@ const fetchAllConferences = async (req, res) => {
       WasetConference.find(searchFilter),
     ]);
 
+    // Append 'type' to 'location' for ConferenceLists ONLY for filtering/searching
+    const updatedConferenceListsData = conferenceListsData.map(conf => ({
+      ...conf._doc,
+      location: conf.location && conf.type ? `${conf.location} ${conf.type}` : conf.location || conf.type
+    }));
+
+    // Date Parsing Function
     const parseConferenceDate = (dateString) => {
-      if (!dateString) return null;
-      const rangePattern = /(\d{1,2}\s\w+\s\d{4})\s*-\s*(\d{1,2}\s\w+\s\d{4})/;
-      const singleDatePattern = /(\d{1,2}\s\w+\s\d{4})/;
-      const wasetPattern = /\((\w+\s\d{1,2}-\d{1,2},\s\d{4})\)/;
+  if (!dateString) return null;
+  
+  const rangePattern = /(\d{1,2}\s\w+\s\d{4})\s*-\s*(\d{1,2}\s\w+\s\d{4})/;
+  const singleDatePattern = /(\d{1,2}\s\w+\s\d{4})/;
+  const wasetPattern = /\((\w+\s\d{1,2}-\d{1,2},\s\d{4})\)/;
 
-      let startDate, endDate;
+  let startDate, endDate;
 
-      if (rangePattern.test(dateString)) {
-        const [, start, end] = dateString.match(rangePattern);
-        startDate = new Date(start);
-        endDate = new Date(end);
-      } else if (wasetPattern.test(dateString)) {
-        const [, date] = dateString.match(wasetPattern);
-        const [month, dayRange, year] = date.replace(",", "").split(" ");
-        const [startDay, endDay] = dayRange.split("-");
-        startDate = new Date(`${month} ${startDay}, ${year}`);
-        endDate = new Date(`${month} ${endDay}, ${year}`);
-      } else if (singleDatePattern.test(dateString)) {
-        const [date] = dateString.match(singleDatePattern);
-        startDate = new Date(date);
-        endDate = new Date(date);
-      } else {
-        return null;
-      }
+  if (rangePattern.test(dateString)) {
+    // Date range case: "11 Jun 2023 - 17 Jun 2026"
+    const [, start, end] = dateString.match(rangePattern);
+    startDate = new Date(start);
+    endDate = new Date(end);
+  } else if (wasetPattern.test(dateString)) {
+    // Waset format: "(June 22-24, 2024)"
+    const [, date] = dateString.match(wasetPattern);
+    const [month, dayRange, year] = date.replace(",", "").split(" ");
+    const [startDay, endDay] = dayRange.split("-");
+    startDate = new Date(`${month} ${startDay}, ${year}`);
+    endDate = new Date(`${month} ${endDay}, ${year}`);
+  } else if (singleDatePattern.test(dateString)) {
+    // Single date case: "22 Nov 2024"
+    const [date] = dateString.match(singleDatePattern);
+    startDate = new Date(date);
+    endDate = new Date(date);  
+  } else {
+    return null;
+  }
 
-      return { startDate, endDate };
-    };
+  return { startDate, endDate };
+};
 
+
+    // Merge all conference data and process dates
     const filteredConferences = [
       ...conference365Data,
       ...conferenceServiceData,
-      ...conferenceListsData,
+      ...updatedConferenceListsData, // Use updated data here
       ...wasetConferenceData,
     ]
       .map((conf) => {
@@ -77,6 +93,7 @@ const fetchAllConferences = async (req, res) => {
         if (!parsedDates) return null;
         conf.startDate = parsedDates.startDate;
         conf.endDate = parsedDates.endDate;
+
         return conf;
       })
       .filter(Boolean)
@@ -87,8 +104,10 @@ const fetchAllConferences = async (req, res) => {
         return true;
       });
 
+    // Sort by start date
     filteredConferences.sort((a, b) => a.startDate - b.startDate);
 
+    // Pagination
     const paginatedConferences = filteredConferences.slice(skip, skip + limit);
 
     res.status(200).json({
@@ -102,8 +121,5 @@ const fetchAllConferences = async (req, res) => {
     res.status(500).json({ message: 'Error fetching data from one or more collections.' });
   }
 };
-
-
-
 
 export { fetchAllConferences };
