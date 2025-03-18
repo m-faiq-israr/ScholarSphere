@@ -17,27 +17,38 @@ export function AuthProvider({ children }) {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user);
-            setUserLoggedIn(!!user);
-            setLoading(false);
-
-            // Redirect logged-in users to dashboard if they access `/`
             if (user) {
-                navigate("/dashboard", { replace: true });
+                setCurrentUser(user);
+                setUserLoggedIn(true);
+            } else {
+                setCurrentUser(null);
+                setUserLoggedIn(false);
             }
+            setLoading(false);
         });
 
         return () => unsubscribe();
-    }, [navigate]);
+    }, []);
 
     const logout = async () => {
-        await signOut(auth);
-        setUserLoggedIn(false);
-        navigate("/"); 
+        try {
+            await signOut(auth);
+            setUserLoggedIn(false);
+            navigate("/", { replace: true }); 
+        } catch (error) {
+            console.error("Error signing out:", error);
+        }
+    };
+
+    const value = {
+        currentUser,
+        userLoggedIn,
+        loading,
+        logout,
     };
 
     return (
-        <AuthContext.Provider value={{ currentUser, userLoggedIn, loading, logout }}>
+        <AuthContext.Provider value={value}>
             {!loading && children}
         </AuthContext.Provider>
     );

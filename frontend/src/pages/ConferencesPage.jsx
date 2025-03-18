@@ -4,6 +4,7 @@ import { Pagination, Spin, Button, Skeleton } from "antd";
 import ConferenceItem from "../components/ListItems/ConferenceItem";
 import SearchInput from "../components/InputFields/SearchInput";
 import ConferenceFilterDropdown from "../components/Filters/ConferenceFilterDropdown";
+import Nav from "../components/Navs/UserPageNav";
 
 const ConferencesPage = () => {
   const [conferences, setConferences] = useState([]);

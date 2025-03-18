@@ -31,7 +31,7 @@ const SignupComponent = () => {
         }
         try {
             await doCreateUserWithEmailAndPassword(credentials.email, credentials.password);
-            navigate('/dashboard');
+            navigate('/grants');
         setLoading(false); 
 
         } catch (err) {
@@ -43,7 +43,7 @@ const SignupComponent = () => {
 
     const { user } = useAuth();
 
-  if (user) return <Navigate to="/dashboard" />;
+  if (user) return <Navigate to="/grants" />;
 
     return (
         <div className="h-screen flex flex-col items-center justify-center font-outfit">

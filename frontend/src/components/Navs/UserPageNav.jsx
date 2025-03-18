@@ -1,24 +1,22 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
-import { AppContext } from '../../contexts/AppContext';
-import { FaBars, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from 'react';
+import { FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { FiEdit } from 'react-icons/fi';
+import { useNavigate, useLocation } from "react-router-dom";
 import { doSignOut } from "../../firebase/auth";
 
-const Nav = () => {
-  const { navItem, setNavItem } = useContext(AppContext);
+const Nav = ({ userFname, userLname }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
   const dropdownRef = useRef(null); 
   const navigate = useNavigate();
-  
-    const handleLogout = async () => {
-      await doSignOut();
-      navigate("/");
-    };
+  const location = useLocation(); 
 
+  const handleLogout = async () => {
+    await doSignOut();
+    navigate("/");
+  };
 
-  const navItemClicked = (item) => {
-    console.log('Clicked:', item);
-    setNavItem(item);
+  const handleProfileClick = () => {
+    navigate("/user");
   };
 
   const toggleDropdown = () => {
@@ -42,7 +40,7 @@ const Nav = () => {
     <nav className="fixed top-0 left-0 right-0 font-outfit px-8 py-3 z-10 bg-white select-none">
       <div className="container mx-auto flex items-center justify-between">
         {/* Left Section: Heading */}
-        <div className="text-3xl font-bold flex-1">
+        <div className="text-3xl font-bold flex-1 cursor-pointer" onClick={()=> navigate('/grants')}>
           ScholarSphere
         </div>
 
@@ -50,25 +48,25 @@ const Nav = () => {
         <ul className="flex space-x-20 font-semibold justify-center flex-1">
           <li
             className={`cursor-pointer ${
-              navItem === 'Grants' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
+              location.pathname === '/grants' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
             }`}
-            onClick={() => navItemClicked('Grants')}
+            onClick={() => navigate('/grants')}
           >
             Grants
           </li>
           <li
             className={`cursor-pointer ${
-              navItem === 'Conferences' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
+              location.pathname === '/conferences' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
             }`}
-            onClick={() => navItemClicked('Conferences')}
+            onClick={() => navigate('/conferences')}
           >
             Conferences
           </li>
           <li
             className={`cursor-pointer ${
-              navItem === 'Journals' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
+              location.pathname === '/journals' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
             }`}
-            onClick={() => navItemClicked('Journals')}
+            onClick={() => navigate('/journals')}
           >
             Journals
           </li>
@@ -76,8 +74,13 @@ const Nav = () => {
 
         {/* Right Section: Hamburger Icon and Dropdown */}
         <div className="flex items-center space-x-2 flex-1 justify-end relative" ref={dropdownRef}>
-          <div className="cursor-pointer" onClick={toggleDropdown}>
-            <FaBars className="text-xl font-outfit" />
+          <div className="flex items-center gap-2">
+            <div className='font-outfit font-semibold text-heading-1 '>
+              {userFname} {userLname}
+            </div>
+            <div onClick={toggleDropdown} className='cursor-pointer bg-heading-1 hover:bg-gray-700 rounded-full p-1.5'>
+              <FaUser className="text-white font-outfit" /> 
+            </div>
           </div>
 
           {/* Dropdown Menu */}
@@ -87,12 +90,12 @@ const Nav = () => {
                 <li
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2"
                   onClick={() => {
-                    console.log('User Profile clicked');
                     setIsDropdownOpen(false); 
+                    handleProfileClick();
                   }}
                 >
-                  <FaUser className="text-heading-1" /> 
-                  <span className="text-heading-1">User Profile</span>
+                  <FiEdit size={18} className='text-heading-1' />
+                  <span className="text-heading-1">Edit Profile</span>
                 </li>
                 <li
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2"
@@ -101,8 +104,8 @@ const Nav = () => {
                     handleLogout();
                   }}
                 >
-                  <FaSignOutAlt className="text-red-600" /> {/* Log Out Icon */}
-                  <span className="text-red-600 font-semibold">Log Out</span>
+                  <FaSignOutAlt className="text-red-600" /> 
+                  <span className="text-red-600 ">Logout</span>
                 </li>
               </ul>
             </div>

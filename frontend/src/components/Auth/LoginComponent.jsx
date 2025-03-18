@@ -24,7 +24,7 @@ const LoginComponent = () => {
 
         try {
             await doSignInWithEmailAndPassword(credentials.email, credentials.password);
-            navigate('/dashboard');
+            navigate('/grants');
         } catch (err) {
             setError(err.message);
         } finally {
@@ -32,7 +32,7 @@ const LoginComponent = () => {
         }
     };
 
-    if (user) return <Navigate to="/dashboard" />;
+    if (user) return <Navigate to="/grants" />;
 
     return (
         <div className="h-screen flex flex-col items-center justify-center font-outfit">

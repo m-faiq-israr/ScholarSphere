@@ -11,15 +11,10 @@ const HomePage = () => {
   return (
     <div>
       <Nav />
-      {navItem === 'Grants' ? (
-        <GrantsPage />
-      ) : navItem === 'Conferences' ? (
-        <ConferencesPage />
-      ) : navItem === 'Journals' ? (
-        <JournalsPage />
-      ) : (
-        <GrantsPage /> 
-      )}
+      {navItem === 'Grants' && <GrantsPage />}
+{navItem === 'Conferences' && <ConferencesPage />}
+{navItem === 'Journals' && <JournalsPage />}
+
     </div>
   );
 };

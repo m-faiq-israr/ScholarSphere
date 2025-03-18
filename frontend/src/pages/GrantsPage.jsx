@@ -4,6 +4,7 @@ import { Pagination, Skeleton } from "antd";
 import GrantItem from "../components/ListItems/GrantItem";
 import GrantFilterDropdown from "../components/Filters/GrantsFilterDropdown";
 import SearchInput from "../components/InputFields/SearchInput";
+import Nav from "../components/Navs/UserPageNav";
 
 const GrantsPage = () => {
   const [grants, setGrants] = useState([]);

@@ -5,6 +5,7 @@ import { Pagination, Spin, Button, Skeleton } from 'antd';
 import '../components/css/Pagination.css';
 import JournalsFilterDropdown from '../components/Filters/JournalsFilterDropdown';
 import SearchInput from '../components/InputFields/SearchInput';
+import Nav from '../components/Navs/UserPageNav';
 
 const JournalsPage = () => {
   const [journals, setJournals] = useState([]);
