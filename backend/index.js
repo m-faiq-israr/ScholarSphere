@@ -1,12 +1,11 @@
 import express from 'express';
-import cors from 'cors'; // Import cors
+import cors from 'cors'; 
 import conferenceRoutes from './Routes/conferenceRoutes.js';
 import grantRoutes from './Routes/grantRoutes.js';
 import journalRoutes from './Routes/journalRoutes.js';
 
 const app = express();
 
-// Enable CORS
 app.use(cors());
 
 app.use('/api/conferences', conferenceRoutes);

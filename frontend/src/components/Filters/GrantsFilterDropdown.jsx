@@ -45,7 +45,7 @@ const GrantFilterDropdown = ({ onApply, onClear }) => {
 
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-56 origin-top-right rounded-xl border border-gray bg-white p-2 text-sm text-heading-1 transition duration-100 ease-out focus:outline-none"
+          className="absolute right-0 mt-2 w-56 origin-top-right rounded-xl border border-gray bg-white p-3 text-sm text-heading-1 transition duration-100 ease-out focus:outline-none"
           style={{ zIndex: 1000 }}
         >
           <div className="space-y-4">

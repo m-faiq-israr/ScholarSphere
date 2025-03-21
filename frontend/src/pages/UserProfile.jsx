@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -6,8 +6,8 @@ import { TiMinus } from "react-icons/ti";
 import { FiEdit, FiPlus, FiSave } from "react-icons/fi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import toast, { Toaster } from "react-hot-toast";
-import Nav from "../components/Navs/UserPageNav";
 import UserPageInput from "../components/InputFields/UserPageInput";
+import { AppContext } from "../contexts/AppContext";
 
 const UserProfile = () => {
   const [loading, setLoading] = useState(false);
@@ -20,6 +20,7 @@ const UserProfile = () => {
   });
   const [originalData, setOriginalData] = useState(null); 
   const [hasData, setHasData] = useState(false);
+const {setuserName} = useContext(AppContext);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -43,14 +44,22 @@ const UserProfile = () => {
           ...userData,
           fieldsofInterest: userData.fieldsofInterest?.length ? userData.fieldsofInterest : [""],
         };
+
         setFormData(formattedData);
-        setOriginalData(formattedData); // Save original data for comparison
+        setOriginalData(formattedData);
         setHasData(true);
+
+        if (userData.firstName && userData.lastName) {
+          setuserName(`${userData.firstName} ${userData.lastName}`);
+        } else {
+          setuserName("Guest");
+        }
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
-  };
+};
+
 
   const handleChange = (index, value) => {
     const updatedFields = [...formData.fieldsofInterest];

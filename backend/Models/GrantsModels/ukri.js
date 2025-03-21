@@ -10,6 +10,8 @@ const ukriSchema = new mongoose.Schema({
   total_fund : {type : String, default : null},
   opening_date : {type : String},
   closing_date : {type : String},
+  who_can_apply : {type : String, default : null},
+  scope : {type : String, default : null}
 
 }, {collection: 'ukrigrants'});
 
