@@ -31,22 +31,22 @@ const MainPage = () => {
         <img
           src={layout1}
           alt="Layout Left"
-          className="absolute top-12 left-0 "
+          className="absolute top-12 left-0 hidden md:block w-24 h-[350px]"
           style={{ width: '120px', height: '350px' }}
         />
         <img
           src={layout2}
           alt="Layout Right"
-          className="absolute top-6 right-0 "
+          className="absolute top-6 right-0 hidden md:block w-28 h-[500px]"
           style={{ width: '110px', height: '500px' }}
         />
 
         {/* Exploring international academic opportunities */}
-        <div className="w-screen text-center">
-          <h1 className="text-2xl font-bold text-heading-1 font-outfit">
+        <div className="w-full text-center px-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-heading-1 font-outfit">
             Exploring International Academic Opportunities
           </h1>
-          <div className="flex justify-center items-center gap-x-24 mt-12">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-x-24 mt-12">
             <HomePageCard image={homecard1} text={'Easily find grants for your research.'} />
             <HomePageCard image={homecard2} text={'Never miss the chance to attend conferences.'} />
             <HomePageCard image={homecard3} text={'Find journals to publish your work.'} />
@@ -55,30 +55,30 @@ const MainPage = () => {
       </div>
 
 
-      <div className="relative select-none">
+      <div className="relative select-none mt-16">
         {/* Layout 6 and Layout 7 on the left */}
-        <div className="absolute left-0 top-52 transform -translate-y-1/2">
-          <img src={layout6} style={{ width: '220px', height: '200px' }} className="block" />
-          <img src={layout7} style={{ width: '220px', height: '200px' }} className="-ml-1 -mt-1 block" />
+        <div className="absolute left-0 top-32 hidden lg:block">
+          <img src={layout6} style={{ width: '220px', height: '200px' }} className="w-40 h-40" />
+          <img src={layout7} style={{ width: '220px', height: '200px' }} className="w-40 h-40 -ml-1 -mt-1" />
         </div>
 
         {/* Layout 5 centered and overlapping */}
-        <div className="relative flex justify-center items-center top-52">
+        <div className="relative flex justify-center items-center">
           {/* Image Wrapper */}
           <div className="relative">
             <img
               src={layout5}
               alt="Layout Center"
               style={{ width: "670px", height: "670px" }}
-              className="z-0"
+              className="w-[90%] md:w-[670px] mx-auto"
             />
 
             {/* Centered HomeSearchField */}
             <div className="absolute inset-0 flex justify-center items-center">
-              <div className='text-center'>
+              <div className='text-center w-full px-4'>
 
                 <HomeSearchField />
-                <div className='font-outfit mt-4 font-semibold  '>Browse through our vast collection</div>
+                <div className='font-outfit mt-4 font-semibold text-center'>Browse through our vast collection</div>
               </div>
             </div>
           </div>
@@ -86,9 +86,9 @@ const MainPage = () => {
 
 
         {/* Layout 10 and Layout 11 on the right */}
-        <div className="absolute right-0 flex flex-col items-end ">
-          <img src={layout10} style={{ width: '200px', height: '200px' }} className="block right-0" />
-          <img src={layout11} style={{ width: '200px', height: '260px' }} className="-mr-2 -mt-1 block right-0" />
+        <div className="absolute right-0 top-24 hidden lg:flex flex-col items-end">
+          <img src={layout10} style={{ width: '200px', height: '200px' }} className="w-40 h-40" />
+          <img src={layout11} style={{ width: '200px', height: '260px' }} className="w-40 h-52 mt-2" />
         </div>
 
         <div>
@@ -99,19 +99,24 @@ const MainPage = () => {
 
 
 
-      <div className="  ">
+      <div className=" relative mt-16 flex flex-col lg:flex-row items-center justify-center text-center lg:text-left px-4 ">
         {/* Extreme Left Image (layout14) */}
         <img
           src={layout14}
-          className="absolute left-0 mt-20"
+          className="hidden lg:block w-20 h-[450px] absolute left-0 mt-20"
           style={{ width: '80px', height: '450px' }}
         />
 
         {/* Centered Content */}
-        <div className='flex justify-center font-outfit'>
-          <div className='text-heading-1'>
+        <div className='flex flex-col lg:flex-row items-center lg:justify-center mt-16 px-4'>
+          <div className='lg:max-w-lg text-heading-1 text-left space-y-2'>
             <h1 className='font-bold text-3xl mt-8'>One-Stop Solution</h1>
-            <div className="before:content-['•'] before:text-lg before:font-bold before:mr-2 font-semibold mt-1 ">
+            <ul className='mt-4 space-y-2 text-lg'>
+            <li>Expedite delivery using custom templates</li>
+            <li>Track progress with intuitive dashboards</li>
+            <li>Collaborate seamlessly with your team</li>
+          </ul>
+            {/* <div className="before:content-['•'] before:text-lg before:font-bold before:mr-2 font-semibold mt-1 ">
               Expedite delivery using custom templates
             </div>
 
@@ -120,28 +125,28 @@ const MainPage = () => {
             </div>
             <div className="before:content-['•'] before:text-lg before:font-bold before:mr-2 font-semibold mt-1">
               Expedite delivery using custom templates
-            </div>
+            </div> */}
           </div>
-          <img src={layout13} style={{ width: '300px', height: '230px' }} />
+          <img src={layout13}  className="w-60 h-48 mt-6 lg:mt-0" style={{ width: '300px', height: '230px' }} />
         </div>
       </div>
 
 
       <div className='flex justify-center mt-16 relative font-outfit'>
   {/* Background Image */}
-  <img src={layout15} className="max-w-full" />
+  <img src={layout15} className="w-full max-w-screen-lg" />
 
   {/* Centered Text */}
-  <div className="absolute inset-0 flex flex-col justify-center  text-center text-white">
-    <h1 className="text-2xl font-bold">Join us today! In few easy steps</h1>
-<div className='block max-w-4xl mx-auto'>
+  <div className="absolute inset-0 flex flex-col justify-center  text-center text-white px-4">
+    <h1 className="text-xl md:text-2xl font-bold">Join us today! In few easy steps</h1>
+<div className='max-w-4xl mx-auto mt-10 space-y-5'>
 
-    <div className="mt-20 flex justify-center items-center gap-4">
+    <div className="flex flex-col md:flex-row justify-center items-center gap-4">
       <h1 className="text-lg">Already have an account?</h1>
       <CredentialButton name={'Login'} color={'bg-gray-200'} textColor={'text-heading-1'} onclick={()=>navigate('/signin')} />
     </div>
     
-    <div className="mt-5 flex justify-end gap-4 items-center ">
+    <div className="flex flex-col md:flex-row justify-center items-center gap-4 ">
       <h1 className="text-lg">New User?</h1>
       <CredentialButton name={'Signup'} color={'bg-heading-1'} textColor={'text-white'} onclick={()=>navigate('signup')}/>
     </div>
