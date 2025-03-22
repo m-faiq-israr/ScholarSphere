@@ -119,7 +119,7 @@ const GrantsPage = () => {
 
   if (loading) {
     return (
-      <div className="m-24 p-6">
+      <div className="m-8 md:m-16 lg:m-24 p-4 md:p-6">
         <Skeleton active paragraph={{ rows: 15, width: ["60%", "80%", "100%"] }} />
       </div>
     );
@@ -130,28 +130,31 @@ const GrantsPage = () => {
   }
 
   return (
-    <div>
-      <div className="m-24 p-6 rounded-xl bg-gray-200">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
+    <div className="container mx-auto px-4">
+      <div className="mt-16 md:mt-20 p-4 md:p-6 rounded-xl bg-gray-200">
+        <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+          <div className="flex flex-wrap items-center gap-2 md:gap-4 w-full">
+          <div className="flex-grow">
             {/* Search Input */}
             <SearchInput
               placeholder="Search by title"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onSearch={handleSearch}
+              className="w-full sm:w-auto"
             />
+            </div>
             {/* Filters Dropdown */}
             <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
           </div>
-          <div className="font-semibold text-heading-1 font-outfit select-none">
+          <div className="font-semibold text-heading-1 font-outfit select-none text-sm md:text-base">
             Total Grants: {totalGrants}
           </div>
         </div>
 
         {grants.length > 0 ? (
           grants.map((grant, index) => (
-            <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
+            <div key={index} className="bg-white rounded-xl px-2 sm:px-4 md:px-8 py-2 mb-6">
               <GrantItem grant={grant} />
             </div>
           ))
@@ -167,6 +170,7 @@ const GrantsPage = () => {
             pageSize={itemsPerPage}
             onChange={handlePageChange}
             showSizeChanger={false}
+            className="text-sm sm:text-base"
           />
         </div>
       </div>
