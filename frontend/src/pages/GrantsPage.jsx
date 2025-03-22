@@ -4,7 +4,6 @@ import { Pagination, Skeleton } from "antd";
 import GrantItem from "../components/ListItems/GrantItem";
 import GrantFilterDropdown from "../components/Filters/GrantsFilterDropdown";
 import SearchInput from "../components/InputFields/SearchInput";
-import Nav from "../components/Navs/UserPageNav";
 
 const GrantsPage = () => {
   const [grants, setGrants] = useState([]);
@@ -16,18 +15,22 @@ const GrantsPage = () => {
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [appliedSearchTerm, setAppliedSearchTerm] = useState(""); 
+  const [appliedSearchTerm, setAppliedSearchTerm] = useState("");
   const [descriptionFilter, setDescriptionFilter] = useState("");
+  const [isFiltered, setIsFiltered] = useState(false);
+  const [isSearched, setIsSearched] = useState(false);
 
-  const fetchGrants = async () => {
+  // **Fetch All Grants**
+  const fetchAllGrants = async () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:4000/api/grants?page=${currentPage}&limit=${itemsPerPage}&minAmount=${minAmount || ""}&maxAmount=${maxAmount || ""}&search=${appliedSearchTerm || ""}&descriptionFilter=${descriptionFilter || ""}`
+        `http://localhost:4000/api/grants?page=${currentPage}&limit=${itemsPerPage}`
       );
-
       setGrants(response.data.grants || []);
-      setTotalGrants(response.data.total || 0);
+      setTotalGrants(response.data.total || 0); // Ensure total is set
+      setIsFiltered(false);
+      setIsSearched(false);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -35,19 +38,65 @@ const GrantsPage = () => {
     }
   };
 
+  // **Fetch Filtered Grants**
+  const fetchFilteredGrants = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:4000/api/grants/filter?page=${currentPage}&limit=${itemsPerPage}&minAmount=${minAmount || ""}&maxAmount=${maxAmount || ""}&descriptionFilter=${descriptionFilter || ""}`
+      );
+      setGrants(response.data.grants || []);
+      setTotalGrants(response.data.total || response.data.grants.length || 0); // Ensure total is set
+      setIsFiltered(true);
+      setIsSearched(false);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // **Fetch Searched Grants**
+  const fetchSearchedGrants = async () => {
+    try {
+      if (!appliedSearchTerm) return fetchAllGrants();
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:4000/api/grants/search?search=${appliedSearchTerm}&page=${currentPage}&limit=${itemsPerPage}`
+      );
+      setGrants(response.data.grants || []);
+      setTotalGrants(response.data.total || response.data.grants.length || 0); // Ensure total is set
+      setIsSearched(true);
+      setIsFiltered(false);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // **Handle API Calls on Dependency Change**
   useEffect(() => {
-    fetchGrants();
-  }, [currentPage, itemsPerPage, minAmount, maxAmount, appliedSearchTerm, descriptionFilter]);
+    if (isSearched) {
+      fetchSearchedGrants();
+    } else if (isFiltered) {
+      fetchFilteredGrants();
+    } else {
+      fetchAllGrants();
+    }
+  }, [currentPage, appliedSearchTerm, minAmount, maxAmount, descriptionFilter]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const applyFilters = (min, max, descriptionFilter) => {
+  const applyFilters = (min, max, description) => {
     setMinAmount(min);
     setMaxAmount(max);
-    setDescriptionFilter(descriptionFilter);
+    setDescriptionFilter(description);
+    setAppliedSearchTerm("");
     setCurrentPage(1);
+    setIsFiltered(true);
   };
 
   const clearFilters = () => {
@@ -55,11 +104,17 @@ const GrantsPage = () => {
     setMaxAmount("");
     setDescriptionFilter("");
     setCurrentPage(1);
+    setIsFiltered(false);
+    fetchAllGrants();
   };
 
   const handleSearch = () => {
-    setAppliedSearchTerm(searchTerm); 
+    setAppliedSearchTerm(searchTerm);
+    setMinAmount("");
+    setMaxAmount("");
+    setDescriptionFilter("");
     setCurrentPage(1);
+    setIsSearched(true);
   };
 
   if (loading) {
@@ -79,7 +134,7 @@ const GrantsPage = () => {
       <div className="m-24 p-6 rounded-xl bg-gray-200">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-            {/* Search Input Field */}
+            {/* Search Input */}
             <SearchInput
               placeholder="Search by title"
               value={searchTerm}

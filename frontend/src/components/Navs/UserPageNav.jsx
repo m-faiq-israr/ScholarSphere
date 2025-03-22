@@ -1,14 +1,37 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { FaUser, FaSignOutAlt } from 'react-icons/fa';
 import { FiEdit } from 'react-icons/fi';
 import { useNavigate, useLocation } from "react-router-dom";
 import { doSignOut } from "../../firebase/auth";
+import { AppContext } from '../../contexts/AppContext';
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-const Nav = ({ userFname, userLname }) => {
+const Nav = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
+  const [fullName, setFullName] = useState("");
   const dropdownRef = useRef(null); 
   const navigate = useNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
+  const auth = getAuth();
+  const db = getFirestore();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const userRef = doc(db, "user_profile", user.uid);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          setFullName(`${userData.firstName} ${userData.lastName}`);
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, [auth, db]);
 
   const handleLogout = async () => {
     await doSignOut();
@@ -72,11 +95,11 @@ const Nav = ({ userFname, userLname }) => {
           </li>
         </ul>
 
-        {/* Right Section: Hamburger Icon and Dropdown */}
+        {/* Right Section: Profile and Dropdown */}
         <div className="flex items-center space-x-2 flex-1 justify-end relative" ref={dropdownRef}>
           <div className="flex items-center gap-2">
             <div className='font-outfit font-semibold text-heading-1 '>
-              {userFname} {userLname}
+              {fullName || "Guest"}
             </div>
             <div onClick={toggleDropdown} className='cursor-pointer bg-heading-1 hover:bg-gray-700 rounded-full p-1.5'>
               <FaUser className="text-white font-outfit" /> 

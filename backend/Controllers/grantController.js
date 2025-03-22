@@ -74,4 +74,21 @@ const fetchAllGrants = async (req, res) => {
     res.status(500).json({ message: "Error fetching grants data." });
   }
 };
-export { fetchAllGrants };
+
+
+const fetchWhoCanApplyAndScope = async (req, res) => {
+  try {
+    // Fetch only `who_can_apply` and `scope` fields from UkriGrants
+    const ukriGrantsData = await UkriGrants.find({}, "who_can_apply scope -_id");
+
+    res.status(200).json({
+      grants: ukriGrantsData,
+      total: ukriGrantsData.length,
+    });
+  } catch (error) {
+    console.error("Error fetching who_can_apply and scope fields:", error);
+    res.status(500).json({ message: "Error fetching grants data." });
+  }
+};
+
+export { fetchAllGrants, fetchWhoCanApplyAndScope };
