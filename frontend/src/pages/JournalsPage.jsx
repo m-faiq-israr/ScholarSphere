@@ -65,35 +65,37 @@ const JournalsPage = () => {
       // <div className="flex justify-center items-center h-screen">
       //   <Spin className="custom-spin" size="large" />
       // </div>
-      <div className="m-24 p-6">
+      <div className="m-6 sm:m-24 p-4 sm:p-6">
         <Skeleton active paragraph={{ rows: 15, width: ['60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '100%', '60%', '80%', '100%', '60%', '80%', '100%'] }} />
       </div>
     );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="text-red-500 text-center">Error: {error}</div>;
   }
 
   return (
-    <div>
-      <div className="m-24 p-6 rounded-xl bg-gray-200">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
+    <div className="container mx-auto px-4">
+      <div className="mt-16 md:mt-20 p-4 md:p-6 rounded-xl bg-gray-200">
+        <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+          <div className="flex flex-wrap items-center gap-2 md:gap-4 w-full">
+          <div className="flex-grow">
             <SearchInput
               placeholder="Search by title"
               value={tempSearchQuery}
               onChange={handleSearchChange}
               onSearch={handleSearch}
+              className="w-full sm:w-72 relative z-10"
             />
-
+            </div>
             <JournalsFilterDropdown
               onApplyFilters={handleApplyFilters}
               onClearFilters={handleClearFilters}
             />
           </div>
 
-          <div className="font-semibold text-heading-1 font-outfit select-none">
+          <div className="font-semibold text-heading-1 font-outfit select-none text-sm md:text-base">
             Total Journals: {totalJournals}
           </div>
         </div>
@@ -101,8 +103,12 @@ const JournalsPage = () => {
         {/* Display Journals */}
         {journals.length > 0 ? (
           journals.map((journal, index) => (
-            <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
-              <JournalItem journal={journal} />
+            <div key={index} className="bg-white rounded-xl px-4 py-3 mb-6 shadow-md">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div className="w-full min-h-[50px] overflow-hidden text-ellipsis whitespace-normal">
+                    <JournalItem journal={journal} />
+                  </div>
+                  </div>
             </div>
           ))
         ) : (
@@ -117,6 +123,7 @@ const JournalsPage = () => {
             pageSize={itemsPerPage}
             onChange={handlePageChange}
             showSizeChanger={false}
+             className="text-sm sm:text-base"
           />
         </div>
       </div>
