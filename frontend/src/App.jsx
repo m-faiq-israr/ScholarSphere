@@ -24,9 +24,7 @@ function AppContent() {
         <Route
           path="/"
           element={
-            <PublicRoute>
               <MainPage />
-            </PublicRoute>
           }
         />
         <Route
