@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navs/Navbar';
 import HomePageCard from '../components/Cards/HomePageCard';
 import homecard1 from '../assets/images/homecard1.png';
@@ -19,10 +19,21 @@ import HomeSearchField from '../components/InputFields/HomeSearchField';
 import CredentialButton from '../components/Buttons/CredentialButton';
 import Footer from '../components/Footer';
 import { useNavigate } from "react-router-dom";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const MainPage = () => {
 
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const auth = getAuth();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, [auth]);
+
   return (
     <div className='overflow-x-hidden'>
       <Navbar />
@@ -79,6 +90,7 @@ const MainPage = () => {
 
                 <HomeSearchField />
                 <div className='font-outfit mt-4 font-semibold text-center'>Browse through our vast collection</div>
+                <div className='font-rockSalt  mt-4 font-bold  '>Browse through Grants, Conferences and  Journals </div>
               </div>
             </div>
           </div>
@@ -152,6 +164,29 @@ const MainPage = () => {
     </div>
 </div>
   </div>
+        {/* Background Image */}
+        <img src={layout15} className="max-w-full" />
+
+        {/* Centered Text */}
+        {!user && (
+
+          <div className="absolute inset-0 flex flex-col justify-center  text-center text-white">
+            <h1 className="text-2xl font-bold">Join us today! In few easy steps</h1>
+            <div className='block max-w-4xl mx-auto'>
+
+              <div className="mt-20 flex justify-center items-center gap-4">
+                <h1 className="text-lg">Already have an account?</h1>
+                <CredentialButton name={'Login'} color={'bg-gray-200'} textColor={'text-heading-1'} onclick={() => navigate('/signin')} />
+              </div>
+
+              <div className="mt-5 flex justify-end gap-4 items-center ">
+                <h1 className="text-lg">New User?</h1>
+                <CredentialButton name={'Signup'} color={'bg-heading-1'} textColor={'text-white'} onclick={() => navigate('signup')} />
+              </div>
+            </div>
+          </div>
+  )}
+
 </div>
 
 
@@ -161,7 +196,7 @@ const MainPage = () => {
 
 
 
-<Footer/>
+      <Footer />
     </div>
   );
 };

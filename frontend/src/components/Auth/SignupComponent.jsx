@@ -54,16 +54,7 @@ const SignupComponent = () => {
             <div className="w-full max-w-md mx-auto bg-gradient-to-b from-[#000235] to-[#F2BDFA] px-7 py-4 rounded-[50px]">
                 <form onSubmit={handleSignup}>
                     <div className="flex flex-col gap-4">
-                        <div className="flex gap-6">
-                            <div className="flex flex-col gap-2 w-[47%]">
-                                <label className="font-outfit text-sm font-semibold text-white">First Name:</label>
-                                <CredentialInputField name="firstName" type="text" placeholder="Enter your first name" onChange={onChange} />
-                            </div>
-                            <div className="flex flex-col gap-2 w-[47%]">
-                                <label className="font-outfit text-sm font-semibold text-white">Last Name:</label>
-                                <CredentialInputField name="lastName" type="text" placeholder="Enter your last name" onChange={onChange} />
-                            </div>
-                        </div>
+                   
                         <div className="flex flex-col gap-2">
                             <label className="font-outfit text-sm font-semibold text-white">Email:</label>
                             <CredentialInputField name="email" type="email" placeholder="Enter your email" onChange={onChange} />

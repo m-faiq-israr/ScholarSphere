@@ -16,7 +16,8 @@ export default {
       }
     },
     fontFamily: {
-      outfit: ["Outfit", "sans-serif"]
+      outfit: ["Outfit", "sans-serif"],
+      rockSalt: ["Rock Salt", "cursive"]
     }
   },
   plugins: [],
