@@ -37,58 +37,58 @@ const GrantFilterDropdown = ({ onApply, onClear }) => {
     <div className="relative inline-block text-left font-outfit" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex select-none items-center gap-2 rounded-xl bg-heading-1 py-2 px-3 text-sm font-semibold text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
+        className="inline-flex select-none items-center gap-2 rounded-xl bg-heading-1 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
       >
-        <FunnelIcon className="size-4 fill-white" />
+        <FunnelIcon className="size-3 sm:size-4 fill-white" />
         Filters
       </button>
 
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-56 origin-top-right rounded-xl border border-gray bg-white p-3 text-sm text-heading-1 transition duration-100 ease-out focus:outline-none"
+          className="absolute left-0 right-auto sm:right-0 sm:left-auto mt-2 min-w-[200px] sm:min-w-[250px] origin-top-right rounded-xl border border-gray bg-white p-3 text-xs sm:text-sm text-heading-1 transition duration-100 ease-out focus:outline-none transform-none sm:translate-x-0"
           style={{ zIndex: 1000 }}
         >
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <div>
-              <label className="block text-sm font-medium text-heading-1">Min Amount</label>
+              <label className="block text-xs sm:text-sm font-medium text-heading-1">Min Amount</label>
               <input
                 type="number"
                 value={minAmount}
                 onChange={(e) => setMinAmount(e.target.value)}
                 placeholder="Enter min amount"
-                className="w-full rounded-md border border-gray-300 p-1 focus:outline-blue-500 text-heading-1"
+                className="w-full rounded-md border border-gray-300 p-1 sm:p-2 focus:outline-blue-500 text-heading-1"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-heading-1">Max Amount</label>
+              <label className="block text-xs sm:text-sm font-medium text-heading-1">Max Amount</label>
               <input
                 type="number"
                 value={maxAmount}
                 onChange={(e) => setMaxAmount(e.target.value)}
                 placeholder="Enter max amount"
-                className="w-full rounded-md border border-gray-300 focus:outline-blue-500 p-1 text-heading-1"
+                className="w-full rounded-md border border-gray-300 p-1 sm:p-2 focus:outline-blue-500 text-heading-1"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-heading-1">Keywords</label>
+              <label className="block text-xs sm:text-sm font-medium text-heading-1">Keywords</label>
               <input
                 type="text"
                 value={descriptionFilter}
                 onChange={(e) => setDescriptionFilter(e.target.value)}
                 placeholder="Search through keywords"
-                className="w-full rounded-md border border-gray-300 p-1 focus:outline-blue-500 text-heading-1"
+                className="w-full rounded-md border border-gray-300 p-1 sm:p-2 focus:outline-blue-500 text-heading-1"
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
               <button
                 onClick={handleClearFilters}
-                className="px-5 rounded-md text-sm bg-red-500 py-1 text-white hover:bg-red-600"
+                className="w-full sm:w-auto px-4 sm:px-5 rounded-md text-xs sm:text-sm bg-red-500 py-1 sm:py-2 text-white hover:bg-red-600"
               >
                 Clear
               </button>
               <button
                 onClick={handleApplyFilters}
-                className="px-5 rounded-md text-sm bg-blue-500 py-1 text-white hover:bg-blue-600"
+                className="w-full sm:w-auto px-4 sm:px-5 rounded-md text-xs sm:text-sm bg-blue-500 py-1 sm:py-2 text-white hover:bg-blue-600"
               >
                 Apply
               </button>
