@@ -3,15 +3,15 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { FaUser, FaSignOutAlt } from 'react-icons/fa';
 import { FiEdit } from 'react-icons/fi';
-import {getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { doSignOut } from '../../firebase/auth';
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
   const auth = getAuth();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [fullName, setFullName] = useState("");
-  const dropdownRef = useRef(null); 
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const db = getFirestore();
@@ -20,10 +20,10 @@ const Navbar = () => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
-    return () => unsubscribe(); 
+    return () => unsubscribe();
   }, [auth]);
 
-   useEffect(() => {
+  useEffect(() => {
     const fetchUserProfile = async () => {
       const user = auth.currentUser;
       if (user) {
@@ -50,13 +50,13 @@ const Navbar = () => {
   };
 
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen); 
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false); 
+        setIsDropdownOpen(false);
       }
     };
 
@@ -67,49 +67,35 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 font-outfit px-8 py-3 z-10 bg-white select-none">
+    <nav className="fixed top-0 left-0 right-0 font-outfit px-4 md:px-8 py-3 z-10 bg-white select-none shadow-md"> 
+      {/* Adjusted padding for mobile responsiveness */}
       <div className="container mx-auto flex items-center justify-between relative">
-        
         {/* Left Section: Heading */}
-        <div className="text-3xl font-bold">
+        <div className="text-xl md:text-3xl font-bold"> 
+          {/* Adjusted font size for smaller screens */}
           ScholarSphere
         </div>
   
- {/* Middle Section: Options (Centered) */}
-{user && (
-  <ul className="absolute left-1/2 transform -translate-x-1/2 flex space-x-20 font-semibold z-10">
-    <li
-      className={`cursor-pointer ${
-        location.pathname === '/grants' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
-      }`}
-      onClick={() => navigate('/grants')}
-    >
-      Grants
-    </li>
-    <li
-      className={`cursor-pointer ${
-        location.pathname === '/conferences' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
-      }`}
-      onClick={() => navigate('/conferences')}
-    >
-      Conferences
-    </li>
-    <li
-      className={`cursor-pointer ${
-        location.pathname === '/journals' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
-      }`}
-      onClick={() => navigate('/journals')}
-    >
-      Journals
-    </li>
-  </ul>
-)}
+        {/* Middle Section: Options (Centered) */}
+        {user && (
+          <ul className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-6 md:space-x-20 font-semibold z-10"> 
+            {/* Hidden on mobile, reduced spacing for better responsiveness */}
+            <li className={`cursor-pointer ${location.pathname === '/grants' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''}`} onClick={() => navigate('/grants')}>
+              Grants
+            </li>
+            <li className={`cursor-pointer ${location.pathname === '/conferences' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''}`} onClick={() => navigate('/conferences')}>
+              Conferences
+            </li>
+            <li className={`cursor-pointer ${location.pathname === '/journals' ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''}`} onClick={() => navigate('/journals')}>
+              Journals
+            </li>
+          </ul>
+        )}
 
-
-  
         {/* Right Section: Conditional Buttons */}
         {!user ? (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 text-sm md:text-base"> 
+            {/* Adjusted text size for better responsiveness */}
             <Link to={'/signin'} className="font-semibold">
               Login
             </Link>
@@ -120,7 +106,8 @@ const Navbar = () => {
         ) : (
           <div className="flex items-center space-x-2 flex-1 justify-end relative" ref={dropdownRef}>
             <div className="flex items-center gap-2">
-              <div className='font-outfit font-semibold text-heading-1'>
+              <div className='font-outfit font-semibold text-heading-1 text-sm md:text-base'> 
+                {/* Adjusted text size for better mobile display */}
                 {fullName || "Guest"}
               </div>
               <div onClick={toggleDropdown} className='cursor-pointer bg-heading-1 hover:bg-gray-700 rounded-full p-1.5'>
@@ -130,25 +117,14 @@ const Navbar = () => {
   
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
+              <div className="absolute top-full right-0 mt-2 w-40 md:w-48 bg-white border border-gray-200 rounded-lg shadow-lg"> 
+                {/* Adjusted width for better mobile compatibility */}
                 <ul className="py-2">
-                  <li
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2"
-                    onClick={() => {
-                      setIsDropdownOpen(false); 
-                      handleProfileClick();
-                    }}
-                  >
+                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" onClick={() => { setIsDropdownOpen(false); handleProfileClick(); }}>
                     <FiEdit size={18} className='text-heading-1' />
                     <span className="text-heading-1">Edit Profile</span>
                   </li>
-                  <li
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2"
-                    onClick={() => {
-                      setIsDropdownOpen(false); 
-                      handleLogout();
-                    }}
-                  >
+                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" onClick={() => { setIsDropdownOpen(false); handleLogout(); }}>
                     <FaSignOutAlt className="text-red-600" /> 
                     <span className="text-red-600">Logout</span>
                   </li>
@@ -160,7 +136,6 @@ const Navbar = () => {
       </div>
     </nav>
   );
-  
 };
 
 export default Navbar;
