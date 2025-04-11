@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { Pagination, Skeleton } from "antd";
+import { message, Pagination, Skeleton } from "antd";
 import GrantItem from "../components/ListItems/GrantItem";
 import GrantFilterDropdown from "../components/Filters/GrantsFilterDropdown";
 import SearchInput from "../components/InputFields/SearchInput";
+import RecommendationButton from "../components/Buttons/RecommendationButton";
+import { useNavigate } from "react-router-dom";
+import { AppContext } from "../contexts/AppContext";
+import toast, { Toaster } from "react-hot-toast";
+import { HoverBorderGradient } from "../components/anim";
+
 
 const GrantsPage = () => {
   const [grants, setGrants] = useState([]);
@@ -19,6 +25,10 @@ const GrantsPage = () => {
   const [descriptionFilter, setDescriptionFilter] = useState("");
   const [isFiltered, setIsFiltered] = useState(false);
   const [isSearched, setIsSearched] = useState(false);
+  const {interests} = useContext(AppContext);
+const navigate = useNavigate();
+
+  
 
   // **Fetch All Grants**
   const fetchAllGrants = async () => {
@@ -75,7 +85,6 @@ const GrantsPage = () => {
     }
   };
 
-  // **Handle API Calls on Dependency Change**
   useEffect(() => {
     if (isSearched) {
       fetchSearchedGrants();
@@ -129,6 +138,15 @@ const GrantsPage = () => {
     return <div>Error: {error}</div>;
   }
 
+  const recommendedGrantsPage = () =>{
+    if (!interests || interests.length === 0){
+      toast.error('Enter fields of interests in user profile to get recommendations')
+    }
+    else{
+      navigate('/recommended-grants');
+    }
+  }
+
   return (
     <div>
       <div className="m-24 p-6 rounded-xl bg-gray-200">
@@ -143,6 +161,8 @@ const GrantsPage = () => {
             />
             {/* Filters Dropdown */}
             <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
+            <RecommendationButton onClick={recommendedGrantsPage}/>
+
           </div>
           <div className="font-semibold text-heading-1 font-outfit select-none">
             Total Grants: {totalGrants}
@@ -170,6 +190,7 @@ const GrantsPage = () => {
           />
         </div>
       </div>
+      <Toaster/>
     </div>
   );
 };

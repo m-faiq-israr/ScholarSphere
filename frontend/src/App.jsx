@@ -11,6 +11,9 @@ import GrantsPage from './pages/GrantsPage';
 import ConferencesPage from './pages/ConferencesPage';
 import JournalsPage from './pages/JournalsPage';
 import Nav from './components/Navs/UserPageNav';
+import RecommendedGrantsPage from './pages/recommendedGrants';
+import RecommendedConferencesPage from './pages/RecommendedConferences';
+import RecommendedJournalsPage from './pages/RecommendedJournals';
 
 function AppContent() {
   const location = useLocation();
@@ -74,6 +77,33 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+
+<Route
+          path="/recommended-grants"
+          element={
+            <ProtectedRoute>
+              <RecommendedGrantsPage/>
+            </ProtectedRoute>
+          }
+        />
+
+<Route
+          path="/recommended-conferences"
+          element={
+            <ProtectedRoute>
+              <RecommendedConferencesPage/>
+            </ProtectedRoute>
+          }
+        />
+
+<Route
+          path="/recommended-journals"
+          element={
+            <ProtectedRoute>
+              <RecommendedJournalsPage/>
             </ProtectedRoute>
           }
         />

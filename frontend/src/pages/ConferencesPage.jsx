@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Pagination, Spin, Button, Skeleton } from "antd";
 import ConferenceItem from "../components/ListItems/ConferenceItem";
 import SearchInput from "../components/InputFields/SearchInput";
 import ConferenceFilterDropdown from "../components/Filters/ConferenceFilterDropdown";
 import Nav from "../components/Navs/UserPageNav";
+import RecommendationButton from "../components/Buttons/RecommendationButton";
+import { AppContext } from "../contexts/AppContext";
+import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+
 
 const ConferencesPage = () => {
   const [conferences, setConferences] = useState([]);
@@ -18,6 +23,8 @@ const ConferencesPage = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [location, setLocation] = useState("");
+  const {interests} = useContext(AppContext);
+  const navigate = useNavigate();
 
   const fetchConferences = async () => {
     try {
@@ -75,6 +82,15 @@ const ConferencesPage = () => {
     return <div>Error: {error}</div>;
   }
 
+    const recommendedConferencesPage = () =>{
+      if (!interests || interests.length === 0){
+        toast.error('Enter fields of interests in user profile to get recommendations')
+      }
+      else{
+        navigate('/recommended-conferences');
+      }
+    }
+
   return (
     <div>
       <div className="m-24 p-6 rounded-xl bg-gray-200">
@@ -87,6 +103,8 @@ const ConferencesPage = () => {
               onSearch={handleSearch}
             />
             <ConferenceFilterDropdown onApply={applyFilters} onClear={clearFilters} />
+                        <RecommendationButton onClick={recommendedConferencesPage}/>
+            
           </div>
 
           <div className="font-semibold text-heading-1 font-outfit select-none">
@@ -115,6 +133,7 @@ const ConferencesPage = () => {
           />
         </div>
       </div>
+      <Toaster/>
     </div>
   );
 };

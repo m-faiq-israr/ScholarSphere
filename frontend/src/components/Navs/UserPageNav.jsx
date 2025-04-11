@@ -15,6 +15,7 @@ const Nav = () => {
   const location = useLocation();
   const auth = getAuth();
   const db = getFirestore();
+  const {setinterests} = useContext(AppContext)
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -26,6 +27,7 @@ const Nav = () => {
         if (userSnap.exists()) {
           const userData = userSnap.data();
           setFullName(`${userData.firstName} ${userData.lastName}`);
+          setinterests(userData.fieldsofInterest)
         }
       }
     };

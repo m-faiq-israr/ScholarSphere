@@ -59,20 +59,24 @@ const truncateText = (text, wordLimit = 100) => {
           </div>
 
           {/* Opening Date */}
-          <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
+          {(grant?.posted_date || grant?.opening_date) && (
+            <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
             <h1 className="font-semibold text-lg text-heading-1">Opening Date</h1>
             <p className="text-heading-1 text-base">
               {grant?.posted_date ? `${grant.posted_date}` : `${grant.opening_date}`}
             </p>
           </div>
+          )}
 
           {/* Closing Date */}
-          <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
+          {(grant?.due_date || grant?.closing_date) && (
+            <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
             <h1 className="font-semibold text-lg text-heading-1">Closing Date</h1>
             <p className="text-heading-1 text-base">
               {grant?.due_date ? `${grant.due_date}` : `${grant.closing_date}`}
             </p>
           </div>
+          )}
         </div>
 
   {/* Scope Section */}

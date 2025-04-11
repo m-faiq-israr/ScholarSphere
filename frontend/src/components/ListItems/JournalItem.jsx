@@ -7,9 +7,9 @@ const JournalItem = ({ journal }) => {
     return (
         <div className='flex justify-between font-outfit p-1 h-full'>
             <div className='w-[70%]'>
-                <h1 className='font-bold text-heading-1 pb-3 line-clamp-1'>{journal.title}</h1>
+                <h1 className='font-bold text-heading-1 pb-1 line-clamp-1 text-lg'>{journal.title}</h1>
                 <p className='text-gray-600 line-clamp-2 '>
-                    <span className='font-semibold'>Subject Areas:</span> {journal.subject_areas.join(', ')}
+                    <span className='font-semibold'>Subject Areas:</span> {Array.isArray(journal.subject_areas) ? journal.subject_areas.join(', ') : journal.subject_areas}
                 </p>
                 <p className='text-gray-600 line-clamp-2 '>
                     <span className='font-semibold'>

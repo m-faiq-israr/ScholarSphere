@@ -82,7 +82,7 @@ const JournalsModal = ({ open, onClose, journal }) => {
                     <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5 mb-2">
                         <h1 className="font-semibold text-lg text-heading-1">Subject Areas</h1>
                         <p className="text-heading-1 text-base">
-                            {journal.subject_areas.join(', ')}
+                        {Array.isArray(journal.subject_areas) ? journal.subject_areas.join(', ') : journal.subject_areas}
                         </p>
                     </div>
                 </div>

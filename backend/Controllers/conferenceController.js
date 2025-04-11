@@ -83,7 +83,7 @@ const fetchAllConferences = async (req, res) => {
     const filteredConferences = [
       ...conference365Data,
       ...conferenceServiceData,
-      ...updatedConferenceListsData, // Use updated data here
+      ...updatedConferenceListsData, 
       ...wasetConferenceData,
     ]
       .map((conf) => {

@@ -39,8 +39,8 @@ const GrantFilterDropdown = ({ onApply, onClear }) => {
         onClick={() => setIsOpen(!isOpen)}
         className="inline-flex select-none items-center gap-2 rounded-xl bg-heading-1 py-2 px-3 text-sm font-semibold text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
       >
-        <FunnelIcon className="size-4 fill-white" />
         Filters
+        <FunnelIcon className="size-4 fill-white" />
       </button>
 
       {isOpen && (

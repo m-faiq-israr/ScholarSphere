@@ -18,9 +18,9 @@ const UserProfile = () => {
     contactNo: "",
     fieldsofInterest: [""],
   });
-  const [originalData, setOriginalData] = useState(null); 
+  const [originalData, setOriginalData] = useState(null);
   const [hasData, setHasData] = useState(false);
-const {setuserName} = useContext(AppContext);
+  const { setuserName } = useContext(AppContext);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -58,7 +58,7 @@ const {setuserName} = useContext(AppContext);
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
-};
+  };
 
 
   const handleChange = (index, value) => {

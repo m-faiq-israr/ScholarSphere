@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import JournalItem from '../components/ListItems/JournalItem';
 import axios from 'axios';
 import { Pagination, Spin, Button, Skeleton } from 'antd';
@@ -6,6 +6,11 @@ import '../components/css/Pagination.css';
 import JournalsFilterDropdown from '../components/Filters/JournalsFilterDropdown';
 import SearchInput from '../components/InputFields/SearchInput';
 import Nav from '../components/Navs/UserPageNav';
+import { AppContext } from '../contexts/AppContext';
+import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from "react-hot-toast";
+import RecommendationButton from '../components/Buttons/RecommendationButton';
+
 
 const JournalsPage = () => {
   const [journals, setJournals] = useState([]);
@@ -17,6 +22,8 @@ const JournalsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [tempSearchQuery, setTempSearchQuery] = useState('');
   const [filters, setFilters] = useState({});
+   const {interests} = useContext(AppContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchJournals = async () => {
@@ -75,6 +82,15 @@ const JournalsPage = () => {
     return <div>Error: {error}</div>;
   }
 
+   const recommendedJournalsPage = () =>{
+      if (!interests || interests.length === 0){
+        toast.error('Enter fields of interests in user profile to get recommendations')
+      }
+      else{
+        navigate('/recommended-journals');
+      }
+    }
+
   return (
     <div>
       <div className="m-24 p-6 rounded-xl bg-gray-200">
@@ -91,6 +107,8 @@ const JournalsPage = () => {
               onApplyFilters={handleApplyFilters}
               onClearFilters={handleClearFilters}
             />
+                        <RecommendationButton onClick={recommendedJournalsPage}/>
+            
           </div>
 
           <div className="font-semibold text-heading-1 font-outfit select-none">
@@ -120,6 +138,7 @@ const JournalsPage = () => {
           />
         </div>
       </div>
+      <Toaster/>
     </div>
   );
 };
