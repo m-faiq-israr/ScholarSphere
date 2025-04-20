@@ -19,51 +19,55 @@ const ConferenceItem = ({ conference }) => {
     //         : conference.date}
     //     </div>
 
-        // <button className='flex gap-2 select-none items-center justify-center mt-3 text-sm w-28 bg-green-500 text-white px-1 py-1 rounded-md hover:bg-green-600 transition-colors'
-        //   onClick={() => {
-        //     if (conference.link) {
-        //       window.open(conference.link, "_blank");
-        //     } else if (conference.url) {
-        //       window.open(conference.url, "_blank");
-        //     } else {
-        //       console.warn("No link available for this conference");
-        //     }
+    // <button className='flex gap-2 select-none items-center justify-center mt-3 text-sm w-28 bg-green-500 text-white px-1 py-1 rounded-md hover:bg-green-600 transition-colors'
+    //   onClick={() => {
+    //     if (conference.link) {
+    //       window.open(conference.link, "_blank");
+    //     } else if (conference.url) {
+    //       window.open(conference.url, "_blank");
+    //     } else {
+    //       console.warn("No link available for this conference");
+    //     }
 
-        //   }}>
-        //   Apply
+    //   }}>
+    //   Apply
 
-        //   <FaExternalLinkAlt />
+    //   <FaExternalLinkAlt />
 
-        // </button>
+    // </button>
     //   </div>
     // </div>
 
-    <div className="bg-white rounded-xl p-1 ">
-      <h2 className="text-lg font-bold font-outfit mb-1">{conference.title}</h2>
-      <p className=" text-gray-600 mb-1 font-outfit">
-        <strong>Date:</strong> {conference.dates
-            ? conference.dates
-            : conference.date}
+    <div className="bg-white rounded-xl p-1 text-heading-1 ">
+      <h2 className="text-lg font-semibold  font-outfit mb-1">{conference.title}</h2>
+      <p className=" mb-1 font-outfit text-gray-600">
+        <span className='font-semibold'>
+          Date:
+        </span> {conference.dates
+          ? conference.dates
+          : conference.date}
       </p>
-      <p className=" text-gray-600 mb-1 font-outfit">
-        <strong>Location:</strong> {conference.location || "N/A"}
+      <p className="mb-1 font-outfit text-gray-600">
+        <span className='font-semibold'>
+          Location:
+        </span> {conference.location || "N/A"}
       </p>
       <button className='flex gap-2 select-none items-center justify-center mt-3 text-sm w-28 bg-green-500 text-white px-1 py-1 rounded-md hover:bg-green-600 transition-colors'
-          onClick={() => {
-            if (conference.link) {
-              window.open(conference.link, "_blank");
-            } else if (conference.url) {
-              window.open(conference.url, "_blank");
-            } else {
-              console.warn("No link available for this conference");
-            }
+        onClick={() => {
+          if (conference.link) {
+            window.open(conference.link, "_blank");
+          } else if (conference.url) {
+            window.open(conference.url, "_blank");
+          } else {
+            console.warn("No link available for this conference");
+          }
 
-          }}>
-          Apply
+        }}>
+        Apply
 
-          <FaExternalLinkAlt />
+        <FaExternalLinkAlt />
 
-        </button>
+      </button>
     </div>
 
   )

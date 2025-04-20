@@ -1,59 +1,62 @@
 import { UkriGrants } from "../Models/GrantsModels/ukri.js";
 
 const getAllGrants = async (req, res) => {
-    try {
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
-      const skip = (page - 1) * limit;
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const parseAmount = (amount) => {
+      if (!amount || typeof amount !== "string") return null;
+      return parseFloat(amount.replace(/[£,]/g, ""));
+    };
+
+    // Get total count first
+    const total = await UkriGrants.countDocuments();
+
+    // Fetch only paginated + sorted data
+    const ukriGrantsData = await UkriGrants
+      .find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const processedGrants = ukriGrantsData.map(grant => ({
+      ...grant.toObject(),
+      numeric_fund: parseAmount(grant.total_fund),
+    }));
+
+    res.status(200).json({
+      grants: processedGrants,
+      total,
+      page,
+      limit,
+    });
+  } catch (error) {
+    console.error("Error fetching grants:", error);
+    res.status(500).json({ message: "Error fetching grants data." });
+  }
+};
+
   
-      const ukriGrantsData = await UkriGrants.find();
-  
-      const parseAmount = (amount) => {
-        if (!amount || typeof amount !== "string") return null;
-        return parseFloat(amount.replace(/[£,]/g, ""));
-      };
-  
-      let ukriGrantsProcessed = ukriGrantsData.map((grant) => ({
-        ...grant.toObject(),
-        numeric_fund: parseAmount(grant.total_fund),
-      }));
-  
-      ukriGrantsProcessed.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  
-      const paginatedGrants = ukriGrantsProcessed.slice(skip, skip + limit);
-  
-      res.status(200).json({
-        grants: paginatedGrants,
-        total: ukriGrantsProcessed.length,
-        page,
-        limit,
-      });
-    } catch (error) {
-      console.error("Error fetching grants:", error);
-      res.status(500).json({ message: "Error fetching grants data." });
+const searchGrants = async (req, res) => {
+  try {
+    const searchQuery = req.query.search?.trim();
+    if (!searchQuery) {
+      return res.status(400).json({ message: "Search query is required." });
     }
-  };
-  
-  const searchGrants = async (req, res) => {
-    try {
-      const searchQuery = req.query.search ? req.query.search.trim().toLowerCase() : null;
-  
-      if (!searchQuery) {
-        return res.status(400).json({ message: "Search query is required." });
-      }
-  
-      const ukriGrantsData = await UkriGrants.find();
-  
-      const filteredGrants = ukriGrantsData.filter((grant) =>
-        grant.title?.toLowerCase().includes(searchQuery)
-      );
-  
-      res.status(200).json({ grants: filteredGrants });
-    } catch (error) {
-      console.error("Error searching grants:", error);
-      res.status(500).json({ message: "Error searching grants." });
-    }
-  };
+
+    const filteredGrants = await UkriGrants.find({
+      title: { $regex: searchQuery, $options: 'i' }, 
+    });
+
+    res.status(200).json({ grants: filteredGrants });
+  } catch (error) {
+    console.error("Error searching grants:", error);
+    res.status(500).json({ message: "Error searching grants." });
+  }
+};
+
   
   const filterGrants = async (req, res) => {
     try {

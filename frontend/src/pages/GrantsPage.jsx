@@ -143,7 +143,7 @@ const navigate = useNavigate();
       toast.error('Enter fields of interests in user profile to get recommendations')
     }
     else{
-      navigate('/recommended-grants');
+      navigate('/grants/recommended-grants');
     }
   }
 

@@ -3,6 +3,7 @@ import axios from "axios";
 import { Skeleton } from "antd";
 import GrantItem from "../components/ListItems/GrantItem";
 import { auth } from "../firebase/firebase";
+import { BsStars } from "react-icons/bs";
 
 
 const RecommendedGrantsPage = () => {
@@ -60,7 +61,8 @@ const RecommendedGrantsPage = () => {
 
   return (
     <div className="m-24 p-6 rounded-xl bg-gray-200">
-      <div className="text-heading-1 font-outfit font-semibold mb-6 text-2xl">
+      <div className="text-heading-1 font-outfit font-semibold mb-6 text-2xl flex items-center gap-2">
+        <BsStars />
         Recommended Grants
       </div>
 
@@ -68,12 +70,16 @@ const RecommendedGrantsPage = () => {
         grants.map((grant, index) => (
           <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
             <GrantItem grant={grant.grant || grant} />
-            {grant.matched_keywords && grant.matched_keywords.length > 0 && (
-              <div className="mt-2 text-sm text-heading-1 font-outfit ">
-                <strong>Matched Interests:</strong>{" "}
-                {grant.matched_keywords.join(", ")}
+            {grant.matched_keywords && grant.matched_keywords.length > 0 ? (
+              <div className="mt-2 text-sm text-heading-1 font-outfit">
+                <strong>Matched Interests:</strong> {grant.matched_keywords.join(", ")}
+              </div>
+            ) : (
+              <div className="mt-2 text-sm text-gray-500 font-outfit">
+                No direct interest keywords matched
               </div>
             )}
+
           </div>
         ))
       ) : (

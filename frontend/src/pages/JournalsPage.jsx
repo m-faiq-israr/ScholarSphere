@@ -22,7 +22,7 @@ const JournalsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [tempSearchQuery, setTempSearchQuery] = useState('');
   const [filters, setFilters] = useState({});
-   const {interests} = useContext(AppContext);
+  const { interests } = useContext(AppContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -82,14 +82,14 @@ const JournalsPage = () => {
     return <div>Error: {error}</div>;
   }
 
-   const recommendedJournalsPage = () =>{
-      if (!interests || interests.length === 0){
-        toast.error('Enter fields of interests in user profile to get recommendations')
-      }
-      else{
-        navigate('/recommended-journals');
-      }
+  const recommendedJournalsPage = () => {
+    if (!interests || interests.length === 0) {
+      toast.error('Enter fields of interests in user profile to get recommendations')
     }
+    else {
+      navigate('/journals/recommended-journals');
+    }
+  }
 
   return (
     <div>
@@ -107,8 +107,8 @@ const JournalsPage = () => {
               onApplyFilters={handleApplyFilters}
               onClearFilters={handleClearFilters}
             />
-                        <RecommendationButton onClick={recommendedJournalsPage}/>
-            
+            <RecommendationButton onClick={recommendedJournalsPage} />
+
           </div>
 
           <div className="font-semibold text-heading-1 font-outfit select-none">
@@ -138,7 +138,7 @@ const JournalsPage = () => {
           />
         </div>
       </div>
-      <Toaster/>
+      <Toaster />
     </div>
   );
 };

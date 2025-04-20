@@ -87,7 +87,7 @@ const ConferencesPage = () => {
         toast.error('Enter fields of interests in user profile to get recommendations')
       }
       else{
-        navigate('/recommended-conferences');
+        navigate('/conferences/recommended-conferences');
       }
     }
 

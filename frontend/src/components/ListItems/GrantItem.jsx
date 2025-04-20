@@ -6,7 +6,7 @@ const GrantItem = ({ grant }) => {
   return (
     <div className="flex justify-between font-outfit p-1 h-full">
       <div className="w-[70%]">
-        <h1 className="font-bold text-heading-1 pb-1 text-lg">{grant.title}</h1>
+        <h1 className="font-semibold text-heading-1 pb-1 text-lg">{grant.title}</h1>
         <p className="text-gray-600 line-clamp-2">{grant.description}</p>
       </div>
 

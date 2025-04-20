@@ -21,13 +21,13 @@ function AppContent() {
 
   return (
     <>
-      {!isPublicRoute && <Nav />}  
+      {!isPublicRoute && <Nav />}
       <Routes>
         {/* Public routes */}
         <Route
           path="/"
           element={
-              <MainPage />
+            <MainPage />
           }
         />
         <Route
@@ -73,40 +73,40 @@ function AppContent() {
           }
         />
         <Route
-          path="/user"
+          path="/user-profile"
           element={
             <ProtectedRoute>
               <UserProfile />
             </ProtectedRoute>
           }
         />
-
-<Route
-          path="/recommended-grants"
+        <Route
+          path="/grants/recommended-grants"
           element={
             <ProtectedRoute>
-              <RecommendedGrantsPage/>
+              <RecommendedGrantsPage />
             </ProtectedRoute>
           }
         />
 
-<Route
-          path="/recommended-conferences"
+        <Route
+          path="/conferences/recommended-conferences"
           element={
             <ProtectedRoute>
-              <RecommendedConferencesPage/>
+              <RecommendedConferencesPage />
             </ProtectedRoute>
           }
         />
 
-<Route
-          path="/recommended-journals"
+        <Route
+          path="/journals/recommended-journals"
           element={
             <ProtectedRoute>
-              <RecommendedJournalsPage/>
+              <RecommendedJournalsPage />
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </>
   );

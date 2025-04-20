@@ -19,7 +19,7 @@ const recommendConferences = async (req, res) => {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     const userId = decodedToken.uid;
 
-    // ✅ 2. Get user interests from Firestore
+    // ✅ 2. Get user interests and publications from Firestore
     const userDoc = await db.collection('user_profile').doc(userId).get();
     if (!userDoc.exists) {
       return res.status(404).json({ message: 'User profile not found' });
@@ -27,6 +27,14 @@ const recommendConferences = async (req, res) => {
 
     const userData = userDoc.data();
     const interests = userData.fieldsofInterest || [];
+    const publications = (userData.publications || []).map(pub => ({
+      title: pub.title || '',
+      journal: pub.journal || '',
+      year: pub.year || '',
+      authors: pub.authors || [],
+      keywords: pub.keywords || [],
+      abstract: pub.abstract || ''
+    }));
 
     if (!interests.length) {
       return res.status(400).json({ message: 'No interests found in user profile' });
@@ -34,7 +42,7 @@ const recommendConferences = async (req, res) => {
 
     // ✅ 3. Fetch conferences from 4 MongoDB models
     const [conf1, conf2, conf3, conf4] = await Promise.all([
-        ConferenceService.find(),
+      ConferenceService.find(),
       Conference365.find(),
       ConferenceLists.find(),
       WasetConference.find(),
@@ -44,15 +52,16 @@ const recommendConferences = async (req, res) => {
 
     // ✅ 4. Format data for the recommender
     const formattedConferences = allConferences.map(c => ({
-        title: c.title || '',
-        location: c.location || '',
-        link: c.link || '',
-        date: c.date || c.dates || ''
-      }));
+      title: c.title || '',
+      location: c.location || '',
+      link: c.link || '',
+      date: c.date || c.dates || ''
+    }));
 
     // ✅ 5. Send to Python recommender
     const response = await axios.post('http://127.0.0.1:8000/recommend/conferences', {
       user_interests: interests,
+      publications,
       conferences: formattedConferences
     });
 
@@ -64,5 +73,6 @@ const recommendConferences = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 export { recommendConferences };
