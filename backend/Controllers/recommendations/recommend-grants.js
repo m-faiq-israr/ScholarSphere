@@ -1,11 +1,12 @@
 import express from 'express';
 import axios from 'axios';
-import { admin, db } from '../firebase.js';
-import { SJRJournals } from '../Models/JournalModels/SJRModel.js'; 
+import { admin, db } from '../../firebase.js'; 
+import { UkriGrants } from '../../Models/GrantsModels/ukri.js'; 
 
 const router = express.Router();
 
-const recommendJournals = async (req, res) => {
+
+const recommendRoutes = async (req, res) => {
   const idToken = req.headers.authorization?.split('Bearer ')[1];
   if (!idToken) return res.status(401).json({ message: 'Unauthorized' });
 
@@ -21,37 +22,37 @@ const recommendJournals = async (req, res) => {
     const userData = userDoc.data();
     const interests = userData.fieldsofInterest || [];
     const publications = userData.publications || [];
+    const fetchedPublications = userData.fetched_publications || [];
 
     if (!interests.length) {
       return res.status(400).json({ message: 'No interests found in user profile' });
     }
 
-    const journalsFromDB = await SJRJournals.find();
-
-    const formattedJournals = journalsFromDB.map(j => ({
-      title: j.title || '',
-      subject_areas: Array.isArray(j.subject_areas) ? j.subject_areas.join(', ') : j.subject_areas || '',
-      country_flag: j.country_flag || '',
-      publisher: j.publisher || '',
-      coverage: j.coverage || '',
-      homepage: j.homepage || '',
-      publish_guide: j.publish_guide || '',
-      contact_email: j.contact_email || '',
-      link: j.link || ''
+    const grantsFromDB = await UkriGrants.find();
+    const formattedGrants = grantsFromDB.map(g => ({
+      title: g.title || '',
+      description: g.description || '',
+      scope: g.scope || '',
+      opening_date: g.opening_date || '',
+      closing_date: g.closing_date || '',
+      who_can_apply: g.who_can_apply || ''
     }));
 
-    const response = await axios.post('http://127.0.0.1:8000/recommend/journals', {
+    const response = await axios.post('http://127.0.0.1:8000/recommend/grants', {
       user_interests: interests,
-      publications: publications,
-      journals: formattedJournals
+      publications,
+      fetched_publications: fetchedPublications,
+      grants: formattedGrants
     });
 
     res.json(response.data);
-
   } catch (err) {
-    console.error('Journal recommendation error:', err.message);
+    console.error('Recommendation error:', err.message);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-export { recommendJournals };
+
+  
+
+export {recommendRoutes}

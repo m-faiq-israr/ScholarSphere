@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Skeleton } from "antd";
-import { auth } from "../firebase/firebase";
-import ConferenceItem from "../components/ListItems/ConferenceItem";
+import { auth } from "../../firebase/firebase";
+import ConferenceItem from "../../components/ListItems/ConferenceItem";
 import { BsStars } from "react-icons/bs";
 
 const RecommendedConferencesPage = () => {

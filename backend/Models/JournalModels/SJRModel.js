@@ -5,6 +5,7 @@ import { ResearchJournalsDB } from '../../db.js';
 const SJRJournalSchema = new mongoose.Schema({
   title: {type:String},
   country_flag: {type: String},
+  scope : {type: String},
   subject_areas : {type: [String]},
   publisher : {type : String},
   coverage : {type : String},

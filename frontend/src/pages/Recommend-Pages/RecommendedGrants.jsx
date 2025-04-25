@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Skeleton } from "antd";
-import { auth } from "../firebase/firebase";
-import JournalItem from "../components/ListItems/JournalItem";
+import GrantItem from "../../components/ListItems/GrantItem";
+import { auth } from "../../firebase/firebase";
 import { BsStars } from "react-icons/bs";
 
-const RecommendedJournalsPage = () => {
-  const [journals, setJournals] = useState([]);
+
+const RecommendedGrantsPage = () => {
+  const [grants, setGrants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchRecommendedJournals = async () => {
+  const fetchRecommendedGrants = async () => {
     try {
       setLoading(true);
 
@@ -23,7 +24,7 @@ const RecommendedJournalsPage = () => {
       const token = await user.getIdToken();
 
       const response = await axios.post(
-        "http://localhost:4000/api/journals/recommended-journals",
+        "http://localhost:4000/api/grants/recommended-grants",
         {},
         {
           headers: {
@@ -32,17 +33,18 @@ const RecommendedJournalsPage = () => {
         }
       );
 
-      setJournals(response.data || []);
+      setGrants(response.data || []);
     } catch (err) {
-      console.error("Error fetching recommended journals:", err.message);
-      setError("Could not load recommended journals.");
+      console.error("Error fetching recommendations:", err.message);
+      setError("Could not load recommended grants.");
     } finally {
       setLoading(false);
     }
   };
 
+
   useEffect(() => {
-    fetchRecommendedJournals();
+    fetchRecommendedGrants();
   }, []);
 
   if (loading) {
@@ -61,30 +63,30 @@ const RecommendedJournalsPage = () => {
     <div className="m-24 p-6 rounded-xl bg-gray-200">
       <div className="text-heading-1 font-outfit font-semibold mb-6 text-2xl flex items-center gap-2">
         <BsStars />
-        Recommended Journals
+        Recommended Grants
       </div>
 
-      {journals.length > 0 ? (
-        journals.map((item, index) => (
+      {grants.length > 0 ? (
+        grants.map((grant, index) => (
           <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
-            <JournalItem journal={item.journal} />
-            {item.matched_keywords && item.matched_keywords.length > 0 ? (
+            <GrantItem grant={grant.grant || grant} />
+            {grant.matched_keywords && grant.matched_keywords.length > 0 ? (
               <div className="mt-2 text-sm text-heading-1 font-outfit">
-                <strong>Matched Interests:</strong>{" "}
-                {item.matched_keywords.join(", ")}
+                <strong>Matched Interests:</strong> {grant.matched_keywords.join(", ")}
               </div>
             ) : (
               <div className="mt-2 text-sm text-gray-500 font-outfit">
                 No direct interest keywords matched
               </div>
             )}
+
           </div>
         ))
       ) : (
-        <div className="text-center text-gray-500">No recommended journals found.</div>
+        <div className="text-center text-gray-500">No recommended grants found.</div>
       )}
     </div>
   );
 };
 
-export default RecommendedJournalsPage;
+export default RecommendedGrantsPage;

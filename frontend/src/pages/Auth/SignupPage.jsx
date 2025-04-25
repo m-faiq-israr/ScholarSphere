@@ -1,12 +1,11 @@
 import React from 'react';
-import layout1 from '../assets/images/layout1.png';
-import layout2 from '../assets/images/layout2.png';
-import layout3 from '../assets/images/layout3.png';
-import layout4 from '../assets/images/layout4.png';
-import LoginComponent from '../components/Auth/LoginComponent'; 
+import layout1 from '../../assets/images/layout1.png';
+import layout2 from '../../assets/images/layout2.png';
+import layout3 from '../../assets/images/layout3.png';
+import layout4 from '../../assets/images/layout4.png';
+import SignupComponent from '../../components/Auth/SignupComponent';
 
-
-const SigninPage = () => {
+const SignupPage = () => {
   return (
     <div className="relative h-screen flex">
       {/* Background Layout */}
@@ -27,11 +26,11 @@ const SigninPage = () => {
       {/* Overlay Login Page */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="w-full max-w-md">
-          <LoginComponent />
+          <SignupComponent />
         </div>
       </div>
     </div>
   );
 };
 
-export default SigninPage;
+export default SignupPage;

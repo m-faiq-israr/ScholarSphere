@@ -1,7 +1,7 @@
 import express from 'express';
 import { fetchAllGrants, fetchWhoCanApplyAndScope } from '../Controllers/grantController.js';
 import { getAllGrants, searchGrants, filterGrants } from '../Controllers/grantsControllers.js';
-import { recommendRoutes } from '../Controllers/recommend-grants.js';
+import { recommendRoutes } from '../Controllers/recommendations//recommend-grants.js';
 
 const router = express();
 

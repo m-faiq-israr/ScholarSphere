@@ -6,6 +6,8 @@ import ModalButton from "../Buttons/ModalButton";
 const JournalsModal = ({ open, onClose, journal }) => {
   const [visible, setVisible] = useState(open);
   const [closing, setClosing] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
 
   useEffect(() => {
     if (open) {
@@ -50,7 +52,7 @@ const JournalsModal = ({ open, onClose, journal }) => {
   return (
     <Modal
       title={
-        <div className="font-outfit font-bold text-heading-1 text-2xl">
+        <div className="font-outfit font-bold text-heading-1 text-2xl pl-2">
           {journal.title || "Journal Details"}
         </div>
       }
@@ -67,10 +69,25 @@ const JournalsModal = ({ open, onClose, journal }) => {
       className={`custom-modal${closing ? " closing" : ""}`}
       destroyOnClose={false}
     >
-      <div className="font-outfit">
-      <div>
-          <div className="bg-gray-200 rounded-xl p-4 inline-block mb-2 mt-5 ">
-            <h1 className="font-semibold text-lg text-heading-1">Subject Areas</h1>
+      <div className="font-outfit pl-2">
+        <div>
+          <div className="bg-gray-200 rounded-xl p-4 inline-block mb-2 mt-5 transition duration-700 ease-in-out transform">
+            <h1 className="font-semibold text-lg text-heading-1">Description:</h1>
+            <p className={`text-heading-1 text-base  ${!isExpanded ? "line-clamp-2" : ""}`}>
+              {journal.scope}
+            </p>
+            {journal.scope && journal.scope.length > 100 && (
+              <button
+                className="mt text-blue-500 hover:underline"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                {isExpanded ? "Show less" : "Show more"}
+              </button>
+            )}
+          </div>
+
+          <div className="bg-gray-200 rounded-xl p-4 inline-block w-full mb-2 mt-1 ">
+            <h1 className="font-semibold text-lg text-heading-1">Subject Areas:</h1>
             <p className="text-heading-1 text-base">
               {Array.isArray(journal.subject_areas)
                 ? journal.subject_areas.join(", ")
@@ -78,31 +95,33 @@ const JournalsModal = ({ open, onClose, journal }) => {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-5">
-          <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
-            <h1 className="font-semibold text-lg text-heading-1">Publisher</h1>
+
+          <div className="bg-gray-200 rounded-xl p-4 inline-block mt-1 w-full">
+            <h1 className="font-semibold text-lg text-heading-1">Publisher:</h1>
             <p className="text-heading-1 text-base">{journal.publisher}</p>
           </div>
 
-          <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
-            <h1 className="font-semibold text-lg text-heading-1">Coverage</h1>
+        <div className="flex items-center gap-5 mb-1">
+
+          <div className="bg-gray-200 rounded-xl p-4 inline-block mt-3">
+            <h1 className="font-semibold text-lg text-heading-1">Coverage:</h1>
             <p className="text-heading-1 text-base">{journal.coverage}</p>
           </div>
 
-          <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
-            <h1 className="font-semibold text-lg text-heading-1">Country</h1>
+          <div className="bg-gray-200 rounded-xl p-4 inline-block mt-3">
+            <h1 className="font-semibold text-lg text-heading-1">Country:</h1>
             <p className="text-heading-1 text-base">{journal.country_flag}</p>
           </div>
 
           {journal.contact_email && (
-            <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
-              <h1 className="font-semibold text-lg text-heading-1">Contact Email</h1>
+            <div className="bg-gray-200 rounded-xl p-4 inline-block mt-3">
+              <h1 className="font-semibold text-lg text-heading-1">Contact Email:</h1>
               <p className="text-heading-1 text-base">{journal.contact_email}</p>
             </div>
           )}
         </div>
 
-        
+
       </div>
     </Modal>
   );

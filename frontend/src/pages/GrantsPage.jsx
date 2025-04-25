@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { message, Pagination, Skeleton } from "antd";
+import { Skeleton } from "antd";
 import GrantItem from "../components/ListItems/GrantItem";
 import GrantFilterDropdown from "../components/Filters/GrantsFilterDropdown";
 import SearchInput from "../components/InputFields/SearchInput";
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../contexts/AppContext";
 import toast, { Toaster } from "react-hot-toast";
 import { HoverBorderGradient } from "../components/anim";
+import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "../components/ui/pagination"
 
 
 const GrantsPage = () => {
@@ -25,10 +26,10 @@ const GrantsPage = () => {
   const [descriptionFilter, setDescriptionFilter] = useState("");
   const [isFiltered, setIsFiltered] = useState(false);
   const [isSearched, setIsSearched] = useState(false);
-  const {interests} = useContext(AppContext);
-const navigate = useNavigate();
+  const { interests } = useContext(AppContext);
+  const navigate = useNavigate();
 
-  
+
 
   // **Fetch All Grants**
   const fetchAllGrants = async () => {
@@ -138,11 +139,11 @@ const navigate = useNavigate();
     return <div>Error: {error}</div>;
   }
 
-  const recommendedGrantsPage = () =>{
-    if (!interests || interests.length === 0){
+  const recommendedGrantsPage = () => {
+    if (!interests || interests.length === 0) {
       toast.error('Enter fields of interests in user profile to get recommendations')
     }
-    else{
+    else {
       navigate('/grants/recommended-grants');
     }
   }
@@ -161,7 +162,7 @@ const navigate = useNavigate();
             />
             {/* Filters Dropdown */}
             <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
-            <RecommendationButton onClick={recommendedGrantsPage}/>
+            <RecommendationButton onClick={recommendedGrantsPage} />
 
           </div>
           <div className="font-semibold text-heading-1 font-outfit select-none">
@@ -179,18 +180,83 @@ const navigate = useNavigate();
           <div className="text-center text-gray-500">No grants found.</div>
         )}
 
-        <div className="flex justify-center mt-6 custom-pagination font-outfit">
-          <Pagination
-            defaultCurrent={1}
-            current={currentPage}
-            total={totalGrants}
-            pageSize={itemsPerPage}
-            onChange={handlePageChange}
-            showSizeChanger={false}
-          />
+        {/* Pagination */}
+        <div className="flex justify-center mt-6 font-outfit">
+          <Pagination>
+            <PaginationContent className="flex items-center gap-2">
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+                />
+              </PaginationItem>
+
+              {(() => {
+                const totalPages = Math.ceil(totalGrants / itemsPerPage);
+                const visiblePages = [];
+
+                if (totalPages <= 7) {
+                  for (let i = 1; i <= totalPages; i++) {
+                    visiblePages.push(i);
+                  }
+                } else {
+                  visiblePages.push(1);
+
+                  if (currentPage > 4) {
+                    visiblePages.push("dots-1");
+                  }
+
+                  for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                    if (i > 1 && i < totalPages) {
+                      visiblePages.push(i);
+                    }
+                  }
+
+                  if (currentPage < totalPages - 3) {
+                    visiblePages.push("dots-2");
+                  }
+
+                  visiblePages.push(totalPages);
+                }
+
+                return visiblePages.map((page, index) => (
+                  <PaginationItem key={index}>
+                    {typeof page === "number" ? (
+                      <button
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-1 rounded-md text-sm font-semibold
+                  ${currentPage === page
+                            ? "bg-heading-1 text-white"
+                            : "bg-gray-200 text-heading-1 hover:bg-gray-300"}
+                `}
+                      >
+                        {page}
+                      </button>
+                    ) : (
+                      <span className="px-3 py-1 text-sm text-gray-500 select-none ">...</span>
+                    )}
+                  </PaginationItem>
+                ));
+              })()}
+
+              {/* Next Button */}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      prev * itemsPerPage < totalGrants ? prev + 1 : prev
+                    )
+                  }
+                  className={currentPage * itemsPerPage >= totalGrants ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
+
+
       </div>
-      <Toaster/>
+      <Toaster />
     </div>
   );
 };

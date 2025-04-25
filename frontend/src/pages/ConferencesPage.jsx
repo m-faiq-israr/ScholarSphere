@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { Pagination, Spin, Button, Skeleton } from "antd";
+import {  Spin, Button, Skeleton } from "antd";
 import ConferenceItem from "../components/ListItems/ConferenceItem";
 import SearchInput from "../components/InputFields/SearchInput";
 import ConferenceFilterDropdown from "../components/Filters/ConferenceFilterDropdown";
@@ -9,6 +9,8 @@ import RecommendationButton from "../components/Buttons/RecommendationButton";
 import { AppContext } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "../components/ui/pagination"
+
 
 
 const ConferencesPage = () => {
@@ -122,16 +124,78 @@ const ConferencesPage = () => {
           <div className="text-center text-gray-500">No conferences found.</div>
         )}
 
-        <div className="flex justify-center mt-6 custom-pagination font-outfit">
-          <Pagination
-            defaultCurrent={1}
-            current={currentPage}
-            total={totalConferences}
-            pageSize={itemsPerPage}
-            onChange={handlePageChange}
-            showSizeChanger={false}
-          />
-        </div>
+<div className="flex justify-center mt-6 font-outfit">
+  <Pagination>
+    <PaginationContent className="flex items-center gap-2">
+      <PaginationItem>
+        <PaginationPrevious
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+        />
+      </PaginationItem>
+
+      {(() => {
+        const totalPages = Math.ceil(totalConferences / itemsPerPage);
+        const visiblePages = [];
+        
+        if (totalPages <= 7) {
+          for (let i = 1; i <= totalPages; i++) {
+            visiblePages.push(i);
+          }
+        } else {
+          visiblePages.push(1);
+
+          if (currentPage > 4) {
+            visiblePages.push("dots-1");
+          }
+
+          for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+            if (i > 1 && i < totalPages) {
+              visiblePages.push(i);
+            }
+          }
+
+          if (currentPage < totalPages - 3) {
+            visiblePages.push("dots-2");
+          }
+
+          visiblePages.push(totalPages);
+        }
+
+        return visiblePages.map((page, index) => (
+          <PaginationItem key={index}>
+            {typeof page === "number" ? (
+              <button
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-md text-sm font-semibold 
+                  ${currentPage === page
+                    ? "bg-heading-1 text-white"
+                    : "bg-gray-200 text-heading-1 hover:bg-gray-300"}
+                `}
+              >
+                {page}
+              </button>
+            ) : (
+              <span className="px-3 py-1 text-sm text-gray-500 select-none">...</span>
+            )}
+          </PaginationItem>
+        ));
+      })()}
+
+      <PaginationItem>
+        <PaginationNext
+          onClick={() =>
+            setCurrentPage((prev) =>
+              prev * itemsPerPage < totalConferences ? prev + 1 : prev
+            )
+          }
+          className={currentPage * itemsPerPage >= totalConferences ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+        />
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
+</div>
+
       </div>
       <Toaster/>
     </div>

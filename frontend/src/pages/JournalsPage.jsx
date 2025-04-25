@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import JournalItem from '../components/ListItems/JournalItem';
 import axios from 'axios';
-import { Pagination, Spin, Button, Skeleton } from 'antd';
+import {  Spin, Button, Skeleton } from 'antd';
 import '../components/css/Pagination.css';
 import JournalsFilterDropdown from '../components/Filters/JournalsFilterDropdown';
 import SearchInput from '../components/InputFields/SearchInput';
@@ -10,6 +10,7 @@ import { AppContext } from '../contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from "react-hot-toast";
 import RecommendationButton from '../components/Buttons/RecommendationButton';
+import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "../components/ui/pagination"
 
 
 const JournalsPage = () => {
@@ -91,6 +92,10 @@ const JournalsPage = () => {
     }
   }
 
+  const recommendedJournalsByAbstract = () => {
+    navigate('/journals/recommend-by-abstract')
+  }
+
   return (
     <div>
       <div className="m-24 p-6 rounded-xl bg-gray-200">
@@ -108,6 +113,9 @@ const JournalsPage = () => {
               onClearFilters={handleClearFilters}
             />
             <RecommendationButton onClick={recommendedJournalsPage} />
+
+            <button className="inline-flex font-outfit select-none items-center gap-2 rounded-xl bg-heading-1 py-2 px-3 text-sm font-medium text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
+              onClick={recommendedJournalsByAbstract}>Search through abstract</button>
 
           </div>
 
@@ -127,16 +135,78 @@ const JournalsPage = () => {
           <div className="text-center text-gray-500">No journals found.</div>
         )}
 
-        <div className="flex justify-center mt-6 custom-pagination font-outfit">
-          <Pagination
-            defaultCurrent={1}
-            current={currentPage}
-            total={totalJournals}
-            pageSize={itemsPerPage}
-            onChange={handlePageChange}
-            showSizeChanger={false}
-          />
-        </div>
+<div className="flex justify-center mt-6 font-outfit">
+  <Pagination>
+    <PaginationContent className="flex items-center gap-2">
+      <PaginationItem>
+        <PaginationPrevious
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+        />
+      </PaginationItem>
+
+      {(() => {
+        const totalPages = Math.ceil(totalJournals / itemsPerPage);
+        const visiblePages = [];
+
+        if (totalPages <= 7) {
+          for (let i = 1; i <= totalPages; i++) {
+            visiblePages.push(i);
+          }
+        } else {
+          visiblePages.push(1);
+
+          if (currentPage > 4) {
+            visiblePages.push("dots-1");
+          }
+
+          for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+            if (i > 1 && i < totalPages) {
+              visiblePages.push(i);
+            }
+          }
+
+          if (currentPage < totalPages - 3) {
+            visiblePages.push("dots-2");
+          }
+
+          visiblePages.push(totalPages);
+        }
+
+        return visiblePages.map((page, index) => (
+          <PaginationItem key={index}>
+            {typeof page === "number" ? (
+              <button
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-md text-sm font-semibold 
+                  ${currentPage === page
+                    ? "bg-heading-1 text-white"
+                    : "bg-gray-200 text-heading-1 hover:bg-gray-300"}
+                `}
+              >
+                {page}
+              </button>
+            ) : (
+              <span className="px-3 py-1 text-sm text-gray-500 select-none">...</span>
+            )}
+          </PaginationItem>
+        ));
+      })()}
+
+      <PaginationItem>
+        <PaginationNext
+          onClick={() =>
+            setCurrentPage((prev) =>
+              prev * itemsPerPage < totalJournals ? prev + 1 : prev
+            )
+          }
+          className={currentPage * itemsPerPage >= totalJournals ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+        />
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
+</div>
+
       </div>
       <Toaster />
     </div>

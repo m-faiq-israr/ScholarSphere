@@ -3,17 +3,18 @@ import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './routes/ProtectedRoute';
 import PublicRoute from './routes/PublicRoutes';
 import MainPage from './pages/MainPage';
-import SignIn from './pages/SigninPage';
-import SignUp from './pages/SignupPage';
+import SignIn from './pages/Auth/SigninPage';
+import SignUp from './pages/Auth/SignupPage';
 import { AppProvider } from './contexts/AppContext';
 import UserProfile from './pages/UserProfile';
 import GrantsPage from './pages/GrantsPage';
 import ConferencesPage from './pages/ConferencesPage';
 import JournalsPage from './pages/JournalsPage';
 import Nav from './components/Navs/UserPageNav';
-import RecommendedGrantsPage from './pages/recommendedGrants';
-import RecommendedConferencesPage from './pages/RecommendedConferences';
-import RecommendedJournalsPage from './pages/RecommendedJournals';
+import RecommendedGrantsPage from './pages/Recommend-Pages/RecommendedGrants';
+import RecommendedConferencesPage from './pages/Recommend-Pages/RecommendedConferences';
+import RecommendedJournalsPage from './pages/Recommend-Pages/RecommendedJournals';
+import RecommendedJournalsByAbstract from './pages/Recommend-Pages/RecommendedJournalsByAbstract';
 
 function AppContent() {
   const location = useLocation();
@@ -106,6 +107,17 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
+<Route
+          path="/journals/recommend-by-abstract"
+          element={
+            <ProtectedRoute>
+              <RecommendedJournalsByAbstract />
+            </ProtectedRoute>
+          }
+        />
+
+
 
       </Routes>
     </>

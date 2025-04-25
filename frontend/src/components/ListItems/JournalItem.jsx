@@ -9,11 +9,17 @@ const JournalItem = ({ journal }) => {
             <div className='w-[70%]'>
                 <h1 className='font-semibold text-heading-1 pb-1 line-clamp-1 text-lg'>{journal.title}</h1>
                 <p className='text-gray-600 line-clamp-2 '>
-                    <span className='font-semibold'>Subject Areas:</span> {Array.isArray(journal.subject_areas) ? journal.subject_areas.join(', ') : journal.subject_areas}
+                    <span className='font-semibold'>
+                        Description:&nbsp;
+                    </span>
+                     {journal.scope}
                 </p>
+                {/* <p className='text-gray-600 line-clamp-2 '>
+                    <span className='font-semibold'>Subject Areas:</span> {Array.isArray(journal.subject_areas) ? journal.subject_areas.join(', ') : journal.subject_areas}
+                </p> */}
                 <p className='text-gray-600 line-clamp-2 '>
                     <span className='font-semibold'>
-                        Publisher:
+                        Publisher:&nbsp;
                     </span>
                      {journal.publisher}
                 </p>
