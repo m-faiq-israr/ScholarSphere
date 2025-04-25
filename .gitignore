@@ -1,0 +1,5 @@
+# Ignore backend files
+backend/service-account-key.json
+backend/temp/
+backend/*.log
+backend/.env
