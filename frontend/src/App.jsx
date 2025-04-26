@@ -15,6 +15,7 @@ import RecommendedGrantsPage from './pages/Recommend-Pages/RecommendedGrants';
 import RecommendedConferencesPage from './pages/Recommend-Pages/RecommendedConferences';
 import RecommendedJournalsPage from './pages/Recommend-Pages/RecommendedJournals';
 import RecommendedJournalsByAbstract from './pages/Recommend-Pages/RecommendedJournalsByAbstract';
+import { Toaster } from './components/ui/toaster';
 
 function AppContent() {
   const location = useLocation();
@@ -132,6 +133,7 @@ function App() {
           <AppContent />
         </AppProvider>
       </AuthProvider>
+      <Toaster />
     </Router>
   );
 }

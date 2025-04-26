@@ -101,7 +101,7 @@ const JournalsModal = ({ open, onClose, journal }) => {
             <p className="text-heading-1 text-base">{journal.publisher}</p>
           </div>
 
-        <div className="flex items-center gap-5 mb-1">
+        <div className="flex items-center gap-3 mb-1">
 
           <div className="bg-gray-200 rounded-xl p-4 inline-block mt-3">
             <h1 className="font-semibold text-lg text-heading-1">Coverage:</h1>
