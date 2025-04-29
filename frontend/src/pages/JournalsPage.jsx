@@ -13,6 +13,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, Pagi
 import { getAuth } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { FaArrowLeft, FaBookmark } from 'react-icons/fa';
+import { BsStars } from "react-icons/bs";
 
 
 const JournalsPage = () => {
@@ -163,7 +164,7 @@ const JournalsPage = () => {
                 <RecommendationButton onClick={recommendedJournalsPage} />
 
                 <button className="inline-flex font-outfit select-none items-center gap-2 rounded-xl bg-heading-1 py-2 px-3 text-sm font-medium text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
-                  onClick={recommendedJournalsByAbstract}>Search through abstract</button>
+                  onClick={recommendedJournalsByAbstract}>Search through abstract <BsStars/></button>
 
               </>
             ) : (

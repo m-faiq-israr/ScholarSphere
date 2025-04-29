@@ -4,6 +4,7 @@ import { Skeleton } from "antd";
 import GrantItem from "../../components/ListItems/GrantItem";
 import { auth } from "../../firebase/firebase";
 import { BsStars } from "react-icons/bs";
+import ExportCsv from "@/components/Buttons/ExportCsv";
 
 
 const RecommendedGrantsPage = () => {
@@ -59,11 +60,57 @@ const RecommendedGrantsPage = () => {
     return <div className="m-24 text-red-500">{error}</div>;
   }
 
+  // Utility to convert JSON to CSV
+const convertToCSV = (data) => {
+  if (!data || data.length === 0) return "";
+
+  const header = Object.keys(data[0]).join(",");
+  const rows = data.map((item) =>
+    Object.values(item)
+      .map((value) =>
+        typeof value === "string"
+          ? `"${value.replace(/"/g, '""')}"`
+          : `"${JSON.stringify(value)}"`
+      )
+      .join(",")
+  );
+
+  return [header, ...rows].join("\n");
+};
+
+// Function to trigger download
+const downloadCSV = (csvContent, filename = "grants.csv") => {
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+const handleExportCSV = () => {
+  const csvData = grants.map((item) => ({
+    ...((item.grant) ? item.grant : item), 
+  }));
+
+  const csvContent = convertToCSV(csvData);
+  downloadCSV(csvContent, "recommended_grants.csv");
+};
+
+
+
   return (
     <div className="m-24 p-6 rounded-xl bg-gray-200">
-      <div className="text-heading-1 font-outfit font-semibold mb-6 text-2xl flex items-center gap-2">
+      <div className="flex items-center justify-between mb-6">
+      <div className="text-heading-1 font-outfit font-semibold text-2xl flex items-center gap-2">
         <BsStars />
         Recommended Grants
+      </div>
+      {grants.length > 0 && (
+        <ExportCsv onClick={handleExportCSV}/>
+      )}
       </div>
 
       {grants.length > 0 ? (

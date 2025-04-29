@@ -11,6 +11,12 @@ import { FaUser } from 'react-icons/fa';
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "../components/ui/pagination"
 import { toast } from "../hooks/use-toast";
 import axios from "axios";
+import { GrUpdate } from "react-icons/gr";
+import { FaUserGraduate } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { doSignOut } from "@/firebase/auth";
+import { HiOutlineLogout } from "react-icons/hi";
+
 
 const UserProfile = () => {
   const [loading, setLoading] = useState(false);
@@ -30,6 +36,8 @@ const UserProfile = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const navigate = useNavigate();
+
 
 
 
@@ -283,14 +291,25 @@ const UserProfile = () => {
     });
   };
 
+  const handleLogout = async () => {
+      await doSignOut();
+      navigate("/");
+    };
+
 
   return (
     <div className="mt-24 px-12 pb-5 pt-8 m-20 rounded-xl bg-gray-200">
-      <div className="flex items-center gap-2 mb-6">
+        <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center gap-2">
         <div className='cursor-pointer bg-heading-1 hover:bg-gray-700 rounded-full p-1.5'>
-          <FaUser className="text-white font-outfit" />
+          <FaUserGraduate className="text-white size-5 font-outfit" />
         </div>
         <h1 className="text-heading-1 text-2xl font-outfit font-semibold">User Profile</h1>
+        </div>
+        <div onClick={handleLogout} className="flex items-center gap-1 font-outfit font-medium text-red-600 cursor-pointer">
+        <HiOutlineLogout/>
+          Logout
+          </div>
       </div>
 
       {/* Personal Information */}
@@ -648,7 +667,8 @@ const UserProfile = () => {
             </>
           ) : hasData ? (
             <>
-              Update <FiEdit size={18} />
+              Update <GrUpdate size={18}/>
+
             </>
           ) : (
             <>

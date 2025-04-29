@@ -20,6 +20,7 @@ import CredentialButton from '../components/Buttons/CredentialButton';
 import Footer from '../components/Footer';
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import Nav from '@/components/Navs/UserPageNav';
 
 const MainPage = () => {
 
@@ -36,7 +37,7 @@ const MainPage = () => {
 
   return (
     <div className='overflow-x-hidden'>
-      <Navbar />
+      <Nav/>
 
       <div className="relative pt-28 overflow-hidden select-none">
         <img
