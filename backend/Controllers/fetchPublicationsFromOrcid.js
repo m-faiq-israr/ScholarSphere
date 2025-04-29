@@ -20,10 +20,9 @@ const fetchPublicationsFromOrcid = async (req, res) => {
       return res.status(200).json({ message: 'No ORCID ID provided, skipping fetch.', publications: [] });
     }
 
-    // Correct OpenAlex API request
     const response = await axios.get(`https://api.openalex.org/works`, {
       params: {
-        'filter': `author.orcid:${orcidId}`,  // ✅ Corrected here
+        'filter': `author.orcid:${orcidId}`, 
         'per_page': 50  
       },
       headers: {

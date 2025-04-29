@@ -1,17 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import {  Spin, Button, Skeleton } from "antd";
+import { Skeleton } from "antd";
 import ConferenceItem from "../components/ListItems/ConferenceItem";
 import SearchInput from "../components/InputFields/SearchInput";
 import ConferenceFilterDropdown from "../components/Filters/ConferenceFilterDropdown";
-import Nav from "../components/Navs/UserPageNav";
 import RecommendationButton from "../components/Buttons/RecommendationButton";
 import { AppContext } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import { toast } from "../hooks/use-toast";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "../components/ui/pagination"
-
-
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { FaBookmark, FaArrowLeft } from "react-icons/fa";
 
 const ConferencesPage = () => {
   const [conferences, setConferences] = useState([]);
@@ -25,8 +25,10 @@ const ConferencesPage = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [location, setLocation] = useState("");
-  const {interests} = useContext(AppContext);
+  const { interests } = useContext(AppContext);
   const navigate = useNavigate();
+  const [showingSaved, setShowingSaved] = useState(false);
+  const [savedConferences, setSavedConferences] = useState([]);
 
   const fetchConferences = async () => {
     try {
@@ -46,7 +48,7 @@ const ConferencesPage = () => {
   useEffect(() => {
     fetchConferences();
   }, [currentPage, searchQuery, startDate, endDate, location]);
-  
+
   const handleSearch = () => {
     setSearchQuery(tempSearchQuery);
     setCurrentPage(1);
@@ -61,22 +63,22 @@ const ConferencesPage = () => {
     setStartDate(start);
     setEndDate(end);
     setLocation(loc);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
-  
+
   const clearFilters = () => {
     setStartDate(null);
     setEndDate(null);
     setLocation("");
     setCurrentPage(1);
   };
-  
+
 
   if (loading) {
     return (
       <div className="m-24 p-6">
-      <Skeleton active paragraph={{ rows: 15, width: ['60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '100%', '60%', '80%', '100%', '60%', '80%', '100%'] }} />
-    </div>
+        <Skeleton active paragraph={{ rows: 15, width: ['60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '100%', '60%', '80%', '100%', '60%', '80%', '100%'] }} />
+      </div>
     );
   }
 
@@ -84,120 +86,212 @@ const ConferencesPage = () => {
     return <div>Error: {error}</div>;
   }
 
-    const recommendedConferencesPage = () =>{
-      if (!interests || interests.length === 0){
-        toast.error('Enter fields of interests in user profile to get recommendations')
-      }
-      else{
-        navigate('/conferences/recommended-conferences');
+  const recommendedConferencesPage = () => {
+    if (!interests || interests.length === 0) {
+      toast({
+        title: "❌ Enter fields of interests in user profile to get recommendations",
+        description: error,
+        variant: "default",
+        duration: 4000,
+      });
+    }
+    else {
+      navigate('/conferences/recommended-conferences');
+    }
+  }
+
+  const toggleSavedConferencesView = async () => {
+    if (showingSaved) {
+      setShowingSaved(false);
+      fetchConferences();
+    } else {
+      try {
+        setLoading(true);
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (!user) {
+          toast({
+            title: "❌ You must be logged in to view saved conferences",
+            description: error,
+            variant: "default",
+            duration: 4000,
+          });
+          return;
+        }
+
+        const db = getFirestore();
+        const userRef = doc(db, "user_profile", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const savedIds = userSnap.data().savedConferences || [];
+          if (savedIds.length === 0) {
+            toast({
+              title: "❌ No saved conferences found.",
+              description: error,
+              variant: "default",
+              duration: 4000,
+            });
+            return;
+          }
+
+          const response = await axios.post("http://localhost:4000/api/conferences/by-ids", {
+            ids: savedIds,
+          });
+
+          setSavedConferences(response.data.conferences || []);
+          setShowingSaved(true);
+          setTotalConferences(response.data.conferences.length || 0);
+        }
+      } catch (error) {
+        console.error("Error fetching saved conferences:", error);
+        toast({
+          title: "❌ Failed to fetch saved conferences.",
+          description: error,
+          variant: "default",
+          duration: 4000,
+        });
+      } finally {
+        setLoading(false);
       }
     }
+  };
+
 
   return (
     <div>
       <div className="m-24 p-6 rounded-xl bg-gray-200">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-            <SearchInput
-              placeholder="Search by title"
-              value={tempSearchQuery}
-              onChange={(e) => setTempSearchQuery(e.target.value)}
-              onSearch={handleSearch}
-            />
-            <ConferenceFilterDropdown onApply={applyFilters} onClear={clearFilters} />
-                        <RecommendationButton onClick={recommendedConferencesPage}/>
-            
+            {!showingSaved ? (
+              <>
+                <SearchInput
+                  placeholder="Search by title"
+                  value={tempSearchQuery}
+                  onChange={(e) => setTempSearchQuery(e.target.value)}
+                  onSearch={handleSearch}
+                />
+                <ConferenceFilterDropdown onApply={applyFilters} onClear={clearFilters} />
+                <RecommendationButton onClick={recommendedConferencesPage} />
+              </>
+            ) : (
+              <div className="text-2xl font-outfit font-semibold text-heading-1">Saved Conferences</div>
+            )}
           </div>
-
-          <div className="font-semibold text-heading-1 font-outfit select-none">
-            Total Conferences: {totalConferences}
+          <div className="flex items-center gap-4">
+            <button
+              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              onClick={toggleSavedConferencesView}
+            >
+              {showingSaved ? (
+                <>
+                  <FaArrowLeft />
+                  Back to All Conferences
+                </>
+              ) : (
+                <>
+                  <FaBookmark />
+                  View Saved Conferences
+                </>
+              )}
+            </button>
+            <div className="font-semibold text-heading-1 font-outfit select-none">
+              Total Conferences: {totalConferences}
+            </div>
           </div>
         </div>
 
-        {conferences.length > 0 ? (
-          conferences.map((conference, index) => (
+        {(showingSaved ? savedConferences : conferences).length > 0 ? (
+          (showingSaved ? savedConferences : conferences).map((conference, index) => (
+
             <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
-              <ConferenceItem conference={conference} />
+              <ConferenceItem
+                conference={conference}
+                onUnsaveSuccess={(id) => {
+                  setSavedConferences(prev => prev.filter(c => c._id !== id));
+                  setTotalConferences(prev => prev - 1);
+                }}
+              />
+
             </div>
           ))
         ) : (
           <div className="text-center text-gray-500">No conferences found.</div>
         )}
 
-<div className="flex justify-center mt-6 font-outfit">
-  <Pagination>
-    <PaginationContent className="flex items-center gap-2">
-      <PaginationItem>
-        <PaginationPrevious
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
-        />
-      </PaginationItem>
+        <div className="flex justify-center mt-6 font-outfit">
+          <Pagination>
+            <PaginationContent className="flex items-center gap-2">
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+                />
+              </PaginationItem>
 
-      {(() => {
-        const totalPages = Math.ceil(totalConferences / itemsPerPage);
-        const visiblePages = [];
-        
-        if (totalPages <= 7) {
-          for (let i = 1; i <= totalPages; i++) {
-            visiblePages.push(i);
-          }
-        } else {
-          visiblePages.push(1);
+              {(() => {
+                const totalPages = Math.ceil(totalConferences / itemsPerPage);
+                const visiblePages = [];
 
-          if (currentPage > 4) {
-            visiblePages.push("dots-1");
-          }
+                if (totalPages <= 7) {
+                  for (let i = 1; i <= totalPages; i++) {
+                    visiblePages.push(i);
+                  }
+                } else {
+                  visiblePages.push(1);
 
-          for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-            if (i > 1 && i < totalPages) {
-              visiblePages.push(i);
-            }
-          }
+                  if (currentPage > 4) {
+                    visiblePages.push("dots-1");
+                  }
 
-          if (currentPage < totalPages - 3) {
-            visiblePages.push("dots-2");
-          }
+                  for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                    if (i > 1 && i < totalPages) {
+                      visiblePages.push(i);
+                    }
+                  }
 
-          visiblePages.push(totalPages);
-        }
+                  if (currentPage < totalPages - 3) {
+                    visiblePages.push("dots-2");
+                  }
 
-        return visiblePages.map((page, index) => (
-          <PaginationItem key={index}>
-            {typeof page === "number" ? (
-              <button
-                onClick={() => setCurrentPage(page)}
-                className={`px-3 py-1 rounded-md text-sm font-semibold 
+                  visiblePages.push(totalPages);
+                }
+
+                return visiblePages.map((page, index) => (
+                  <PaginationItem key={index}>
+                    {typeof page === "number" ? (
+                      <button
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-1 rounded-md text-sm font-semibold 
                   ${currentPage === page
-                    ? "bg-heading-1 text-white"
-                    : "bg-gray-200 text-heading-1 hover:bg-gray-300"}
+                            ? "bg-heading-1 text-white"
+                            : "bg-gray-200 text-heading-1 hover:bg-gray-300"}
                 `}
-              >
-                {page}
-              </button>
-            ) : (
-              <span className="px-3 py-1 text-sm text-gray-500 select-none">...</span>
-            )}
-          </PaginationItem>
-        ));
-      })()}
+                      >
+                        {page}
+                      </button>
+                    ) : (
+                      <span className="px-3 py-1 text-sm text-gray-500 select-none">...</span>
+                    )}
+                  </PaginationItem>
+                ));
+              })()}
 
-      <PaginationItem>
-        <PaginationNext
-          onClick={() =>
-            setCurrentPage((prev) =>
-              prev * itemsPerPage < totalConferences ? prev + 1 : prev
-            )
-          }
-          className={currentPage * itemsPerPage >= totalConferences ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
-        />
-      </PaginationItem>
-    </PaginationContent>
-  </Pagination>
-</div>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      prev * itemsPerPage < totalConferences ? prev + 1 : prev
+                    )
+                  }
+                  className={currentPage * itemsPerPage >= totalConferences ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
 
       </div>
-      <Toaster/>
     </div>
   );
 };

@@ -3,6 +3,8 @@ import { Conference365 } from '../Models/ConferenceModels/conference365Model.js'
 import { ConferenceLists } from '../Models/ConferenceModels/conferenceListsModel.js';
 import { ConferenceService } from '../Models/ConferenceModels/conference_serviceModel.js';
 import { WasetConference } from '../Models/ConferenceModels/wasetConferenceModel.js';
+import mongoose from "mongoose";
+
 
 const fetchAllConferences = async (req, res) => {
   try {
@@ -122,4 +124,94 @@ const fetchAllConferences = async (req, res) => {
   }
 };
 
-export { fetchAllConferences };
+
+const getConferencesByIds = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids)) {
+      return res.status(400).json({ message: "Invalid or missing ids array." });
+    }
+
+    // Validate IDs
+    const validIds = ids.filter(id => mongoose.Types.ObjectId.isValid(id));
+
+    if (validIds.length === 0) {
+      return res.status(400).json({ message: "No valid ObjectIds provided." });
+    }
+
+    // Fetch from all collections
+    const [conference365Data, conferenceListsData, conferenceServiceData, wasetConferenceData] = await Promise.all([
+      Conference365.find({ _id: { $in: validIds } }),
+      ConferenceLists.find({ _id: { $in: validIds } }),
+      ConferenceService.find({ _id: { $in: validIds } }),
+      WasetConference.find({ _id: { $in: validIds } }),
+    ]);
+
+    const updatedConferenceListsData = conferenceListsData.map(conf => ({
+      ...conf._doc,
+      location: conf.location && conf.type ? `${conf.location} ${conf.type}` : conf.location || conf.type
+    }));
+
+    // Date Parsing Function
+    const parseConferenceDate = (dateString) => {
+      if (!dateString) return null;
+      
+      const rangePattern = /(\d{1,2}\s\w+\s\d{4})\s*-\s*(\d{1,2}\s\w+\s\d{4})/;
+      const singleDatePattern = /(\d{1,2}\s\w+\s\d{4})/;
+      const wasetPattern = /\((\w+\s\d{1,2}-\d{1,2},\s\d{4})\)/;
+
+      let startDate, endDate;
+
+      if (rangePattern.test(dateString)) {
+        const [, start, end] = dateString.match(rangePattern);
+        startDate = new Date(start);
+        endDate = new Date(end);
+      } else if (wasetPattern.test(dateString)) {
+        const [, date] = dateString.match(wasetPattern);
+        const [month, dayRange, year] = date.replace(",", "").split(" ");
+        const [startDay, endDay] = dayRange.split("-");
+        startDate = new Date(`${month} ${startDay}, ${year}`);
+        endDate = new Date(`${month} ${endDay}, ${year}`);
+      } else if (singleDatePattern.test(dateString)) {
+        const [date] = dateString.match(singleDatePattern);
+        startDate = new Date(date);
+        endDate = new Date(date);
+      } else {
+        return null;
+      }
+
+      return { startDate, endDate };
+    };
+
+    const mergedConferences = [
+      ...conference365Data,
+      ...conferenceServiceData,
+      ...updatedConferenceListsData,
+      ...wasetConferenceData,
+    ]
+      .map((conf) => {
+        const dateField = conf.dates || conf.date;
+        const parsedDates = parseConferenceDate(dateField);
+
+        if (!parsedDates) return null;
+        conf.startDate = parsedDates.startDate;
+        conf.endDate = parsedDates.endDate;
+
+        return conf;
+      })
+      .filter(Boolean);
+
+    // Optional: Sort by startDate
+    mergedConferences.sort((a, b) => a.startDate - b.startDate);
+
+    res.status(200).json({
+      conferences: mergedConferences,
+      total: mergedConferences.length,
+    });
+
+  } catch (error) {
+    console.error("Error fetching conferences by IDs:", error);
+    res.status(500).json({ message: "Error fetching conferences by IDs." });
+  }
+};
+export { fetchAllConferences, getConferencesByIds };

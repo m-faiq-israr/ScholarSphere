@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { UkriGrants } from "../Models/GrantsModels/ukri.js";
 
 const getAllGrants = async (req, res) => {
@@ -35,6 +36,41 @@ const getAllGrants = async (req, res) => {
   } catch (error) {
     console.error("Error fetching grants:", error);
     res.status(500).json({ message: "Error fetching grants data." });
+  }
+};
+
+
+const getGrantsByIds = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids)) {
+      return res.status(400).json({ message: "Invalid or missing ids array." });
+    }
+
+    const validIds = ids.filter(id => mongoose.Types.ObjectId.isValid(id));
+
+    if (validIds.length === 0) {
+      return res.status(400).json({ message: "No valid IDs provided." });
+    }
+
+    const objectIds = validIds.map(id => new mongoose.Types.ObjectId(id));
+
+    const grants = await UkriGrants.find({ _id: { $in: objectIds } });
+
+    const parseAmount = (amount) => {
+      if (!amount || typeof amount !== "string") return null;
+      return parseFloat(amount.replace(/[£,]/g, ""));
+    };
+
+    const processedGrants = grants.map(grant => ({
+      ...grant.toObject(),
+      numeric_fund: parseAmount(grant.total_fund),
+    }));
+
+    res.status(200).json({ grants: processedGrants });
+  } catch (error) {
+    console.error("Error fetching grants by IDs:", error);
+    res.status(500).json({ message: "Error fetching grants by IDs." });
   }
 };
 
@@ -101,4 +137,4 @@ const searchGrants = async (req, res) => {
     }
   };
   
-  export { getAllGrants, searchGrants, filterGrants };
+  export { getAllGrants, searchGrants, filterGrants, getGrantsByIds };

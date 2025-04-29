@@ -1,4 +1,5 @@
 import { SJRJournals } from "../Models/JournalModels/SJRModel.js";
+import mongoose from 'mongoose';
 
 const fetchAllJournals = async (req, res) => {
   try {
@@ -65,4 +66,29 @@ const fetchAllJournals = async (req, res) => {
   }
 };
 
-export { fetchAllJournals };
+const getJournalsByIds = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids)) {
+      return res.status(400).json({ message: 'Invalid or missing IDs array.' });
+    }
+
+    const validIds = ids.filter(id => mongoose.Types.ObjectId.isValid(id));
+    if (validIds.length === 0) {
+      return res.status(400).json({ message: 'No valid ObjectIDs provided.' });
+    }
+
+    const objectIds = validIds.map(id => new mongoose.Types.ObjectId(id));
+    const journals = await SJRJournals.find({ _id: { $in: objectIds } });
+
+    res.status(200).json({
+      journals,
+      total: journals.length,
+    });
+  } catch (error) {
+    console.error('Error fetching journals by IDs:', error);
+    res.status(500).json({ message: 'Error fetching journals by IDs.' });
+  }
+};
+
+export { fetchAllJournals, getJournalsByIds };

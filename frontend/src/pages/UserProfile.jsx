@@ -10,6 +10,7 @@ import { AppContext } from "../contexts/AppContext";
 import { FaUser } from 'react-icons/fa';
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "../components/ui/pagination"
 import { toast } from "../hooks/use-toast";
+import axios from "axios";
 
 const UserProfile = () => {
   const [loading, setLoading] = useState(false);
@@ -19,16 +20,8 @@ const UserProfile = () => {
     lastName: "",
     orcidId: "",
     fieldsofInterest: [""],
-    publications: [
-      {
-        title: "",
-        journal: "",
-        year: "",
-        authors: [""],
-        keywords: ["", "", ""],
-        abstract: "",
-      },
-    ],
+    publications: [],
+
   });
   const [originalData, setOriginalData] = useState(null);
   const [hasData, setHasData] = useState(false);
@@ -87,16 +80,8 @@ const UserProfile = () => {
               keywords: pub.keywords?.length ? pub.keywords : ["", "", ""],
               abstract: pub.abstract || "",
             }))
-            : [
-              {
-                title: "",
-                journal: "",
-                year: "",
-                authors: [""],
-                keywords: ["", "", ""],
-                abstract: "",
-              },
-            ],
+            : [],
+
         };
 
         setFormData(formattedData);
@@ -250,21 +235,35 @@ const UserProfile = () => {
     );
 
     if (abstractWordLimitExceeded) {
-      return notifyError("Abstract cannot exceed 100 words.");
+      return notifyError("Abstract cannot exceed 300 words.");
     }
 
     setLoading(true);
     try {
+      // 1. Save user profile (first step)
       await setDoc(doc(db, "user_profile", user.uid), formData);
       notify(hasData ? "Data updated successfully!" : "Data saved successfully!");
+
+      // 2. If ORCID ID is provided, call backend to fetch publications
+      if (formData.orcidId && formData.orcidId.trim() !== "") {
+        await axios.post('http://localhost:4000/api/publications/fetch-publications', {
+          uid: user.uid,
+        });
+
+        // 3. Refetch the latest user data from Firestore
+        await fetchUserData(user.uid);
+      }
+
       setOriginalData(formData);
       setHasData(true);
     } catch (error) {
       console.error("Error saving/updating data: ", error);
+      notifyError("Failed to save or update.");
     } finally {
       setLoading(false);
     }
   };
+
 
   const notify = (msg) => {
     toast({
@@ -274,7 +273,7 @@ const UserProfile = () => {
       duration: 4000,
     });
   };
-  
+
   const notifyError = (error) => {
     toast({
       title: "❌ Error",
@@ -283,7 +282,7 @@ const UserProfile = () => {
       duration: 4000,
     });
   };
-  
+
 
   return (
     <div className="mt-24 px-12 pb-5 pt-8 m-20 rounded-xl bg-gray-200">
@@ -540,84 +539,94 @@ const UserProfile = () => {
 
             </div>
           ))
+        ) : formData.publications.length === 0 ? (
+          <div className="border-2 border-dashed border-gray-300 p-6 rounded-xl text-center text-gray-500 font-outfit">
+            No publications added yet. Click "Add Publication" or enter your ORCID ID to fetch your publications.
+          </div>
         ) : (
           <div className="border-2 border-dashed border-gray-300 p-6 rounded-xl text-center text-gray-500 font-outfit">
-            No publications added yet. Click "Add Publication" to create one or enter your Orcid Id to fetch your publications.
+            No publications matched your search.
           </div>
         )}
-                  <div className="flex justify-center mt-6 font-outfit">
-  <Pagination>
-    <PaginationContent className="flex items-center gap-2">
-      {/* Previous Button */}
-      <PaginationItem>
-        <PaginationPrevious
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
-        />
-      </PaginationItem>
+        <div className="flex justify-center mt-6 font-outfit">
+          <Pagination>
+            <PaginationContent className="flex items-center gap-2">
+              {/* Previous Button */}
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+                />
+              </PaginationItem>
 
-      {/* Page Numbers */}
-      {(() => {
-        const totalPages = Math.ceil(totalPublications / itemsPerPage);
-        const visiblePages = [];
+              {/* Page Numbers */}
+              {(() => {
+                const totalPages = Math.ceil(totalPublications / itemsPerPage);
+                const visiblePages = [];
 
-        if (totalPages <= 7) {
-          for (let i = 1; i <= totalPages; i++) {
-            visiblePages.push(i);
-          }
-        } else {
-          visiblePages.push(1);
+                if (totalPages <= 7) {
+                  for (let i = 1; i <= totalPages; i++) {
+                    visiblePages.push(i);
+                  }
+                } else {
+                  visiblePages.push(1);
 
-          if (currentPage > 4) {
-            visiblePages.push("dots-1");
-          }
+                  if (currentPage > 4) {
+                    visiblePages.push("dots-1");
+                  }
 
-          for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-            if (i > 1 && i < totalPages) {
-              visiblePages.push(i);
-            }
-          }
+                  for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                    if (i > 1 && i < totalPages) {
+                      visiblePages.push(i);
+                    }
+                  }
 
-          if (currentPage < totalPages - 3) {
-            visiblePages.push("dots-2");
-          }
+                  if (currentPage < totalPages - 3) {
+                    visiblePages.push("dots-2");
+                  }
 
-          visiblePages.push(totalPages);
-        }
+                  visiblePages.push(totalPages);
+                }
 
-        return visiblePages.map((page, index) => (
-          <PaginationItem key={index}>
-            {typeof page === "number" ? (
-              <button
-                onClick={() => setCurrentPage(page)}
-                className={`px-3 py-1 rounded-md text-sm font-semibold
+                return visiblePages.map((page, index) => (
+                  <PaginationItem key={index}>
+                    {typeof page === "number" ? (
+                      <button
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-1 rounded-md text-sm font-semibold
                 ${currentPage === page
-                  ? "bg-heading-1 text-white"
-                  : "bg-gray-200 text-heading-1 hover:bg-gray-300"}`}
-              >
-                {page}
-              </button>
-            ) : (
-              <span className="px-3 py-1 text-sm text-gray-500 select-none ">...</span>
-            )}
-          </PaginationItem>
-        ));
-      })()}
+                            ? "bg-heading-1 text-white"
+                            : "bg-gray-200 text-heading-1 hover:bg-gray-300"}`}
+                      >
+                        {page}
+                      </button>
+                    ) : (
+                      <span className="px-3 py-1 text-sm text-gray-500 select-none ">...</span>
+                    )}
+                  </PaginationItem>
+                ));
+              })()}
 
-      {/* Next Button */}
-      <PaginationItem>
-        <PaginationNext
-          onClick={() =>
-            setCurrentPage((prev) =>
-              prev * itemsPerPage < totalPublications ? prev + 1 : prev
-            )
-          }
-          className={currentPage * itemsPerPage >= totalPublications ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
-        />
-      </PaginationItem>
-    </PaginationContent>
-  </Pagination>
-</div>
+              {/* Next Button */}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      prev * itemsPerPage < totalPublications ? prev + 1 : prev
+                    )
+                  }
+                  className={currentPage * itemsPerPage >= totalPublications ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+        {filteredPublications.length > 0 && (
+          <div className="m flex justify-end text-sm text-gray-600 font-outfit">
+            Total Publications: {filteredPublications.length}
+          </div>
+        )}
+
 
       </div>
 

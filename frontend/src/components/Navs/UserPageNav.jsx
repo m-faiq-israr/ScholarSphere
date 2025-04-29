@@ -6,7 +6,7 @@ import { doSignOut } from "../../firebase/auth";
 import { AppContext } from '../../contexts/AppContext';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-
+import logo_transparent from '../../assets/images/logo_transparent.png'
 const Nav = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [fullName, setFullName] = useState("");
@@ -65,8 +65,10 @@ const Nav = () => {
     <nav className="fixed top-0 left-0 right-0 font-outfit px-8 py-3 z-10 bg-white select-none">
       <div className="relative flex items-center justify-between w-full">
         {/* Left: Logo */}
-        <div className="text-3xl font-bold cursor-pointer" onClick={() => navigate('/')}>
-          ScholarSphere
+        <div className=" flex items-center cursor-pointer space-x-0" onClick={() => navigate('/')}>
+          <img src={logo_transparent} className=' size-10 ' />
+          <div className='text-3xl font-bold'>ScholarSphere</div>
+          
         </div>
 
         {/* Center: Navigation Tabs (absolutely centered) */}

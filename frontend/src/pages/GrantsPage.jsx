@@ -7,9 +7,11 @@ import SearchInput from "../components/InputFields/SearchInput";
 import RecommendationButton from "../components/Buttons/RecommendationButton";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../contexts/AppContext";
-import toast, { Toaster } from "react-hot-toast";
-import { HoverBorderGradient } from "../components/anim";
+import { toast } from "../hooks/use-toast";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "../components/ui/pagination"
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { FaArrowLeft, FaBookmark } from "react-icons/fa";
 
 
 const GrantsPage = () => {
@@ -28,6 +30,9 @@ const GrantsPage = () => {
   const [isSearched, setIsSearched] = useState(false);
   const { interests } = useContext(AppContext);
   const navigate = useNavigate();
+  const [showingSaved, setShowingSaved] = useState(false);
+  const [savedGrants, setSavedGrants] = useState([]);
+
 
 
 
@@ -39,7 +44,7 @@ const GrantsPage = () => {
         `http://localhost:4000/api/grants?page=${currentPage}&limit=${itemsPerPage}`
       );
       setGrants(response.data.grants || []);
-      setTotalGrants(response.data.total || 0); // Ensure total is set
+      setTotalGrants(response.data.total || 0);
       setIsFiltered(false);
       setIsSearched(false);
     } catch (err) {
@@ -141,39 +146,139 @@ const GrantsPage = () => {
 
   const recommendedGrantsPage = () => {
     if (!interests || interests.length === 0) {
-      toast.error('Enter fields of interests in user profile to get recommendations')
+      toast({
+        title: "❌ Enter fields of interests in user profile to get recommendations",
+        description: error,
+        variant: "default",
+        duration: 4000,
+      });
     }
     else {
       navigate('/grants/recommended-grants');
     }
   }
 
+  const toggleSavedGrantsView = async () => {
+    if (showingSaved) {
+      setShowingSaved(false);
+      fetchAllGrants();
+    } else {
+      try {
+        setLoading(true);
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (!user) {
+          toast({
+            title: "❌ You must be logged in to view saved grants.",
+            description: error,
+            variant: "default",
+            duration: 4000,
+          });
+          return;
+        }
+
+        const db = getFirestore();
+        const userRef = doc(db, "user_profile", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const savedIds = userSnap.data().savedGrants || [];
+          if (savedIds.length === 0) {
+            toast({
+              title: "❌ No saved grants found.",
+              description: error,
+              variant: "default",
+              duration: 4000,
+            });
+            return;
+          }
+
+          const response = await axios.post("http://localhost:4000/api/grants/by-ids", {
+            ids: savedIds,
+          });
+
+          setSavedGrants(response.data.grants || []);
+          setShowingSaved(true);
+          setTotalGrants(response.data.grants.length || 0);
+        } else {
+          toast({
+            title: "❌ No saved grants found.",
+            description: error,
+            variant: "default",
+            duration: 4000,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching saved grants:", error);
+        toast({
+          title: "❌ Failed to fetch saved grants.",
+          description: error,
+          variant: "default",
+          duration: 4000,
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   return (
     <div>
       <div className="m-24 p-6 rounded-xl bg-gray-200">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-            {/* Search Input */}
-            <SearchInput
-              placeholder="Search by title"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onSearch={handleSearch}
-            />
-            {/* Filters Dropdown */}
-            <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
-            <RecommendationButton onClick={recommendedGrantsPage} />
+            {!showingSaved ? (
+              <>
+
+                {/* Search Input */}
+                <SearchInput
+                  placeholder="Search by title"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onSearch={handleSearch}
+                />
+                {/* Filters Dropdown */}
+                <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
+                <RecommendationButton onClick={recommendedGrantsPage} />
+              </>
+            ) : (
+              <div className="text-2xl font-outfit text-heading-1 font-semibold">Saved Grants</div>
+            )}
 
           </div>
-          <div className="font-semibold text-heading-1 font-outfit select-none">
-            Total Grants: {totalGrants}
+
+          <div className="flex items-center gap-4">
+            <button
+              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              onClick={toggleSavedGrantsView}
+            >
+              {showingSaved ? (
+                <>
+                  <FaArrowLeft />
+                  Back to All Grants
+                </>
+              ) : (
+                <>
+                  <FaBookmark />
+                  View Saved Grants
+                </>
+              )}
+            </button>
+            <div className="font-semibold text-heading-1 font-outfit select-none">
+              Total Grants: {totalGrants}
+            </div>
           </div>
         </div>
 
-        {grants.length > 0 ? (
-          grants.map((grant, index) => (
+        {(showingSaved ? savedGrants : grants).length > 0 ? (
+          (showingSaved ? savedGrants : grants).map((grant, index) => (
+
             <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
-              <GrantItem grant={grant} />
+              <GrantItem grant={grant} onUnsaveSuccess={(grantId) => {
+                setSavedGrants(prev => prev.filter(g => g._id !== grantId));
+                setTotalGrants(prev => prev - 1);
+              }} />
+
             </div>
           ))
         ) : (
@@ -256,7 +361,6 @@ const GrantsPage = () => {
 
 
       </div>
-      <Toaster />
     </div>
   );
 };
