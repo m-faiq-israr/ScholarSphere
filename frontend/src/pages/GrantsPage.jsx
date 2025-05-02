@@ -12,6 +12,9 @@ import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, Pagi
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { FaArrowLeft, FaBookmark } from "react-icons/fa";
+import OpportunityStatusSelect from "@/components/InputFields/OpportunityStatusSelect";
+import { convertToCSV, downloadCSV } from "@/utils/exportCsv";
+import ExportCsv from "@/components/Buttons/ExportCsv";
 
 
 const GrantsPage = () => {
@@ -32,6 +35,7 @@ const GrantsPage = () => {
   const navigate = useNavigate();
   const [showingSaved, setShowingSaved] = useState(false);
   const [savedGrants, setSavedGrants] = useState([]);
+  
 
 
 
@@ -222,6 +226,25 @@ const GrantsPage = () => {
     }
   };
 
+  const handleExportCSV = () => {
+    const exportData = (showingSaved ? savedGrants : grants).map(({ _id, title, description, scope, total_fund, opening_date, closing_date, who_can_apply, link, contact_email }) => ({
+      _id,
+      title,
+      description,
+      scope,
+      total_fund,
+      opening_date,
+      closing_date,
+      who_can_apply,
+      link,
+      contact_email
+    }));
+  
+    const csvContent = convertToCSV(exportData);
+    downloadCSV(csvContent, showingSaved ? "saved_grants.csv" : "all_grants.csv");
+  };
+  
+
   return (
     <div>
       <div className="m-24 p-6 rounded-xl bg-gray-200">
@@ -239,6 +262,7 @@ const GrantsPage = () => {
                 />
                 {/* Filters Dropdown */}
                 <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
+                <OpportunityStatusSelect/>
                 <RecommendationButton onClick={recommendedGrantsPage} />
               </>
             ) : (
@@ -264,6 +288,7 @@ const GrantsPage = () => {
                 </>
               )}
             </button>
+            <ExportCsv onClick={handleExportCSV}/>
             <div className="font-semibold text-heading-1 font-outfit select-none">
               Total Grants: {totalGrants}
             </div>

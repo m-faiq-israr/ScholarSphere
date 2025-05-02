@@ -77,8 +77,18 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
     <div className="flex justify-between font-outfit p-1 h-full bg-white rounded-md">
       
       <div className="w-[70%]">
+        {grant.opportunity_status?.toLowerCase() === 'forecasted' && (
+          <div className="bg-heading-1 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Forecasted</div>
+        )}
         <h1 className="font-semibold text-heading-1 pb-1 text-lg">{grant.title}</h1>
-        <p className="text-gray-600 line-clamp-2">{grant.description}</p>
+        {grant?.description !== null && grant?.description !== '' ? (
+          <p className="text-gray-600 line-clamp-2">{grant?.description}</p>
+        ) : (
+          <p className='text-gray-600 line-clamp-2 '>
+          <span className='font-semibold'>Description:</span>
+          N/A
+        </p>
+        )}
       </div>
 
       <div className="w-[30%] h-full flex flex-col items-end justify-between">

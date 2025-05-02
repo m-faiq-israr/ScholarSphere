@@ -9,6 +9,12 @@ const GrantsModal = ({ open, onClose, grant }) => {
   const [isWhoCanApplyOpen, setIsWhoCanApplyOpen] = useState(false);
   const [showFullScope, setShowFullScope] = useState(false);
   const [showFullWhoCanApply, setShowFullWhoCanApply] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const words = grant.description?.split(/\s+/) || [];
+  const isLong = words.length > 75;
+  const preview = words.slice(0, 75).join(' ') + (isLong ? '...' : '');
+  const toggleExpanded = () => setExpanded(!expanded);
 
   // Animation state
   const [visible, setVisible] = useState(open);
@@ -27,7 +33,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
       return () => clearTimeout(timer);
     }
   }, [open]);
-  
+
 
   if (!visible) return null;
 
@@ -36,6 +42,14 @@ const GrantsModal = ({ open, onClose, grant }) => {
       window.open(grant.link, "_blank");
     } else {
       console.warn("No link available for this grant");
+    }
+  };
+
+  const GoToContactEmail = () => {
+    if (grant?.contact_email) {
+      window.location.href = `mailto:${grant.contact_email}`;
+    } else {
+      console.warn("No email available for this journal");
     }
   };
 
@@ -53,7 +67,12 @@ const GrantsModal = ({ open, onClose, grant }) => {
           {grant?.title || "Grant Details"}
         </div>
       }
-      footer={<ModalButton title={"Apply"} onClick={GrantApply} />}
+      footer={
+        <div className="flex items-center gap-4 justify-end">
+          {grant?.contact_email != null && (<ModalButton title={"Contact"} onClick={GoToContactEmail} />)}
+          {grant?.link != null && (<ModalButton title={"Apply"} onClick={GrantApply} />)}
+        </div>
+      }
       open={true}
       onCancel={onClose}
       width={800}
@@ -65,21 +84,34 @@ const GrantsModal = ({ open, onClose, grant }) => {
       {/* Scrollable Content */}
       <div className="modal-content font-outfit">
         {/* Description Box */}
-        <div className="bg-gray-200 p-4 rounded-xl mt-5">
-          <h1 className="font-semibold text-lg text-heading-1">Description:</h1>
-          <p className="text-heading-1 text-base">
-            {grant?.description || "No description available"}
-          </p>
-        </div>
+        {grant?.description !== null && grant?.description !== '' && (
+           <div className="bg-gray-200 p-4 rounded-xl mt-5">
+           <h1 className="font-semibold text-lg text-heading-1">Description:</h1>
+           <p className="text-heading-1 text-base whitespace-pre-wrap">
+             {expanded || !isLong ? grant.description : preview}
+           </p>
+           {isLong && (
+             <button
+               onClick={toggleExpanded}
+               className="text-blue-600 mt-2 underline text-sm"
+             >
+               {expanded ? 'Show Less' : 'Show More'}
+             </button>
+           )}
+         </div>
+        )}
 
         <div className="flex items-center gap-5">
           {/* Amount Box */}
-          <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
-            <h1 className="font-semibold text-lg text-heading-1">Grant Amount:</h1>
-            <p className="text-heading-1 text-base">
-              {grant?.total_fund ? `${grant.total_fund}` : "N/A"}
-            </p>
-          </div>
+          {grant?.total_fund !== null && grant?.total_fund !== '' && (
+            <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
+              <h1 className="font-semibold text-lg text-heading-1">Grant Amount:</h1>
+              <p className="text-heading-1 text-base">
+                {grant.total_fund}
+              </p>
+            </div>
+          )}
+
 
           {/* Opening Date */}
           {(grant?.posted_date || grant?.opening_date) && (
