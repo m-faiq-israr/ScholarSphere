@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SJRJournals } from '../../Models/JournalModels/SJRModel.js'; 
+import { Journals } from '../../Models/JournalModels/SJRModel.js'; 
 
 
 const recommendJournalsByAbstract = async (req, res) => {
@@ -10,7 +10,7 @@ const recommendJournalsByAbstract = async (req, res) => {
   }
 
   try {
-    const journalsFromDB = await SJRJournals.find();
+    const journalsFromDB = await Journals.find();
 
     const formattedJournals = journalsFromDB.map(j => ({
       title: j.title || '',

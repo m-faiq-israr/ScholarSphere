@@ -58,9 +58,12 @@ const JournalsModal = ({ open, onClose, journal }) => {
       }
       footer={
         <div className="flex items-center gap-4 justify-end">
-          <ModalButton title={"Homepage"} onClick={GoToHomepage} />
-          <ModalButton title={"Publish Guide"} onClick={GoToPublishGuide} />
-          <ModalButton title={"Contact"} onClick={GoToContactEmail} />
+          {journal?.homepage && (<ModalButton title={"Homepage"} onClick={GoToHomepage} />)}
+          {journal?.publish_guide && (<ModalButton title={"Publish Guide"} onClick={GoToPublishGuide} />)}
+          {journal?.contact_email && (<ModalButton title={"Contact"} onClick={GoToContactEmail} />)}
+          
+          
+          
         </div>
       }
       open={true}
@@ -110,7 +113,7 @@ const JournalsModal = ({ open, onClose, journal }) => {
 
           <div className="bg-gray-200 rounded-xl p-4 inline-block mt-3">
             <h1 className="font-semibold text-lg text-heading-1">Country:</h1>
-            <p className="text-heading-1 text-base">{journal.country_flag}</p>
+            <p className="text-heading-1 text-base">{journal.country}</p>
           </div>
 
           {journal.contact_email && (

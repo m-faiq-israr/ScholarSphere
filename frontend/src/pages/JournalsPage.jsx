@@ -35,21 +35,41 @@ const JournalsPage = () => {
   useEffect(() => {
     const fetchJournals = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:4000/api/journals?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}&country_flag=${filters.country || ''}&publisher=${filters.publisher || ''}&subject_area=${filters.subjectArea || ''}`
-        );
-
+        setLoading(true);
+  
+        let url = "";
+        const params = new URLSearchParams();
+        params.append("page", currentPage);
+        params.append("limit", itemsPerPage);
+  
+        const hasSearch = searchQuery.trim() !== "";
+        const hasFilters = filters.country || filters.publisher || filters.subjectArea;
+  
+        if (hasSearch) {
+          url = `http://localhost:4000/api/journals/search`;
+          params.append("search", searchQuery);
+        } else if (hasFilters) {
+          url = `http://localhost:4000/api/journals/filter`;
+          if (filters.country) params.append("country", filters.country);
+          if (filters.publisher) params.append("publisher", filters.publisher);
+          if (filters.subjectArea) params.append("subject_area", filters.subjectArea);
+        } else {
+          url = `http://localhost:4000/api/journals`;
+        }
+  
+        const response = await axios.get(`${url}?${params.toString()}`);
         setJournals(response.data.journals || []);
         setTotalJournals(response.data.total || 0);
-        setLoading(false);
       } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
-
+  
     fetchJournals();
   }, [currentPage, itemsPerPage, searchQuery, filters]);
+  
 
   const handleSearchChange = (e) => {
     setTempSearchQuery(e.target.value);
@@ -161,8 +181,6 @@ const JournalsPage = () => {
                   onApplyFilters={handleApplyFilters}
                   onClearFilters={handleClearFilters}
                 />
-                <RecommendationButton onClick={recommendedJournalsPage} />
-
                 <button className="inline-flex font-outfit select-none items-center gap-2 rounded-xl bg-heading-1 py-2 px-3 text-sm font-medium text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
                   onClick={recommendedJournalsByAbstract}>Search through abstract <BsStars/></button>
 

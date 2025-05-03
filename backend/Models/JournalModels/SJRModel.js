@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-import { ResearchJournalsDB } from '../../db.js';
+import { JournalsDB } from '../../db.js';
 
 
-const SJRJournalSchema = new mongoose.Schema({
+const JournalSchema = new mongoose.Schema({
   title: {type:String},
-  country_flag: {type: String},
+  country: {type: String},
   scope : {type: String},
   subject_areas : {type: [String]},
   publisher : {type : String},
@@ -14,9 +14,9 @@ const SJRJournalSchema = new mongoose.Schema({
   contact_email : {type : String},
   link : {type : String},
 
-}, {collection: 'SJR'});
+}, {collection: 'allJournals'});
 
 
 
-const SJRJournals = ResearchJournalsDB.model('SJR', SJRJournalSchema);
-export { SJRJournals };
+const Journals = JournalsDB.model('journals', JournalSchema);
+export { Journals };

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const CONFERENCE_DB_URI = "mongodb+srv://scholarspherefyp:GQwYK0t2FkqpUzyt@scholarsphere.0segx.mongodb.net/Conferences";
-const RESEARCH_JOURNALS_DB_URI = "mongodb+srv://scholarspherefyp:GQwYK0t2FkqpUzyt@scholarsphere.0segx.mongodb.net/ResearchJournals";
+const JOURNALS_DB_URI = "mongodb+srv://scholarspherefyp:GQwYK0t2FkqpUzyt@scholarsphere.0segx.mongodb.net/Journals";
 const GRANTS_DB_URI = "mongodb+srv://scholarspherefyp:GQwYK0t2FkqpUzyt@scholarsphere.0segx.mongodb.net/Grants";
 
 const ConferenceDB = mongoose.createConnection(CONFERENCE_DB_URI, {
@@ -9,7 +9,7 @@ const ConferenceDB = mongoose.createConnection(CONFERENCE_DB_URI, {
   useUnifiedTopology: true,
 });
 
-const ResearchJournalsDB = mongoose.createConnection(RESEARCH_JOURNALS_DB_URI, {
+const JournalsDB = mongoose.createConnection(JOURNALS_DB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -30,11 +30,11 @@ ConferenceDB.on('error', (error) => {
   console.error('Error connecting to ConferenceDB:', error);
 });
 
-ResearchJournalsDB.on('connected', () => {
+JournalsDB.on('connected', () => {
   console.log('Connected to ResearchJournalsDB successfully');
 });
 
-ResearchJournalsDB.on('error', (error) => {
+JournalsDB.on('error', (error) => {
   console.error('Error connecting to ResearchJournalsDB:', error);
 });
 
@@ -47,4 +47,4 @@ GrantsDB.on('error', (error) => {
 });
 
 
-export {ConferenceDB,  ResearchJournalsDB, GrantsDB };
+export {ConferenceDB,  JournalsDB, GrantsDB };

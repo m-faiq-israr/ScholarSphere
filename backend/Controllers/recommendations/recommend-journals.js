@@ -1,7 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import { admin, db } from '../../firebase.js';
-import { SJRJournals } from '../../Models/JournalModels/SJRModel.js'; 
+import { Journals } from '../../Models/JournalModels/SJRModel.js'; 
 
 const router = express.Router();
 
@@ -27,11 +27,11 @@ const recommendJournals = async (req, res) => {
       return res.status(400).json({ message: 'No interests found in user profile' });
     }
 
-    const journalsFromDB = await SJRJournals.find();
+    const journalsFromDB = await Journals.find();
     const formattedJournals = journalsFromDB.map(j => ({
       title: j.title || '',
       subject_areas: Array.isArray(j.subject_areas) ? j.subject_areas.join(', ') : j.subject_areas || '',
-      country_flag: j.country_flag || '',
+      country: j.country || '',
       publisher: j.publisher || '',
       coverage: j.coverage || '',
       homepage: j.homepage || '',
