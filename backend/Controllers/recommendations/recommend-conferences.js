@@ -1,12 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import { admin, db } from '../../firebase.js';
-
-// ✅ Import all four conference models
-import { ConferenceService } from '../../Models/ConferenceModels/conference_serviceModel.js';
-import { Conference365 } from '../../Models/ConferenceModels/conference365Model.js';
-import { ConferenceLists } from '../../Models/ConferenceModels/conferenceListsModel.js';
-import { WasetConference } from '../../Models/ConferenceModels/wasetConferenceModel.js';
+import { Conferences } from '../../Models/ConferenceModels/conferenceModel.js'
 
 const router = express.Router();
 
@@ -46,21 +41,17 @@ const recommendConferences = async (req, res) => {
       return res.status(400).json({ message: 'No interests found in user profile' });
     }
 
-    const [conf1, conf2, conf3, conf4] = await Promise.all([
-      ConferenceService.find(),
-      Conference365.find(),
-      ConferenceLists.find(),
-      WasetConference.find(),
-    ]);
-
-    const allConferences = [...conf1, ...conf2, ...conf3, ...conf4];
+    // ✅ Fetch from only one model now
+    const allConferences = await Conferences.find();
 
     const formattedConferences = allConferences.map(c => ({
       title: c.title || '',
       location: c.location || '',
       link: c.link || '',
-      date: c.date || c.dates || ''
+      date: c.start_date || '',
+      topics: (c.topics || '').split(',').map(t => t.trim()) // ✅ Convert string to array
     }));
+    
 
     const response = await axios.post('http://127.0.0.1:8000/recommend/conferences', {
       user_interests: interests,
@@ -76,7 +67,5 @@ const recommendConferences = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
-
-
 
 export { recommendConferences };

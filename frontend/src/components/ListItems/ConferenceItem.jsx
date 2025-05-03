@@ -81,7 +81,8 @@ const ConferenceItem = ({ conference, onUnsaveSuccess }) => {
 
       <p className="mb-1 font-outfit text-gray-600">
         <span className="font-semibold">Date: </span>
-        {conference.dates ? conference.dates : conference.date}
+        {conference.start_date}
+        {conference.end_date && ` - ${conference.end_date}`}
       </p>
 
       <p className="mb-1 font-outfit text-gray-600">

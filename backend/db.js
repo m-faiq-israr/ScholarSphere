@@ -21,6 +21,7 @@ const GrantsDB = mongoose.createConnection(GRANTS_DB_URI, {
 });
 
 
+
 ConferenceDB.on('connected', () => {
   console.log('Connected to ConferenceDB successfully');
 });
@@ -45,4 +46,5 @@ GrantsDB.on('error', (error) => {
   console.error('Error connecting to GrantsDB:', error);
 });
 
-export { ConferenceDB, ResearchJournalsDB, GrantsDB };
+
+export {ConferenceDB,  ResearchJournalsDB, GrantsDB };

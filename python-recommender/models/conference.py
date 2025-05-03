@@ -1,16 +1,28 @@
+import json
+import torch
+import os
 from fastapi import APIRouter, Query
 from pydantic import BaseModel
 from typing import List, Optional
 from sentence_transformers import SentenceTransformer, util
 
-router = APIRouter()
-
-# ✅ Load the model once globally
+# Load model globally
 model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# Load precomputed embeddings
+current_dir = os.path.dirname(os.path.abspath(__file__))
+json_path = os.path.join(current_dir, "conferences_with_embeddings.json")
+
+with open(json_path, "r", encoding="utf-8") as f:
+    precomputed_conferences = json.load(f)
+
+router = APIRouter()
 
 class Conference(BaseModel):
     title: str
-    date: str = ""
+    topics: Optional[str] = ""  # topics is stored as string
+    start_date: str = ""
+    end_date: str = ""
     location: str = ""
     link: str = ""
 
@@ -20,45 +32,72 @@ class Publication(BaseModel):
     year: str
     authors: List[str]
     keywords: List[str]
-    abstract: str
+    abstract: Optional[str] = ""
 
 class RecommendConferenceRequest(BaseModel):
     user_interests: List[str]
     publications: Optional[List[Publication]] = []
     fetched_publications: Optional[List[Publication]] = []
-    conferences: List[Conference]
 
 @router.post("/recommend/conferences")
-def recommend_conferences(data: RecommendConferenceRequest, top_n: int = Query(10)):
-    # ✅ Merge user interests
-    interest_text = " ".join(data.user_interests)
-
-    # ✅ Merge publication titles + keywords
+def recommend_conferences(data: RecommendConferenceRequest, top_n: int = Query(30)):
     all_publications = (data.publications or []) + (data.fetched_publications or [])
+
+    interest_text = " ".join(data.user_interests)
     publication_text = " ".join([
-        f"{pub.title} {' '.join(pub.keywords)}" for pub in all_publications
+        f"{pub.title} {' '.join(pub.keywords)} {pub.abstract or ''}" for pub in all_publications
     ])
 
-    # ✅ User query = interests + titles + keywords
-    user_text = f"{interest_text} {publication_text}".strip()
+    user_embeddings = model.encode(
+        [interest_text, publication_text],
+        convert_to_tensor=True,
+        normalize_embeddings=True
+    )
+    interest_embedding, publication_embedding = user_embeddings
 
-    # ✅ Conference titles
-    conference_texts = [c.title for c in data.conferences]
+    interest_based = []
+    publication_based = []
 
-    # ✅ Encode user text and conference titles
-    user_embedding = model.encode(user_text, convert_to_tensor=True, normalize_embeddings=True)
-    conference_embeddings = model.encode(conference_texts, convert_to_tensor=True, normalize_embeddings=True)
+    for conf in precomputed_conferences:
+        topics_string = conf.get("topics", "")
+        topics_list = [t.strip() for t in topics_string.split(",")] if isinstance(topics_string, str) else []
 
-    # ✅ Semantic similarity
-    similarities = util.cos_sim(user_embedding, conference_embeddings)[0]
+        combined_text = f"{conf['title']} {' '.join(topics_list)}"
+        conference_embedding = torch.tensor(conf["conference_embedding"])
 
-    recommendations = []
-    for conf, score in zip(data.conferences, similarities):
-        if score > 0.25:  # you can tune this threshold if needed
-            recommendations.append({
-                "conference": conf,
-                "score": float(score)
+        interest_score = float(util.cos_sim(interest_embedding, conference_embedding)[0])
+        publication_score = float(util.cos_sim(publication_embedding, conference_embedding)[0])
+
+        base_conf_info = {
+            "title": conf["title"],
+            "topics": topics_string,
+            "start_date": conf.get("start_date", ""),
+            "end_date": conf.get("end_date", ""),
+            "location": conf.get("location", ""),
+            "link": conf.get("link", "")
+        }
+
+        if interest_score > 0.3:
+            interest_based.append({
+                "reason": "Based on your research interests",
+                "conference": base_conf_info,
+                "score": interest_score
             })
 
-    recommendations.sort(key=lambda x: x["score"], reverse=True)
-    return recommendations[:top_n]
+        if publication_score > 0.3:
+            publication_based.append({
+                "reason": "Based on your publication history",
+                "conference": base_conf_info,
+                "score": publication_score
+            })
+
+    interest_based.sort(key=lambda x: x["score"], reverse=True)
+    publication_based.sort(key=lambda x: x["score"], reverse=True)
+    print("Interest-based matches:", len(interest_based))
+    print("Publication-based matches:", len(publication_based))
+
+
+    return {
+        "recommended_by_interest": interest_based[:top_n],
+        "recommended_by_publications": publication_based[:top_n]
+    }

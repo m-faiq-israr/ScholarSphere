@@ -31,20 +31,31 @@ const ConferencesPage = () => {
   const [savedConferences, setSavedConferences] = useState([]);
 
   const fetchConferences = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `http://localhost:4000/api/conferences?page=${currentPage}&limit=${itemsPerPage}&search=${searchQuery}&startDate=${startDate || ""}&endDate=${endDate || ""}&location=${location || ""}`
-      );
+  try {
+    setLoading(true);
 
-      setConferences(response.data.conferences || []);
-      setTotalConferences(response.data.total || 0);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    let endpoint = "";
+    const baseUrl = "http://localhost:4000/api/conferences";
+
+    if (searchQuery) {
+      endpoint = `${baseUrl}/search?q=${encodeURIComponent(searchQuery)}&page=${currentPage}&limit=${itemsPerPage}`;
+    } else if (startDate || endDate || location) {
+      endpoint = `${baseUrl}/filter?startDate=${startDate || ""}&endDate=${endDate || ""}&location=${location || ""}&page=${currentPage}&limit=${itemsPerPage}`;
+    } else {
+      endpoint = `${baseUrl}?page=${currentPage}&limit=${itemsPerPage}`;
     }
-  };
+
+    const response = await axios.get(endpoint);
+
+    setConferences(response.data.conferences || []);
+    setTotalConferences(response.data.total || 0);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
   useEffect(() => {
     fetchConferences();
   }, [currentPage, searchQuery, startDate, endDate, location]);
