@@ -39,6 +39,8 @@ const UserProfile = () => {
   const [expandedPubs, setExpandedPubs] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [fetchedOnce, setFetchedOnce] = useState(false);
+
   const itemsPerPage = 5;
   const navigate = useNavigate();
 
@@ -106,6 +108,10 @@ const UserProfile = () => {
         } else {
           setuserName("Guest");
         }
+
+        if (userData.fetched_publications?.length > 0) {
+          setFetchedOnce(true);
+        }        
 
         // Set expandedPubs collapsed by default
         setExpandedPubs(combinedPublications.map(() => false));
@@ -253,18 +259,37 @@ const UserProfile = () => {
     setLoading(true);
     try {
       // 1. Save user profile (first step)
-      await setDoc(doc(db, "user_profile", user.uid), formData);
+      await setDoc(doc(db, "user_profile", user.uid), {
+        ...formData,
+        fetched_publications: [] // ✅ Ensure this field is cleared if user deleted all pubs
+      });
+      
       notify(hasData ? "Data updated successfully!" : "Data saved successfully!");
 
       // 2. If ORCID ID is provided, call backend to fetch publications
-      if (formData.orcidId && formData.orcidId.trim() !== "") {
-        await axios.post('http://localhost:4000/api/publications/fetch-publications', {
-          uid: user.uid,
-        });
-
-        // 3. Refetch the latest user data from Firestore
-        await fetchUserData(user.uid);
+      if (
+        formData.orcidId &&
+        formData.orcidId.trim() !== "" &&
+        formData.orcidId !== originalData.orcidId // only if changed
+      ) {
+        try {
+          const response = await axios.post('http://localhost:4000/api/publications/fetch-publications', {
+            uid: user.uid,
+          });
+          console.log('orcid is called')
+      
+          if (response.status === 200 && response.data.publications.length > 0) {
+            await fetchUserData(user.uid);
+            notify("Fetched publications from ORCID successfully!");
+          } else {
+            notifyError("No publications found for this ORCID ID.");
+          }
+        } catch (err) {
+          notifyError("Failed to fetch publications. Please check the ORCID ID.");
+        }
       }
+      
+      
 
       setOriginalData(formData);
       setHasData(true);

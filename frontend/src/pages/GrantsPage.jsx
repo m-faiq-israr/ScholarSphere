@@ -35,9 +35,8 @@ const GrantsPage = () => {
   const navigate = useNavigate();
   const [showingSaved, setShowingSaved] = useState(false);
   const [savedGrants, setSavedGrants] = useState([]);
-  
-
-
+  const [opportunityStatus, setOpportunityStatus] = useState("all");
+  const [opportunityStatusCounts, setOpportunityStatusCounts] = useState({});
 
 
   // **Fetch All Grants**
@@ -95,15 +94,56 @@ const GrantsPage = () => {
     }
   };
 
+
+  const handleOpportunityStatusChange = (status) => {
+    setOpportunityStatus(status);
+    setCurrentPage(1);
+    if (status === "all") {
+      fetchAllGrants();
+    } else {
+      fetchGrantsByOpportunityStatus(status);
+    }
+  };
+
+  const fetchGrantsByOpportunityStatus = async (status) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`http://localhost:4000/api/grants/by-opportunity-status?status=${status}&page=${currentPage}&limit=${itemsPerPage}`);
+      setGrants(response.data.grants || []);
+      setTotalGrants(response.data.total || 0);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchOpportunityStatusCounts = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/api/grants/opportunity-status-counts");
+      setOpportunityStatusCounts(response.data || {});
+    } catch (err) {
+      console.error("Error fetching opportunity status counts:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchOpportunityStatusCounts();
+  }, []);
+
+
   useEffect(() => {
     if (isSearched) {
       fetchSearchedGrants();
     } else if (isFiltered) {
       fetchFilteredGrants();
+    } else if (opportunityStatus !== "all") {
+      fetchGrantsByOpportunityStatus(opportunityStatus);
     } else {
       fetchAllGrants();
     }
-  }, [currentPage, appliedSearchTerm, minAmount, maxAmount, descriptionFilter]);
+  }, [currentPage, appliedSearchTerm, minAmount, maxAmount, descriptionFilter, opportunityStatus]);
+
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -226,6 +266,8 @@ const GrantsPage = () => {
     }
   };
 
+
+
   const handleExportCSV = () => {
     const exportData = (showingSaved ? savedGrants : grants).map(({ _id, title, description, scope, total_fund, opening_date, closing_date, who_can_apply, link, contact_email }) => ({
       _id,
@@ -239,11 +281,11 @@ const GrantsPage = () => {
       link,
       contact_email
     }));
-  
+
     const csvContent = convertToCSV(exportData);
     downloadCSV(csvContent, showingSaved ? "saved_grants.csv" : "all_grants.csv");
   };
-  
+
 
   return (
     <div>
@@ -262,7 +304,12 @@ const GrantsPage = () => {
                 />
                 {/* Filters Dropdown */}
                 <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
-                <OpportunityStatusSelect/>
+                <OpportunityStatusSelect
+                  onChange={handleOpportunityStatusChange}
+                  value={opportunityStatus}
+                  counts={opportunityStatusCounts}
+                />
+
                 <RecommendationButton onClick={recommendedGrantsPage} />
               </>
             ) : (
@@ -288,7 +335,7 @@ const GrantsPage = () => {
                 </>
               )}
             </button>
-            <ExportCsv onClick={handleExportCSV}/>
+            <ExportCsv onClick={handleExportCSV} />
             <div className="font-semibold text-heading-1 font-outfit select-none">
               Total Grants: {totalGrants}
             </div>

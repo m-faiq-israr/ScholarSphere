@@ -94,95 +94,113 @@ const filterGrants = async (req, res) => {
   try {
     const minAmount = req.query.minAmount ? parseFloat(req.query.minAmount) : null;
     const maxAmount = req.query.maxAmount ? parseFloat(req.query.maxAmount) : null;
-    const descriptionFilter = req.query.descriptionFilter?.trim().toLowerCase() || null;
+    const descriptionFilter = req.query.descriptionFilter?.trim();
 
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const matchStage = {
-        $and: [
-          { link: { $exists: true, $ne: "" } }
-        ]
-      };
-      
-      if (descriptionFilter) {
-        matchStage.$and.push({
-          $or: [
-            { title: { $regex: descriptionFilter, $options: 'i' } },
-            { description: { $regex: descriptionFilter, $options: 'i' } }
-          ]
-        });
-      }
-      
-      
+    // Mongoose base query
+    const matchQuery = {
+      link: { $exists: true, $ne: "" },
+    };
 
-    // Add total_fund filtering via a projected numeric field
-    const pipeline = [
-      { $match: matchStage },
-      {
-        $addFields: {
-          numeric_fund: {
-            $cond: {
-              if: { $isNumber: "$total_fund" },
-              then: "$total_fund",
-              else: {
-                $convert: {
-                  input: {
-                    $replaceAll: {
-                      input: "$total_fund",
-                      find: ",",
-                      replacement: ""
-                    }
-                  },
-                  to: "double",
-                  onError: null,
-                  onNull: null
-                }
-              }
-            }
-          }
-        }
-      },
-    ];
 
-    // Add fund filtering if applicable
-    const fundMatch = {};
-    if (minAmount !== null) fundMatch.$gte = minAmount;
-    if (maxAmount !== null) fundMatch.$lte = maxAmount;
-    if (Object.keys(fundMatch).length > 0) {
-      pipeline.push({ $match: { numeric_fund: fundMatch } });
+    if (descriptionFilter) {
+      matchQuery.$or = [
+        { title: { $regex: descriptionFilter, $options: "i" } },
+        { description: { $regex: descriptionFilter, $options: "i" } },
+      ];
     }
 
-    pipeline.push(
-      { $sort: { createdAt: -1 } },
-      {
-        $facet: {
-          grants: [
-            { $skip: skip },
-            { $limit: limit }
-          ],
-          totalCount: [
-            { $count: "count" }
-          ]
-        }
-      }
-    );
+    // Fetch a larger number to filter locally
+    const rawGrants = await Grants.find(matchQuery).sort({ createdAt: -1 }).lean();
 
-    const result = await Grants.aggregate(pipeline);
-    const grants = result[0]?.grants || [];
-    const total = result[0]?.totalCount[0]?.count || 0;
+    // Apply amount filter using parseAmount()
+    const filtered = rawGrants.filter((grant) => {
+      const amount = parseAmount(grant.total_fund);
+      if (amount === null) return false;
 
-    res.status(200).json({ grants, total, page, limit });
+      if (minAmount !== null && amount < minAmount) return false;
+      if (maxAmount !== null && amount > maxAmount) return false;
+      return true;
+    });
+
+    const total = filtered.length;
+    const paginated = filtered.slice(skip, skip + limit);
+
+    res.status(200).json({ grants: paginated, total, page, limit });
   } catch (error) {
     console.error("Error filtering grants:", error);
     res.status(500).json({ message: "Error filtering grants." });
   }
 };
 
+const opportunity_filter = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 10 } = req.query;
+    const skip = (page - 1) * limit;
+
+    let query = {};
+
+    if (status === "forecasted") {
+      query.opportunity_status = "forecasted";
+    } else if (status === "Upcoming") {
+      query.opportunity_status = "Upcoming";
+    } else if (status === "Open") {
+      query.$or = [
+        { opportunity_status: { $nin: ["forecasted", "Upcoming"] } },
+        { opportunity_status: { $exists: false } },
+        { opportunity_status: null },
+        { opportunity_status: "" }
+      ];
+    }
+
+    const results = await Grants.find(query).skip(skip).limit(Number(limit));
+    const total = await Grants.countDocuments(query);
+
+    // Optional: normalize numeric_fund for frontend compatibility
+    const processed = results.map(grant => ({
+      ...grant.toObject(),
+      numeric_fund: parseAmount(grant.total_fund)
+    }));
+
+    res.status(200).json({ grants: processed, total });
+  } catch (error) {
+    console.error("Error filtering by opportunity_status:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+const getOpportunityStatusCounts = async (req, res) => {
+  try {
+    const all = await Grants.countDocuments(); 
+
+    const forecasted = await Grants.countDocuments({ opportunity_status: "forecasted" });
+
+    const upcoming = await Grants.countDocuments({ opportunity_status: "Upcoming" });
+
+    const open = await Grants.countDocuments({
+      $or: [
+        { opportunity_status: { $nin: ["forecasted", "Upcoming"] } },
+        { opportunity_status: { $exists: false } },
+        { opportunity_status: null },
+        { opportunity_status: "" }
+      ]
+    });
+
+    res.status(200).json({
+      all,
+      open,
+      upcoming,
+      forecasted
+    });
+  } catch (error) {
+    console.error("Error getting opportunity status counts:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
 
 
-  
-
-
-export { getAllGrants, getGrantsByIds, searchGrants, filterGrants };
+export { getAllGrants, getGrantsByIds, searchGrants, filterGrants, opportunity_filter, getOpportunityStatusCounts };
+ 

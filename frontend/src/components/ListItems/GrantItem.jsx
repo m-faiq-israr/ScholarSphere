@@ -10,6 +10,17 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
   const [saved, setSaved] = useState(false);
   const currentUser = auth.currentUser;
   const userId = currentUser?.uid;
+  const normalizedStatus = grant.opportunity_status?.toLowerCase?.() || "";
+
+
+  const isOpenStatus = [
+    "open",
+    "posted",
+    "cleared",
+    "waiting for new publication",
+    "", // treat empty string as open
+  ].includes(normalizedStatus);
+
 
   useEffect(() => {
     const checkIfSaved = async () => {
@@ -72,14 +83,20 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
   };
   
   
-
   return (
     <div className="flex justify-between font-outfit p-1 h-full bg-white rounded-md">
       
       <div className="w-[70%]">
-        {grant.opportunity_status?.toLowerCase() === 'forecasted' && (
-          <div className="bg-heading-1 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Forecasted</div>
-        )}
+      {normalizedStatus === "forecasted" && (
+  <div className="bg-blue-300 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Forecasted</div>
+)}
+{normalizedStatus === "upcoming" && (
+  <div className="bg-orange-500 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Upcoming</div>
+)}
+{isOpenStatus && (
+  <div className="bg-teal-500 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Applications Open</div>
+)}
+
         <h1 className="font-semibold text-heading-1 pb-1 text-lg">{grant.title}</h1>
         {grant?.description !== null && grant?.description !== '' ? (
           <p className="text-gray-600 line-clamp-2">{grant?.description}</p>
