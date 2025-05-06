@@ -8,7 +8,6 @@ import os
 
 router = APIRouter()
 
-# Load model and embeddings once
 model = SentenceTransformer("all-MiniLM-L6-v2")
 base_dir = os.path.dirname(os.path.abspath(__file__))
 embeddings_path = os.path.join(base_dir, "journals_with_embeddings.json")

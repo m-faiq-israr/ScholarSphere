@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './routes/ProtectedRoute';
 import PublicRoute from './routes/PublicRoutes';
-import MainPage from './pages/MainPage';
 import SignIn from './pages/Auth/SigninPage';
 import SignUp from './pages/Auth/SignupPage';
 import { AppProvider } from './contexts/AppContext';
@@ -13,7 +12,6 @@ import JournalsPage from './pages/JournalsPage';
 import Nav from './components/Navs/UserPageNav';
 import RecommendedGrantsPage from './pages/Recommend-Pages/RecommendedGrants';
 import RecommendedConferencesPage from './pages/Recommend-Pages/RecommendedConferences';
-import RecommendedJournalsPage from './pages/Recommend-Pages/RecommendedJournals';
 import RecommendedJournalsByAbstract from './pages/Recommend-Pages/RecommendedJournalsByAbstract';
 import { Toaster } from './components/ui/toaster';
 import LandingPage from './pages/LandingPage';
@@ -101,14 +99,6 @@ function AppContent() {
           }
         />
 
-        <Route
-          path="/journals/recommended-journals"
-          element={
-            <ProtectedRoute>
-              <RecommendedJournalsPage />
-            </ProtectedRoute>
-          }
-        />
 
 <Route
           path="/journals/recommend-by-abstract"
