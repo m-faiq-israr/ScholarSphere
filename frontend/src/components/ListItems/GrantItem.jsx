@@ -4,6 +4,7 @@ import { FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { auth } from "../../firebase/firebase";
 import { db } from "../../firebase/firebase";
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import SeeDetails from "../Buttons/SeeDetails";
 
 const GrantItem = ({ grant, onUnsaveSuccess }) => {
   const [open, setOpen] = useState(false);
@@ -18,7 +19,7 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
     "posted",
     "cleared",
     "waiting for new publication",
-    "", // treat empty string as open
+    "", 
   ].includes(normalizedStatus);
 
 
@@ -47,9 +48,9 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
   }, [grant, userId]);
 
   const handleSave = async () => {
-    if (!userId || !grant?._id) return;  
+    if (!userId || !grant?._id) return;
     setSaved(true);
-  
+
     try {
       const userDocRef = doc(db, "user_profile", userId);
       await updateDoc(userDocRef, {
@@ -60,56 +61,56 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
       setSaved(false);
     }
   };
-  
+
   const handleUnsave = async () => {
     if (!userId || !grant?._id) return;
-  
+
     setSaved(false);
-  
+
     try {
       const userDocRef = doc(db, "user_profile", userId);
       await updateDoc(userDocRef, {
         savedGrants: arrayRemove(grant._id)
       });
-  
+
       if (onUnsaveSuccess) {
         onUnsaveSuccess(grant._id);
       }
-  
+
     } catch (error) {
       console.error("Error unsaving grant:", error);
       setSaved(true);
     }
   };
-  
-  
+
+
   return (
     <div className="flex justify-between font-outfit p-1 h-full bg-white rounded-md">
-      
+
       <div className="w-[70%]">
-      {normalizedStatus === "forecasted" && (
-  <div className="bg-blue-300 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Forecasted</div>
-)}
-{normalizedStatus === "upcoming" && (
-  <div className="bg-orange-500 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Upcoming</div>
-)}
-{isOpenStatus && (
-  <div className="bg-teal-500 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Applications Open</div>
-)}
+        {normalizedStatus === "forecasted" && (
+          <div className="bg-cyan-500 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Forecasted</div>
+        )}
+        {normalizedStatus === "upcoming" && (
+          <div className="bg-orange-500 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Upcoming</div>
+        )}
+        {isOpenStatus && (
+          <div className="bg-teal-500 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Applications Open</div>
+        )}
 
         <h1 className="font-semibold text-heading-1 pb-1 text-lg">{grant.title}</h1>
         {grant?.description !== null && grant?.description !== '' ? (
           <p className="text-gray-600 line-clamp-2">{grant?.description}</p>
         ) : (
           <p className='text-gray-600 line-clamp-2 '>
-          <span className='font-semibold'>Description:</span>
-          N/A
-        </p>
+            <span className='font-semibold'>Description:</span>
+            N/A
+          </p>
         )}
       </div>
 
-      <div className="w-[30%] h-full flex flex-col items-end justify-between">
-        
+      <div className="w-[30%] flex flex-col justify-between items-end">
+
         {/* Save/Unsave Icon */}
         <div
           className="text-xl text-gray-600 hover:text-heading-1 cursor-pointer"
@@ -119,26 +120,7 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
         </div>
 
         {/* Open Modal */}
-        <button
-          className="flex select-none items-center justify-center mt-7 text-sm w-28 bg-green-500 text-white px-1 py-1 rounded-md hover:bg-green-600 transition-colors"
-          onClick={() => setOpen(true)}
-        >
-          See details
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 ml-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
+        <SeeDetails onclick={()=>setOpen(true)} text={"See details"}/>
 
       </div>
 

@@ -5,7 +5,8 @@ import { auth } from "../../firebase/firebase";
 import { BsStars } from "react-icons/bs";
 import ExportCsv from "@/components/Buttons/ExportCsv";
 import { convertToCSV, downloadCSV } from "@/utils/exportCsv";
-import GrantItem from "../../components/ListItems/GrantItem"; // Create if not exists
+import GrantItem from "../../components/ListItems/GrantItem"; 
+import recomGrants from '../../assets/images/recomGrants.png'
 
 const RecommendedGrantsPage = () => {
   const [grants, setGrants] = useState({
@@ -86,11 +87,12 @@ const RecommendedGrantsPage = () => {
     .sort((a, b) => b.score - a.score);
 
   return (
-    <div className="m-24 p-6 rounded-xl bg-gray-200">
-      <div className="flex items-center justify-between mb-6">
-        <div className="text-heading-1 font-outfit font-semibold text-2xl flex items-center gap-2">
-          <BsStars />
+    <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)]">
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-heading-1 font-outfit font-bold text-3xl flex items-center ">
+          {/* <BsStars /> */}
           Recommended Grants
+          <img src={recomGrants} className="size-14"/>
         </div>
         {allGrants.length > 0 && <ExportCsv onClick={handleExportCSV} />}
       </div>
@@ -98,7 +100,8 @@ const RecommendedGrantsPage = () => {
       {allGrants.length > 0 ? (
         allGrants.map((item, idx) => (
           <div key={idx} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
-            <GrantItem grant={item.grant} />
+            <GrantItem grant={{ ...item.grant }} />
+            
             <div className="mt-2 text-sm text-heading-1 font-outfit">
               <strong>{item.reason}</strong> (Score: {item.score.toFixed(2)})
             </div>

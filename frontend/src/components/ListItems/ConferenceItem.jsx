@@ -4,6 +4,8 @@ import axios from "axios";
 import { auth } from '../../firebase/firebase';
 import { doc, getDoc } from "firebase/firestore";
 import { db } from '../../firebase/firebase';
+import { FaLink } from "react-icons/fa";
+
 
 const ConferenceItem = ({ conference, onUnsaveSuccess }) => {
 
@@ -91,7 +93,7 @@ const ConferenceItem = ({ conference, onUnsaveSuccess }) => {
       </p>
 
       <button
-        className="flex gap-2 select-none items-center justify-center mt-3 text-sm w-28 bg-green-500 text-white px-1 py-1 rounded-md hover:bg-green-600 transition-colors"
+        className="flex gap-2 select-none items-center justify-center mt-3 text-sm w-28 bg-emerald-500 text-white px-1 py-1 rounded-md hover:bg-emerald-600 font-outfit transition-colors"
         onClick={() => {
           if (conference.link) {
             window.open(conference.link, "_blank");
@@ -103,7 +105,7 @@ const ConferenceItem = ({ conference, onUnsaveSuccess }) => {
         }}
       >
         Apply
-        <FaExternalLinkAlt />
+        <FaLink/>
       </button>
     </div>
   );

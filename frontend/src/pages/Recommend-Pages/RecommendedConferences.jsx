@@ -6,6 +6,7 @@ import ConferenceItem from "../../components/ListItems/ConferenceItem";
 import { BsStars } from "react-icons/bs";
 import ExportCsv from "@/components/Buttons/ExportCsv";
 import { convertToCSV, downloadCSV } from "@/utils/exportCsv";
+import recomConferences from '../../assets/images/recomConferences.png'
 
 const RecommendedConferencesPage = () => {
   const [conferences, setConferences] = useState({
@@ -83,11 +84,12 @@ const RecommendedConferencesPage = () => {
   };
 
   return (
-    <div className="m-24 p-6 rounded-xl bg-gray-200">
-      <div className="flex items-center justify-between mb-6">
-        <div className="text-heading-1 font-outfit font-semibold text-2xl flex items-center gap-2">
-          <BsStars />
+    <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)]">
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-heading-1 font-outfit font-bold text-3xl flex items-center gap-2">
+          {/* <BsStars /> */}
           Recommended Conferences
+          <img src={recomConferences} className="size-14"/>
         </div>
         {allConfs.length > 0 && <ExportCsv onClick={handleExportCSV} />}
       </div>

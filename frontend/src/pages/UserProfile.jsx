@@ -327,7 +327,7 @@ const UserProfile = () => {
 
 
   return (
-    <div className="mt-24 px-12 pb-5 pt-8 m-20 rounded-xl bg-gray-200">
+    <div className="mt-24 px-12 pb-5 pt-8 m-20 rounded-xl bg-[rgb(0,0,0,0.07)]">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <div className='cursor-pointer bg-heading-1 hover:bg-gray-700 rounded-full p-1.5'>
@@ -450,7 +450,7 @@ const UserProfile = () => {
         {paginatedPublications.length > 0 ? (
           paginatedPublications.map((pub, pubIndex) => (
 
-            <div key={pubIndex} className="bg-gray-100 p-4 rounded-xl mb-4">
+            <div key={pubIndex} className="bg-[rgb(0,0,0,0.07)] p-4 rounded-xl mb-4">
               {/* Accordion Header */}
               <div
                 className="flex items-center justify-between mb-2 cursor-pointer"
@@ -590,7 +590,7 @@ const UserProfile = () => {
                     onChange={(e) =>
                       handleAbstractChange(pubIndex, e.target.value)
                     }
-                    className="w-full h-32 p-3 rounded-xl resize-none bg-gray-200 text-sm focus:outline-none text-heading-1"
+                    className="w-full h-32 p-3 rounded-xl resize-none bg-[rgb(0,0,0,0.07)] text-sm focus:outline-none text-heading-1"
                   />
                   <p className="text-sm text-gray-500 mt-1">
                     Word Count:{" "}
@@ -659,7 +659,7 @@ const UserProfile = () => {
                         className={`px-3 py-1 rounded-md text-sm font-semibold
                 ${currentPage === page
                             ? "bg-heading-1 text-white"
-                            : "bg-gray-200 text-heading-1 hover:bg-gray-300"}`}
+                            : "bg-[rgb(0,0,0,0.07)] text-heading-1 hover:bg-gray-300"}`}
                       >
                         {page}
                       </button>

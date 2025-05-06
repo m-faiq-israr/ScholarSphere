@@ -10,7 +10,7 @@ import {
 
 const OpportunityStatusSelect = ({ onChange, value, counts = {} }) => {
   return (
-    <div className="w-52">
+    <div className="w-48">
       <Select onValueChange={onChange} value={value}>
         <SelectTrigger className="!bg-heading-1 w-full !text-white font-medium shadow-none !border-none rounded-xl font-outfit px-3 focus:ring-0 focus:outline-none focus:border-none ring-0 focus-visible:ring-0 data-[state=open]:ring-0">
           <SelectValue className="!text-white" />

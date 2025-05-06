@@ -58,7 +58,7 @@ const RecommendedJournalsPage = () => {
   }
 
   return (
-    <div className="m-24 p-6 rounded-xl bg-gray-200">
+    <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)]">
       <div className="text-heading-1 font-outfit font-semibold mb-6 text-2xl flex items-center gap-2">
         <BsStars />
         Recommended Journals

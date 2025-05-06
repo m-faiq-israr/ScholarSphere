@@ -5,6 +5,7 @@ import axios from 'axios';
 import { auth } from '../../firebase/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
+import SeeDetails from '../Buttons/SeeDetails';
 
 const JournalItem = ({ journal, onUnsaveSuccess }) => {
   const [open, setOpen] = useState(false);
@@ -79,31 +80,12 @@ const JournalItem = ({ journal, onUnsaveSuccess }) => {
           {journal.scope}
         </p>
 
-        <p className='text-gray-600 line-clamp-2 '>
+        <p className='text-gray-600 line-clamp-2 mb-3 '>
           <span className='font-semibold'>Publisher:&nbsp;</span>
           {journal.publisher}
         </p>
 
-        <button 
-          onClick={() => setOpen(true)} 
-          className='flex items-center justify-center select-none mt-3 text-sm w-28 bg-green-500 text-white px-1 py-1 rounded-md hover:bg-green-600 transition-colors'
-        >
-          See details
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            className='h-4 w-4 ml-1'
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke='currentColor'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M9 5l7 7-7 7'
-            />
-          </svg>
-        </button>
+       <SeeDetails text={"See details"} onclick={()=>setOpen(true)}/>
       </div>
 
       {/* Right side */}

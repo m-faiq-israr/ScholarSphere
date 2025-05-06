@@ -85,7 +85,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
       <div className="modal-content font-outfit">
         {/* Description Box */}
         {grant?.description !== null && grant?.description !== '' && (
-           <div className="bg-gray-200 p-4 rounded-xl mt-5">
+           <div className="bg-[rgb(0,0,0,0.07)] p-4 rounded-xl mt-5">
            <h1 className="font-semibold text-lg text-heading-1">Description:</h1>
            <p className="text-heading-1 text-base whitespace-pre-wrap">
              {expanded || !isLong ? grant.description : preview}
@@ -104,7 +104,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
         <div className="flex items-center gap-5">
           {/* Amount Box */}
           {grant?.total_fund !== null && grant?.total_fund !== '' && (
-            <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-5">
               <h1 className="font-semibold text-lg text-heading-1">Grant Amount:</h1>
               <p className="text-heading-1 text-base">
                 {grant.total_fund}
@@ -115,7 +115,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
 
           {/* Opening Date */}
           {(grant?.posted_date || grant?.opening_date) && (
-            <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-5">
               <h1 className="font-semibold text-lg text-heading-1">Opening Date:</h1>
               <p className="text-heading-1 text-base">
                 {grant?.posted_date ? `${grant.posted_date}` : `${grant.opening_date}`}
@@ -125,7 +125,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
 
           {/* Closing Date */}
           {(grant?.due_date || grant?.closing_date) && (
-            <div className="bg-gray-200 rounded-xl p-4 inline-block mt-5">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-5">
               <h1 className="font-semibold text-lg text-heading-1">Closing Date:</h1>
               <p className="text-heading-1 text-base">
                 {grant?.due_date ? `${grant.due_date}` : `${grant.closing_date}`}
@@ -135,7 +135,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
         </div>
         {/* Scope Section */}
         {grant?.scope && (
-          <div className="mt-5 bg-gray-200 p-4 rounded-xl">
+          <div className="mt-5 bg-[rgb(0,0,0,0.07)] p-4 rounded-xl">
             <button
               onClick={() => setIsScopeOpen(!isScopeOpen)}
               className="flex justify-between items-center w-full py-2 text-left text-lg font-semibold text-heading-1"
@@ -164,7 +164,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
 
         {/* Who Can Apply Section */}
         {grant?.who_can_apply && (
-          <div className="mt-5 bg-gray-200 p-4 rounded-xl">
+          <div className="mt-5 bg-[rgb(0,0,0,0.07)] p-4 rounded-xl">
             <button
               onClick={() => setIsWhoCanApplyOpen(!isWhoCanApplyOpen)}
               className="flex justify-between items-center w-full py-2 text-left text-lg font-semibold text-heading-1"

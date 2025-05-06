@@ -3,7 +3,7 @@ import axios from "axios";
 import { Skeleton } from "antd";
 import JournalItem from "../../components/ListItems/JournalItem";
 import { BsStars } from "react-icons/bs";
-
+import recomJournals from '../../assets/images/recomJournals.png'
 const RecommendedJournalsByAbstract = () => {
   const [abstract, setAbstract] = useState("");
   const [journals, setJournals] = useState([]);
@@ -38,10 +38,11 @@ const RecommendedJournalsByAbstract = () => {
   };
 
   return (
-    <div className="m-24 p-6 rounded-xl bg-gray-200 font-outfit">
-      <div className="text-heading-1 font-semibold mb-4 text-2xl flex items-center gap-2">
-        Recommend Journals by Abstract
-        <BsStars />
+    <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)] font-outfit">
+      <div className="text-heading-1 font-bold mb-4 text-3xl flex items-center gap-2">
+        Find the best Journals for your Research Paper
+        {/* <BsStars /> */}
+        <img src={recomJournals} className="size-14"/>
       </div>
 
       {/* Text Area Input */}
@@ -54,9 +55,10 @@ const RecommendedJournalsByAbstract = () => {
 
       <button
         onClick={fetchRecommendations}
-        className="mt-2 mb-6 px-6 py-2 bg-heading-1 hover:bg-gray-800 text-white font-semibold rounded-xl"
+        className="mt-4 mb-6 px-6 py-2 bg-teal-500 hover:bg-opacity-90 text-white font-medium rounded-lg flex items-center gap-1"
       >
         Get Recommendations
+        <BsStars />
       </button>
 
       {/* Loading & Error */}

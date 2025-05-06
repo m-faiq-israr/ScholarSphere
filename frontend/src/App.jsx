@@ -16,6 +16,7 @@ import RecommendedConferencesPage from './pages/Recommend-Pages/RecommendedConfe
 import RecommendedJournalsPage from './pages/Recommend-Pages/RecommendedJournals';
 import RecommendedJournalsByAbstract from './pages/Recommend-Pages/RecommendedJournalsByAbstract';
 import { Toaster } from './components/ui/toaster';
+import LandingPage from './pages/LandingPage';
 
 function AppContent() {
   const location = useLocation();
@@ -29,7 +30,7 @@ function AppContent() {
         <Route
           path="/"
           element={
-            <MainPage />
+            <LandingPage />
           }
         />
         <Route
@@ -117,6 +118,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
 
 
 

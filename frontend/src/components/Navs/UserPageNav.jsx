@@ -7,6 +7,7 @@ import { AppContext } from '../../contexts/AppContext';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import logo_transparent from '../../assets/images/logo_transparent.png'
+import gradHat from '../../assets/images/gradHat.png'
 const Nav = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [fullName, setFullName] = useState("");
@@ -67,8 +68,8 @@ const Nav = () => {
         {/* Left: Logo */}
         <div className=" flex items-center cursor-pointer space-x-0" onClick={() => navigate('/')}>
           <img src={logo_transparent} className=' size-10 ' />
-          <div className='text-3xl font-bold'>ScholarSphere</div>
-          
+          {/* <img src={gradHat} className=' size-12 ' /> */}
+          <div className='text-3xl font-bold text-heading-1'>ScholarSphere</div>
         </div>
 
         {/* Center: Navigation Tabs (absolutely centered) */}

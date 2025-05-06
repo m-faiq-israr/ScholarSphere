@@ -165,7 +165,7 @@ const JournalsPage = () => {
 
   return (
     <div>
-      <div className="m-24 p-6 rounded-xl bg-gray-200">
+      <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)]">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
             {!showingSaved ? (
@@ -186,7 +186,7 @@ const JournalsPage = () => {
 
               </>
             ) : (
-              <div className='font-outfit text-heading-1 text-2xl font-semibold'>Saved Journals</div>
+              <div className='font-outfit text-heading-1 text-2xl font-semibold flex items-center gap-2'><FaBookmark/>  Saved Journals</div>
             )}
           </div>
 
@@ -278,7 +278,7 @@ const JournalsPage = () => {
                         className={`px-3 py-1 rounded-md text-sm font-semibold 
                   ${currentPage === page
                             ? "bg-heading-1 text-white"
-                            : "bg-gray-200 text-heading-1 hover:bg-gray-300"}
+                            : "bg-[rgb(0,0,0,0.05)] text-heading-1 hover:bg-[rgb(0,0,0,0.07)]"}
                 `}
                       >
                         {page}

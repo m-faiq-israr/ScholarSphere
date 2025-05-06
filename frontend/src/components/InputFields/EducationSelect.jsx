@@ -10,7 +10,7 @@ import {
 const EducationSelect = ({ value, onChange }) => {
   return (
     <Select value={value} onValueChange={onChange}>
-    <SelectTrigger className="!bg-gray-200 shadow-none !border-none rounded-xl font-outfit focus:ring-0 focus:outline-none focus:border-none">
+    <SelectTrigger className="!bg-[rgb(0,0,0,0.07)] shadow-none !border-none rounded-xl font-outfit focus:ring-0 focus:outline-none focus:border-none">
       <SelectValue placeholder="Select education level" />
     </SelectTrigger>
     <SelectContent className='font-outfit shadow-none text-heading-1 rounded-xl'>
