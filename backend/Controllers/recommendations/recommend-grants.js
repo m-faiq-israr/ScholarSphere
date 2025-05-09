@@ -23,7 +23,7 @@ const recommendRoutes = async (req, res) => {
     const publications = userData.publications || [];
     const fetchedPublications = userData.fetched_publications || [];
     const educationLevel = userData.educationLevel || "";
-const affiliation = userData.currentAffiliation || ""; // You may need to collect this field in your profile
+const affiliation = userData.currentAffiliation || ""; 
 
 
     if (!interests.length) {

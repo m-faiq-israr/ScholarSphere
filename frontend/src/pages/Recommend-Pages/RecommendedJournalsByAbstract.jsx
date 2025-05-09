@@ -4,12 +4,17 @@ import { Skeleton } from "antd";
 import JournalItem from "../../components/ListItems/JournalItem";
 import { BsStars } from "react-icons/bs";
 import recomJournals from '../../assets/images/recomJournals.png'
+import PaginationControls from "@/components/PaginationControls";
+
 const RecommendedJournalsByAbstract = () => {
   const [abstract, setAbstract] = useState("");
   const [journals, setJournals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [submitted, setSubmitted] = useState(false); // <-- key to control display
+  const [submitted, setSubmitted] = useState(false); 
+  const [currentPage, setCurrentPage] = useState(1);
+const [itemsPerPage] = useState(10);
+
 
   const fetchRecommendations = async () => {
     if (!abstract.trim()) {
@@ -29,6 +34,8 @@ const RecommendedJournalsByAbstract = () => {
 
 
       setJournals(response.data || []);
+      setCurrentPage(1); 
+
     } catch (err) {
       console.error(err);
       setError("Could not fetch journal recommendations.");
@@ -37,12 +44,18 @@ const RecommendedJournalsByAbstract = () => {
     }
   };
 
+  const totalJournals = journals.length;
+const totalPages = Math.ceil(totalJournals / itemsPerPage);
+const paginatedJournals = journals.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+
   return (
     <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)] font-outfit">
       <div className="text-heading-1 font-bold mb-4 text-3xl flex items-center gap-2">
         Find the best Journals for your Research Paper
         {/* <BsStars /> */}
         <img src={recomJournals} className="size-14"/>
+
       </div>
 
       {/* Text Area Input */}
@@ -60,6 +73,9 @@ const RecommendedJournalsByAbstract = () => {
         Get Recommendations
         <BsStars />
       </button>
+      <div className="font-semibold text-heading-1 font-outfit select-none flex justify-end">
+            Recommended Journals: {totalJournals}
+          </div>
 
       {/* Loading & Error */}
       {loading && <Skeleton active paragraph={{ rows: 10 }} />}
@@ -68,7 +84,7 @@ const RecommendedJournalsByAbstract = () => {
       {/* Show results only after button is clicked */}
       {submitted && !loading && journals.length > 0 && (
         <div className="mt-6">
-          {journals.map((j, index) => (
+          {paginatedJournals.map((j, index) => (
             <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
               <JournalItem journal={j.journal} />
               <div className="mt-1 text-sm text-heading-1 font-outfit">
@@ -76,6 +92,11 @@ const RecommendedJournalsByAbstract = () => {
               </div>
             </div>
           ))}
+           <PaginationControls
+      currentPage={currentPage}
+      totalPages={totalPages}
+      setCurrentPage={setCurrentPage}
+    />
         </div>
       )}
 

@@ -18,6 +18,7 @@ for conf in collection.find():
     embedding = model.encode(combined_text, normalize_embeddings=True).tolist()
 
     conference_data.append({
+        "_id": str(conf["_id"]),
         "title": title,
         "topics": topics_str,  # Store original string
         "start_date": conf.get("start_date", ""),

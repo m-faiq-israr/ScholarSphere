@@ -69,6 +69,7 @@ def recommend_conferences(data: RecommendConferenceRequest, top_n: int = Query(3
         publication_score = float(util.cos_sim(publication_embedding, conference_embedding)[0])
 
         base_conf_info = {
+            "_id": conf["_id"],
             "title": conf["title"],
             "topics": topics_string,
             "start_date": conf.get("start_date", ""),

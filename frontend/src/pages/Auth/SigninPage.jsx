@@ -4,7 +4,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 
 import loginComp from '../../assets/images/loginComp.png';
-import { doSignInWithEmailAndPassword } from '../../firebase/auth';
+import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../firebase/auth';
 import { useAuth } from '../../contexts/authContext';
 
 const SigninPage = () => {
@@ -18,6 +18,21 @@ const SigninPage = () => {
   const onChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      await doSignInWithGoogle();
+      navigate('/grants');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -37,11 +52,11 @@ const SigninPage = () => {
   if (user) return <Navigate to="/grants" />;
 
   return (
-    <div className='flex items-start pl-10 h-screen overflow-hidden'>
+    <div className="flex flex-col lg:flex-row h-screen overflow-auto">
       {/* Left Section */}
-      <div className="flex flex-col items-center font-outfit justify-center w-[50%] min-h-screen bg-white px-4">
-        <h1 className="text-6xl font-bold mb-5">Welcome back!</h1>
-        <p className="text-center text-lg text-gray-600 mb-10">
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center font-outfit min-h-screen bg-white px-6 sm:px-10 py-10">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-center">Welcome back!</h1>
+        <p className="text-center text-base sm:text-lg text-gray-600 mb-8 px-2">
           Simplify your workflow and boost your productivity<br />
           with <strong>ScholarSphere</strong>. Get started for free.
         </p>
@@ -54,7 +69,7 @@ const SigninPage = () => {
             value={credentials.email}
             onChange={onChange}
             required
-            className="w-full px-4 py-3 border rounded-xl outline-none "
+            className="w-full px-4 py-3 border rounded-xl outline-none"
           />
 
           <div className="relative">
@@ -65,7 +80,7 @@ const SigninPage = () => {
               value={credentials.password}
               onChange={onChange}
               required
-              className="w-full px-4 py-3 pr-10 border rounded-xl outline-none "
+              className="w-full px-4 py-3 pr-10 border rounded-xl outline-none"
             />
             <button
               type="button"
@@ -98,13 +113,15 @@ const SigninPage = () => {
 
           <button
             type="button"
+            onClick={handleGoogleLogin}
             className="flex items-center justify-center gap-3 w-full bg-black/5 border border-gray-300 text-gray-700 rounded-xl px-4 py-3 shadow-sm hover:bg-gray-100 transition duration-200"
           >
             <FcGoogle className="text-xl" />
             <span className="font-medium">Continue with Google</span>
           </button>
 
-          <p className="text-center text-sm text-gray-700 mt-9">
+
+          <p className="text-center text-sm text-gray-700 mt-6">
             Not a member?{' '}
             <Link to="/signup" className="text-green-700 font-medium hover:underline">
               Register now
@@ -113,12 +130,13 @@ const SigninPage = () => {
         </form>
       </div>
 
-      {/* Right Image Section */}
-      <div className='w-[50%]'>
-        <img src={loginComp} alt="login illustration" className='object-contain' />
+      {/* Right Section (Image) */}
+      <div className="w-full lg:w-1/2 hidden lg:flex items-center justify-center bg-gray-50">
+        <img src={loginComp} alt="login illustration" className="object-contain w-full max-h-[90vh]" />
       </div>
     </div>
   );
+
 };
 
 export default SigninPage;

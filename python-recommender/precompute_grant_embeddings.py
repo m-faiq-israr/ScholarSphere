@@ -26,6 +26,7 @@ for grant in grants:
 
     # Keep original fields + embeddings
     grant_data = {
+        "_id": str(grant["_id"]),
         "title": grant.get("title", ""),
         "description": grant.get("description", ""),
         "scope": grant.get("scope", ""),

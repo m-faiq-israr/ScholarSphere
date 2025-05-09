@@ -61,9 +61,9 @@ const JournalsModal = ({ open, onClose, journal }) => {
           {journal?.homepage && (<ModalButton title={"Homepage"} onClick={GoToHomepage} />)}
           {journal?.publish_guide && (<ModalButton title={"Publish Guide"} onClick={GoToPublishGuide} />)}
           {journal?.contact_email && (<ModalButton title={"Contact"} onClick={GoToContactEmail} />)}
-          
-          
-          
+
+
+
         </div>
       }
       open={true}
@@ -74,7 +74,8 @@ const JournalsModal = ({ open, onClose, journal }) => {
     >
       <div className="font-outfit pl-2">
         <div>
-          <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mb-2 mt-5 transition duration-700 ease-in-out transform">
+          {journal.scope && (
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mb-2 mt-5 transition duration-700 ease-in-out transform">
             <h1 className="font-semibold text-lg text-heading-1">Description:</h1>
             <p className={`text-heading-1 text-base  ${!isExpanded ? "line-clamp-2" : ""}`}>
               {journal.scope}
@@ -88,6 +89,7 @@ const JournalsModal = ({ open, onClose, journal }) => {
               </button>
             )}
           </div>
+          )}
 
           <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block w-full mb-2 mt-1 ">
             <h1 className="font-semibold text-lg text-heading-1">Subject Areas:</h1>
@@ -99,22 +101,27 @@ const JournalsModal = ({ open, onClose, journal }) => {
           </div>
         </div>
 
+        {journal.publisher && (
           <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-1 w-full">
             <h1 className="font-semibold text-lg text-heading-1">Publisher:</h1>
             <p className="text-heading-1 text-base">{journal.publisher}</p>
           </div>
+        )}
 
         <div className="flex items-center gap-3 mb-1">
+          {journal.coverage && (
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3">
+              <h1 className="font-semibold text-lg text-heading-1">Coverage:</h1>
+              <p className="text-heading-1 text-base">{journal.coverage}</p>
+            </div>
+          )}
 
-          <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3">
-            <h1 className="font-semibold text-lg text-heading-1">Coverage:</h1>
-            <p className="text-heading-1 text-base">{journal.coverage}</p>
-          </div>
-
-          <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3">
-            <h1 className="font-semibold text-lg text-heading-1">Country:</h1>
-            <p className="text-heading-1 text-base">{journal.country}</p>
-          </div>
+          {journal.country && (
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3">
+              <h1 className="font-semibold text-lg text-heading-1">Country:</h1>
+              <p className="text-heading-1 text-base">{journal.country}</p>
+            </div>
+          )}
 
           {journal.contact_email && (
             <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3">

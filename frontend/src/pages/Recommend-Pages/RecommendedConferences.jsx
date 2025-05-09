@@ -7,6 +7,8 @@ import { BsStars } from "react-icons/bs";
 import ExportCsv from "@/components/Buttons/ExportCsv";
 import { convertToCSV, downloadCSV } from "@/utils/exportCsv";
 import recomConferences from '../../assets/images/recomConferences.png'
+import PaginationControls from "@/components/PaginationControls";
+
 
 const RecommendedConferencesPage = () => {
   const [conferences, setConferences] = useState({
@@ -15,6 +17,9 @@ const RecommendedConferencesPage = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+
 
   const fetchRecommendedConferences = async () => {
     try {
@@ -83,29 +88,49 @@ const RecommendedConferencesPage = () => {
     downloadCSV(csvContent, "recommended_conferences.csv");
   };
 
+  const totalConfs = allConfs.length;
+  const totalPages = Math.ceil(totalConfs / itemsPerPage);
+  const paginatedConfs = allConfs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
     <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)]">
       <div className="flex items-center justify-between mb-4">
         <div className="text-heading-1 font-outfit font-bold text-3xl flex items-center gap-2">
           {/* <BsStars /> */}
           Recommended Conferences
-          <img src={recomConferences} className="size-14"/>
+          <img src={recomConferences} className="size-14" />
         </div>
+        <div className="flex items-center gap-2">
         {allConfs.length > 0 && <ExportCsv onClick={handleExportCSV} />}
+        <div className="font-semibold text-heading-1 font-outfit select-none">
+            Recommended Conferences: {totalConfs}
+          </div>
+        </div>
       </div>
 
-      {allConfs.length > 0 ? (
-        allConfs.map((item, idx) => (
+      {paginatedConfs.length > 0 ? (
+        paginatedConfs.map((item, idx) => (
+
           <div key={idx} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
             <ConferenceItem conference={item.conference} />
             <div className="mt-2 text-sm text-heading-1 font-outfit">
               <strong>{item.reason}</strong> (Score: {item.score.toFixed(2)})
             </div>
           </div>
+
         ))
+
       ) : (
         <div className="text-center text-gray-500">No recommended conferences found.</div>
       )}
+      {/* Pagination */}
+      <PaginationControls
+  currentPage={currentPage}
+  totalPages={totalPages}
+  setCurrentPage={setCurrentPage}
+/>
+
+
     </div>
   );
 };

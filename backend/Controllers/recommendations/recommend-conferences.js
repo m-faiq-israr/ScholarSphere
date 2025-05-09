@@ -49,7 +49,7 @@ const recommendConferences = async (req, res) => {
       location: c.location || '',
       link: c.link || '',
       date: c.start_date || '',
-      topics: (c.topics || '').split(',').map(t => t.trim()) // ✅ Convert string to array
+      topics: (c.topics || '').split(',').map(t => t.trim()) 
     }));
     
 

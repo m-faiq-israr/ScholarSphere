@@ -36,12 +36,11 @@ def recommend_by_abstract(data: RecommendByAbstractRequest, top_n: int = Query(2
     abstract_embedding = model.encode(data.abstract, convert_to_tensor=True)
 
     scored_results = []
-    for journal, emb_str in zip(data.journals, embedding_data["embeddings"]):
-        emb_array = np.array(emb_str, dtype=np.float32)
-        sim_score = util.cos_sim(abstract_embedding, emb_array).item()
+    for journal, emb_str, _id in zip(data.journals, embedding_data["embeddings"], embedding_data["ids"]):
+        sim_score = util.cos_sim(abstract_embedding, emb_str).item()
         if sim_score > 0.4:
             scored_results.append({
-                "journal": journal,
+                "journal": { **journal.model_dump(), "_id": _id },
                 "score": sim_score
             })
 

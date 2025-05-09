@@ -8,7 +8,12 @@ const saveItem = async (req, res) => {
     const userSnap = await userRef.get();
 
     if (!userSnap.exists) {
-      return res.status(404).json({ message: 'User not found' });
+      // If user profile doesn't exist, create it with an empty structure
+      await userRef.set({
+        savedGrants: [],
+        savedConferences: [],
+        savedJournals: [],
+      });
     }
 
     const fieldMap = {
@@ -33,4 +38,4 @@ const saveItem = async (req, res) => {
   }
 };
 
-export { saveItem };
+export {saveItem};

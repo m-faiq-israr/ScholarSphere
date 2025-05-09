@@ -17,24 +17,30 @@ const Nav = () => {
   const auth = getAuth();
   const db = getFirestore();
   const { setinterests } = useContext(AppContext)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       const user = auth.currentUser;
       if (user) {
+        setIsLoggedIn(true);
         const userRef = doc(db, "user_profile", user.uid);
         const userSnap = await getDoc(userRef);
-
+  
         if (userSnap.exists()) {
           const userData = userSnap.data();
           setFullName(`${userData.firstName} ${userData.lastName}`);
           setinterests(userData.fieldsofInterest)
         }
+      } else {
+        setIsLoggedIn(false);
       }
     };
-
+  
     fetchUserProfile();
   }, [auth, db]);
+  
 
   const handleLogout = async () => {
     await doSignOut();
@@ -72,74 +78,76 @@ const Nav = () => {
           <div className='text-3xl font-bold text-heading-1'>ScholarSphere</div>
         </div>
 
-        {/* Center: Navigation Tabs (absolutely centered) */}
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <ul className="flex space-x-20 font-semibold">
-            <li
-              className={`cursor-pointer ${location.pathname.startsWith('/grants') ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
-                }`}
-              onClick={() => navigate('/grants')}
-            >
-              Grants
-            </li>
-            <li
-              className={`cursor-pointer ${location.pathname.startsWith('/conferences') ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
-                }`}
-              onClick={() => navigate('/conferences')}
-            >
-              Conferences
-            </li>
-            <li
-              className={`cursor-pointer ${location.pathname.startsWith('/journals') ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''
-                }`}
-              onClick={() => navigate('/journals')}
-            >
-              Journals
-            </li>
-          </ul>
-        </div>
+       {/* Center: Navigation Tabs (only if logged in) */}
+{isLoggedIn && (
+  <div className="absolute left-1/2 transform -translate-x-1/2">
+    <ul className="flex space-x-20 font-semibold">
+      <li
+        className={`cursor-pointer ${location.pathname.startsWith('/grants') ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''}`}
+        onClick={() => navigate('/grants')}
+      >
+        Grants
+      </li>
+      <li
+        className={`cursor-pointer ${location.pathname.startsWith('/conferences') ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''}`}
+        onClick={() => navigate('/conferences')}
+      >
+        Conferences
+      </li>
+      <li
+        className={`cursor-pointer ${location.pathname.startsWith('/journals') ? 'underline underline-offset-4 decoration-2 decoration-[#000235]' : ''}`}
+        onClick={() => navigate('/journals')}
+      >
+        Journals
+      </li>
+    </ul>
+  </div>
+)}
 
-        {/* Right: Profile */}
-        <div className="flex items-center space-x-2 relative hover:bg-gray-300 p-2 rounded-xl hover:cursor-pointer" onClick={handleProfileClick} >
-          <div className="flex items-center gap-2">
-            <div className="font-outfit font-semibold text-heading-1">
-              {fullName || "Guest"}
-            </div>
-            <div
-              className="cursor-pointer bg-heading-1 hover:bg-gray-700 rounded-full p-1.5"
-            >
-              <FaUser className="text-white font-outfit" />
-            </div>
-          </div>
+{/* Right: Profile (only if logged in) */}
+{isLoggedIn && (
+  <div
+    className="flex items-center space-x-2 relative hover:bg-gray-300 p-2 rounded-xl hover:cursor-pointer"
+    onClick={handleProfileClick}
+  >
+    <div className="flex items-center gap-2">
+      <div className="font-outfit font-semibold text-heading-1">
+        {fullName || "Guest"}
+      </div>
+      <div className="cursor-pointer bg-heading-1 hover:bg-gray-700 rounded-full p-1.5">
+        <FaUser className="text-white font-outfit" />
+      </div>
+    </div>
 
-          {/* Dropdown */}
-          {isDropdownOpen && (
-            <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
-              <ul className="py-2">
-                <li
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2"
-                  onClick={() => {
-                    setIsDropdownOpen(false);
-                    handleProfileClick();
-                  }}
-                >
-                  <FiEdit size={18} className="text-heading-1" />
-                  <span className="text-heading-1">Edit Profile</span>
-                </li>
-                <li
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2"
-                  onClick={() => {
-                    setIsDropdownOpen(false);
-                    handleLogout();
-                  }}
-                >
-                  <FaSignOutAlt className="text-red-600" />
-                  <span className="text-red-600">Logout</span>
-                </li>
-              </ul>
-            </div>
-          )}
-        </div>
+    {isDropdownOpen && (
+      <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
+        <ul className="py-2">
+          <li
+            className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2"
+            onClick={() => {
+              setIsDropdownOpen(false);
+              handleProfileClick();
+            }}
+          >
+            <FiEdit size={18} className="text-heading-1" />
+            <span className="text-heading-1">Edit Profile</span>
+          </li>
+          <li
+            className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2"
+            onClick={() => {
+              setIsDropdownOpen(false);
+              handleLogout();
+            }}
+          >
+            <FaSignOutAlt className="text-red-600" />
+            <span className="text-red-600">Logout</span>
+          </li>
+        </ul>
+      </div>
+    )}
+  </div>
+)}
+
       </div>
 
     </nav>

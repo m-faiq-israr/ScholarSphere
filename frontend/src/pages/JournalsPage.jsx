@@ -14,6 +14,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { FaArrowLeft, FaBookmark } from 'react-icons/fa';
 import { BsStars } from "react-icons/bs";
+import PaginationControls from '@/components/PaginationControls';
 
 
 const JournalsPage = () => {
@@ -36,15 +37,15 @@ const JournalsPage = () => {
     const fetchJournals = async () => {
       try {
         setLoading(true);
-  
+
         let url = "";
         const params = new URLSearchParams();
         params.append("page", currentPage);
         params.append("limit", itemsPerPage);
-  
+
         const hasSearch = searchQuery.trim() !== "";
         const hasFilters = filters.country || filters.publisher || filters.subjectArea;
-  
+
         if (hasSearch) {
           url = `http://localhost:4000/api/journals/search`;
           params.append("search", searchQuery);
@@ -56,7 +57,7 @@ const JournalsPage = () => {
         } else {
           url = `http://localhost:4000/api/journals`;
         }
-  
+
         const response = await axios.get(`${url}?${params.toString()}`);
         setJournals(response.data.journals || []);
         setTotalJournals(response.data.total || 0);
@@ -66,10 +67,10 @@ const JournalsPage = () => {
         setLoading(false);
       }
     };
-  
+
     fetchJournals();
   }, [currentPage, itemsPerPage, searchQuery, filters]);
-  
+
 
   const handleSearchChange = (e) => {
     setTempSearchQuery(e.target.value);
@@ -108,7 +109,7 @@ const JournalsPage = () => {
 
   const recommendedJournalsPage = () => {
     if (!interests || interests.length === 0) {
-      toast.error('Enter fields of interests in user profile to get recommendations')
+      toast.error('Complete user profile to get recommendations')
     }
     else {
       navigate('/journals/recommended-journals');
@@ -182,11 +183,11 @@ const JournalsPage = () => {
                   onClearFilters={handleClearFilters}
                 />
                 <button className="inline-flex font-outfit select-none items-center gap-2 rounded-xl bg-heading-1 py-2 px-3 text-sm font-medium text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
-                  onClick={recommendedJournalsByAbstract}>Search through abstract <BsStars/></button>
+                  onClick={recommendedJournalsByAbstract}>Search through abstract <BsStars /></button>
 
               </>
             ) : (
-              <div className='font-outfit text-heading-1 text-2xl font-semibold flex items-center gap-2'><FaBookmark/>  Saved Journals</div>
+              <div className='font-outfit text-heading-1 text-2xl font-semibold flex items-center gap-2'><FaBookmark />  Saved Journals</div>
             )}
           </div>
 
@@ -208,7 +209,7 @@ const JournalsPage = () => {
               )}
             </button>
             <div className="font-semibold text-heading-1 font-outfit select-none">
-            Total Journals: {totalJournals}
+              Total Journals: {totalJournals}
             </div>
           </div>
         </div>
@@ -232,77 +233,11 @@ const JournalsPage = () => {
           <div className="text-center text-gray-500">No journals found.</div>
         )}
 
-        <div className="flex justify-center mt-6 font-outfit">
-          <Pagination>
-            <PaginationContent className="flex items-center gap-2">
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
-                />
-              </PaginationItem>
-
-              {(() => {
-                const totalPages = Math.ceil(totalJournals / itemsPerPage);
-                const visiblePages = [];
-
-                if (totalPages <= 7) {
-                  for (let i = 1; i <= totalPages; i++) {
-                    visiblePages.push(i);
-                  }
-                } else {
-                  visiblePages.push(1);
-
-                  if (currentPage > 4) {
-                    visiblePages.push("dots-1");
-                  }
-
-                  for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-                    if (i > 1 && i < totalPages) {
-                      visiblePages.push(i);
-                    }
-                  }
-
-                  if (currentPage < totalPages - 3) {
-                    visiblePages.push("dots-2");
-                  }
-
-                  visiblePages.push(totalPages);
-                }
-
-                return visiblePages.map((page, index) => (
-                  <PaginationItem key={index}>
-                    {typeof page === "number" ? (
-                      <button
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-1 rounded-md text-sm font-semibold 
-                  ${currentPage === page
-                            ? "bg-heading-1 text-white"
-                            : "bg-[rgb(0,0,0,0.05)] text-heading-1 hover:bg-[rgb(0,0,0,0.07)]"}
-                `}
-                      >
-                        {page}
-                      </button>
-                    ) : (
-                      <span className="px-3 py-1 text-sm text-gray-500 select-none">...</span>
-                    )}
-                  </PaginationItem>
-                ));
-              })()}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() =>
-                    setCurrentPage((prev) =>
-                      prev * itemsPerPage < totalJournals ? prev + 1 : prev
-                    )
-                  }
-                  className={currentPage * itemsPerPage >= totalJournals ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={Math.ceil(totalJournals / itemsPerPage)}
+          setCurrentPage={setCurrentPage}
+        />
 
       </div>
       <Toaster />

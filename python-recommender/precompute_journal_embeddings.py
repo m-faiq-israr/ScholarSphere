@@ -1,6 +1,5 @@
 import json
 from sentence_transformers import SentenceTransformer
-import numpy as np
 from pymongo import MongoClient
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
@@ -17,10 +16,12 @@ journal_texts = [
 ]
 
 embeddings = model.encode(journal_texts, convert_to_numpy=True).tolist()
+journal_ids = [str(j["_id"]) for j in journals]
 
 with open("journals_with_embeddings.json", "w") as f:
     json.dump({
+        "ids": journal_ids,
         "embeddings": embeddings
     }, f)
 
-print(f"Saved {len(embeddings)} journal embeddings.")
+print(f"Saved {len(embeddings)} embeddings with journal IDs.")

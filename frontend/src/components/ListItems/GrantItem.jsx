@@ -3,8 +3,9 @@ import GrantsModal from "../Modals/GrantsModal";
 import { FaRegBookmark, FaBookmark } from "react-icons/fa";
 import { auth } from "../../firebase/firebase";
 import { db } from "../../firebase/firebase";
-import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import SeeDetails from "../Buttons/SeeDetails";
+import axios from "axios";
 
 const GrantItem = ({ grant, onUnsaveSuccess }) => {
   const [open, setOpen] = useState(false);
@@ -13,15 +14,13 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
   const userId = currentUser?.uid;
   const normalizedStatus = grant.opportunity_status?.toLowerCase?.() || "";
 
-
   const isOpenStatus = [
     "open",
     "posted",
     "cleared",
     "waiting for new publication",
-    "", 
+    "",
   ].includes(normalizedStatus);
-
 
   useEffect(() => {
     const checkIfSaved = async () => {
@@ -47,42 +46,35 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
     checkIfSaved();
   }, [grant, userId]);
 
-  const handleSave = async () => {
-    if (!userId || !grant?._id) return;
+  const handleSave = () => {
     setSaved(true);
 
-    try {
-      const userDocRef = doc(db, "user_profile", userId);
-      await updateDoc(userDocRef, {
-        savedGrants: arrayUnion(grant._id)
-      });
-    } catch (error) {
+    axios.post("http://localhost:4000/api/items/save-item", {
+      userId,
+      itemId: grant._id,
+      itemType: "grant",
+    }).catch(error => {
       console.error("Error saving grant:", error);
       setSaved(false);
-    }
+    });
   };
 
-  const handleUnsave = async () => {
-    if (!userId || !grant?._id) return;
-
+  const handleUnsave = () => {
     setSaved(false);
 
-    try {
-      const userDocRef = doc(db, "user_profile", userId);
-      await updateDoc(userDocRef, {
-        savedGrants: arrayRemove(grant._id)
-      });
-
+    axios.post("http://localhost:4000/api/items/unsave-item", {
+      userId,
+      itemId: grant._id,
+      itemType: "grant",
+    }).then(() => {
       if (onUnsaveSuccess) {
         onUnsaveSuccess(grant._id);
       }
-
-    } catch (error) {
+    }).catch(error => {
       console.error("Error unsaving grant:", error);
       setSaved(true);
-    }
+    });
   };
-
 
   return (
     <div className="flex justify-between font-outfit p-1 h-full bg-white rounded-md">
@@ -110,8 +102,6 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
       </div>
 
       <div className="w-[30%] flex flex-col justify-between items-end">
-
-        {/* Save/Unsave Icon */}
         <div
           className="text-xl text-gray-600 hover:text-heading-1 cursor-pointer"
           onClick={saved ? handleUnsave : handleSave}
@@ -119,15 +109,13 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
           {saved ? <FaBookmark className="text-heading-1" /> : <FaRegBookmark />}
         </div>
 
-        {/* Open Modal */}
-        <SeeDetails onclick={()=>setOpen(true)} text={"See details"}/>
-
+        <SeeDetails onclick={() => setOpen(true)} text={"See details"} />
       </div>
 
-      {/* Modal Component */}
       <GrantsModal open={open} onClose={() => setOpen(false)} grant={grant} />
     </div>
   );
 };
 
 export default GrantItem;
+

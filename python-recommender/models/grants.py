@@ -48,19 +48,22 @@ class RecommendRequest(BaseModel):
 @router.post("/recommend/grants")
 def recommend_grants(data: RecommendRequest, top_n: int = Query(10)):
     all_publications = (data.publications or []) + (data.fetched_publications or [])
+    interest_text = " ".join(data.user_interests) if data.user_interests else None
+    qualification_text = f"{data.educationLevel} {data.currentAffiliation}".strip() if data.educationLevel or data.currentAffiliation else None
     publication_text = " ".join([
         f"{pub.title} {' '.join(pub.keywords)} {pub.abstract or ''}" for pub in all_publications
-    ])
+    ]) if all_publications else None
     
-    interest_text = " ".join(data.user_interests)
-    qualification_text = f"{data.educationLevel or ''} {data.currentAffiliation or ''}".strip()
 
     # Batch encode user data
-    user_embeddings = model.encode(
-        [interest_text, qualification_text, publication_text],
-        convert_to_tensor=True, normalize_embeddings=True
-    )
-    interest_embedding, qualification_embedding, publication_embedding = user_embeddings
+    user_embeddings = {}
+    if interest_text:
+        user_embeddings['interest'] = model.encode(interest_text, convert_to_tensor=True, normalize_embeddings=True)
+    if qualification_text:
+        user_embeddings['qualification'] = model.encode(qualification_text, convert_to_tensor=True, normalize_embeddings=True)
+    if publication_text:
+        user_embeddings['publication'] = model.encode(publication_text, convert_to_tensor=True, normalize_embeddings=True)
+
 
     interest_based = []
     publication_based = []
@@ -71,11 +74,8 @@ def recommend_grants(data: RecommendRequest, top_n: int = Query(10)):
         apply_embedding = torch.tensor(grant["apply_embedding"])
         title_embedding = torch.tensor(grant["title_embedding"])
 
-        interest_score = float(util.cos_sim(interest_embedding, title_embedding)[0])
-        qualification_score = float(util.cos_sim(qualification_embedding, apply_embedding)[0])
-        publication_score = float(util.cos_sim(publication_embedding, grant_embedding)[0])
-
         base_grant_info = {
+            "_id": grant["_id"],
             "title": grant["title"],
             "description": grant["description"],
             "scope": grant["scope"],
@@ -88,26 +88,33 @@ def recommend_grants(data: RecommendRequest, top_n: int = Query(10)):
             "opportunity_status": grant.get("opportunity_status", "")
         }
 
-        if interest_score > 0.3:
-            interest_based.append({
-                "reason": "Based on your research interests",
-                "grant": base_grant_info,
-                "score": interest_score
-            })
-
-        if publication_score > 0.3:
-            publication_based.append({
-                "reason": "Based on your publication history",
-                "grant": base_grant_info,
-                "score": publication_score
-            })
-
-        if qualification_score > 0.3:
-            qualification_based.append({
-                "reason": "Based on your qualifications",
-                "grant": base_grant_info,
-                "score": qualification_score
-            })
+        if 'interest' in user_embeddings:
+            interest_score = float(util.cos_sim(user_embeddings['interest'], title_embedding)[0])
+            if interest_score > 0.3:
+                    interest_based.append({
+                    "reason": "Based on your research interests",
+                    "grant": base_grant_info,
+                    "score": interest_score
+                })
+    
+        if 'qualification' in user_embeddings:
+            qualification_score = float(util.cos_sim(user_embeddings['qualification'], apply_embedding)[0])
+            if qualification_score > 0.3:
+                qualification_based.append({
+                    "reason": "Based on your qualifications",
+                    "grant": base_grant_info,
+                    "score": qualification_score
+                })
+    
+        if 'publication' in user_embeddings:
+            publication_score = float(util.cos_sim(user_embeddings['publication'], grant_embedding)[0])
+            if publication_score > 0.3:
+                publication_based.append({
+                    "reason": "Based on your publication history",
+                    "grant": base_grant_info,
+                    "score": publication_score
+                })
+    
 
     # Sort each list by descending score and limit to top N
     interest_based.sort(key=lambda x: x["score"], reverse=True)

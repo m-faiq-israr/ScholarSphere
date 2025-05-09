@@ -77,12 +77,12 @@ const JournalItem = ({ journal, onUnsaveSuccess }) => {
         
         <p className='text-gray-600 line-clamp-2 '>
           <span className='font-semibold'>Description:&nbsp;</span>
-          {journal.scope}
+          {journal.scope ? journal.scope : 'N/A'}
         </p>
 
         <p className='text-gray-600 line-clamp-2 mb-3 '>
           <span className='font-semibold'>Publisher:&nbsp;</span>
-          {journal.publisher}
+          {journal.publisher ? journal.publisher : 'N/A'}
         </p>
 
        <SeeDetails text={"See details"} onclick={()=>setOpen(true)}/>

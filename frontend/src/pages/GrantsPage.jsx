@@ -8,7 +8,7 @@ import RecommendationButton from "../components/Buttons/RecommendationButton";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../contexts/AppContext";
 import { toast } from "../hooks/use-toast";
-import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "../components/ui/pagination"
+import PaginationControls from "@/components/PaginationControls";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { FaArrowLeft, FaBookmark } from "react-icons/fa";
@@ -191,7 +191,7 @@ const GrantsPage = () => {
   const recommendedGrantsPage = () => {
     if (!interests || interests.length === 0) {
       toast({
-        title: "❌ Enter fields of interests in user profile to get recommendations",
+        title: "❌ Complete your profile to get recommendations.",
         description: error,
         variant: "default",
         duration: 4000,
@@ -358,78 +358,12 @@ const GrantsPage = () => {
         )}
 
         {/* Pagination */}
-        <div className="flex justify-center mt-6 font-outfit">
-          <Pagination>
-            <PaginationContent className="flex items-center gap-2">
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
-                />
-              </PaginationItem>
+        <PaginationControls
+  currentPage={currentPage}
+  totalPages={Math.ceil(totalGrants / itemsPerPage)}
+  setCurrentPage={setCurrentPage}
+/>
 
-              {(() => {
-                const totalPages = Math.ceil(totalGrants / itemsPerPage);
-                const visiblePages = [];
-
-                if (totalPages <= 7) {
-                  for (let i = 1; i <= totalPages; i++) {
-                    visiblePages.push(i);
-                  }
-                } else {
-                  visiblePages.push(1);
-
-                  if (currentPage > 4) {
-                    visiblePages.push("dots-1");
-                  }
-
-                  for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-                    if (i > 1 && i < totalPages) {
-                      visiblePages.push(i);
-                    }
-                  }
-
-                  if (currentPage < totalPages - 3) {
-                    visiblePages.push("dots-2");
-                  }
-
-                  visiblePages.push(totalPages);
-                }
-
-                return visiblePages.map((page, index) => (
-                  <PaginationItem key={index}>
-                    {typeof page === "number" ? (
-                      <button
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-1 rounded-md text-sm font-semibold
-                  ${currentPage === page
-                            ? "bg-heading-1 text-white"
-                            : "bg-[rgb(0,0,0,0.05)] text-heading-1 hover:bg-[rgb(0,0,0,0.07)]"}
-                `}
-                      >
-                        {page}
-                      </button>
-                    ) : (
-                      <span className="px-3 py-1 text-sm text-gray-500 select-none ">...</span>
-                    )}
-                  </PaginationItem>
-                ));
-              })()}
-
-              {/* Next Button */}
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() =>
-                    setCurrentPage((prev) =>
-                      prev * itemsPerPage < totalGrants ? prev + 1 : prev
-                    )
-                  }
-                  className={currentPage * itemsPerPage >= totalGrants ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
 
 
       </div>
