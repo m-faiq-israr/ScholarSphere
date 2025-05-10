@@ -73,27 +73,28 @@ const ConferenceItem = ({ conference, onUnsaveSuccess }) => {
 
       {/* Save Icon Top Right */}
       <div
-        className="absolute top-3 right-3 cursor-pointer text-xl text-gray-600 hover:text-heading-1"
+        className="absolute hidden md:block top-3 right-3 cursor-pointer text-xl text-gray-600 hover:text-heading-1"
         onClick={saved ? handleUnsave : handleSave}
       >
         {saved ? <FaBookmark className="text-heading-1" /> : <FaRegBookmark />}
       </div>
 
-      <h2 className="text-lg font-semibold font-outfit mb-1">{conference.title}</h2>
+      <h2 className="text-base md:text-lg font-semibold font-outfit mb-1">{conference.title}</h2>
 
-      <p className="mb-1 font-outfit text-gray-600">
+      <p className="mb-1 font-outfit text-gray-600 text-sm md:text-base">
         <span className="font-semibold">Date: </span>
         {conference.start_date}
         {conference.end_date && ` - ${conference.end_date}`}
       </p>
 
-      <p className="mb-1 font-outfit text-gray-600">
+      <p className="mb-1 font-outfit text-gray-600 text-sm md:text-base">
         <span className="font-semibold">Location: </span>
         {conference.location || "N/A"}
       </p>
 
+      <div className="flex items-center justify-between">
       <button
-        className="flex gap-2 select-none items-center justify-center mt-3 text-sm w-28 bg-emerald-500 text-white px-1 py-1 rounded-md hover:bg-emerald-600 font-outfit transition-colors"
+        className="flex gap-2 select-none items-center justify-center mt-3 text-xs md:text-sm  bg-emerald-500 text-white px-4 md:px-5 py-1  rounded-md hover:bg-emerald-600 font-outfit transition-colors"
         onClick={() => {
           if (conference.link) {
             window.open(conference.link, "_blank");
@@ -107,6 +108,13 @@ const ConferenceItem = ({ conference, onUnsaveSuccess }) => {
         Apply
         <FaLink/>
       </button>
+      <div
+        className=" md:hidden  cursor-pointer text-gray-600 hover:text-heading-1"
+        onClick={saved ? handleUnsave : handleSave}
+      >
+        {saved ? <FaBookmark className="text-heading-1" /> : <FaRegBookmark />}
+      </div>
+      </div>
     </div>
   );
 };

@@ -18,7 +18,7 @@ const JournalsModal = ({ open, onClose, journal }) => {
       const timer = setTimeout(() => {
         setVisible(false);
         setClosing(false);
-      }, 250); // match fadeScaleOut duration
+      }, 250); 
       return () => clearTimeout(timer);
     }
   }, [open]);
@@ -52,12 +52,12 @@ const JournalsModal = ({ open, onClose, journal }) => {
   return (
     <Modal
       title={
-        <div className="font-outfit font-bold text-heading-1 text-2xl pl-2">
+        <div className="font-outfit font-bold text-heading-1 text-lg md:text-2xl pl-2">
           {journal.title || "Journal Details"}
         </div>
       }
       footer={
-        <div className="flex items-center gap-4 justify-end">
+        <div className="flex items-center gap-2 md:gap-4 justify-end">
           {journal?.homepage && (<ModalButton title={"Homepage"} onClick={GoToHomepage} />)}
           {journal?.publish_guide && (<ModalButton title={"Publish Guide"} onClick={GoToPublishGuide} />)}
           {journal?.contact_email && (<ModalButton title={"Contact"} onClick={GoToContactEmail} />)}
@@ -76,13 +76,13 @@ const JournalsModal = ({ open, onClose, journal }) => {
         <div>
           {journal.scope && (
             <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mb-2 mt-5 transition duration-700 ease-in-out transform">
-            <h1 className="font-semibold text-lg text-heading-1">Description:</h1>
-            <p className={`text-heading-1 text-base  ${!isExpanded ? "line-clamp-2" : ""}`}>
+            <h1 className="font-semibold text-base md:text-lg text-heading-1">Description:</h1>
+            <p className={`text-heading-1 text-sm md:text-base   ${!isExpanded ? "line-clamp-2" : ""}`}>
               {journal.scope}
             </p>
             {journal.scope && journal.scope.length > 100 && (
               <button
-                className="mt text-blue-500 hover:underline"
+                className="mt text-blue-500 hover:underline text-xs md:text-sm"
                 onClick={() => setIsExpanded(!isExpanded)}
               >
                 {isExpanded ? "Show less" : "Show more"}
@@ -92,8 +92,8 @@ const JournalsModal = ({ open, onClose, journal }) => {
           )}
 
           <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block w-full mb-2 mt-1 ">
-            <h1 className="font-semibold text-lg text-heading-1">Subject Areas:</h1>
-            <p className="text-heading-1 text-base">
+            <h1 className="font-semibold text-base md:text-lg text-heading-1">Subject Areas:</h1>
+            <p className="text-heading-1 text-sm md:text-base ">
               {Array.isArray(journal.subject_areas)
                 ? journal.subject_areas.join(", ")
                 : journal.subject_areas}
@@ -103,30 +103,30 @@ const JournalsModal = ({ open, onClose, journal }) => {
 
         {journal.publisher && (
           <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-1 w-full">
-            <h1 className="font-semibold text-lg text-heading-1">Publisher:</h1>
-            <p className="text-heading-1 text-base">{journal.publisher}</p>
+            <h1 className="font-semibold text-base md:text-lg text-heading-1">Publisher:</h1>
+            <p className="text-heading-1 text-sm md:text-base ">{journal.publisher}</p>
           </div>
         )}
 
         <div className="flex items-center gap-3 mb-1">
           {journal.coverage && (
             <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3">
-              <h1 className="font-semibold text-lg text-heading-1">Coverage:</h1>
-              <p className="text-heading-1 text-base">{journal.coverage}</p>
+              <h1 className="font-semibold text-base md:text-lg text-heading-1">Coverage:</h1>
+              <p className="text-heading-1 text-xs md:text-base ">{journal.coverage}</p>
             </div>
           )}
 
           {journal.country && (
             <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3">
-              <h1 className="font-semibold text-lg text-heading-1">Country:</h1>
-              <p className="text-heading-1 text-base">{journal.country}</p>
+              <h1 className="font-semibold text-base md:text-lg text-heading-1">Country:</h1>
+              <p className="text-heading-1 text-xs md:text-base ">{journal.country}</p>
             </div>
           )}
 
           {journal.contact_email && (
             <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3">
-              <h1 className="font-semibold text-lg text-heading-1">Contact Email:</h1>
-              <p className="text-heading-1 text-base">{journal.contact_email}</p>
+              <h1 className="font-semibold text-base md:text-lg text-heading-1">Contact Email:</h1>
+              <p className="text-heading-1 text-xs md:text-base ">{journal.contact_email}</p>
             </div>
           )}
         </div>

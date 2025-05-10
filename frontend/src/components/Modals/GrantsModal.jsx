@@ -16,7 +16,6 @@ const GrantsModal = ({ open, onClose, grant }) => {
   const preview = words.slice(0, 75).join(' ') + (isLong ? '...' : '');
   const toggleExpanded = () => setExpanded(!expanded);
 
-  // Animation state
   const [visible, setVisible] = useState(open);
   const [closing, setClosing] = useState(false);
 
@@ -29,7 +28,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
       const timer = setTimeout(() => {
         setVisible(false);
         setClosing(false);
-      }, 250); // match fadeScaleOut duration
+      }, 250); 
       return () => clearTimeout(timer);
     }
   }, [open]);
@@ -63,7 +62,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
   return (
     <Modal
       title={
-        <div className="font-outfit font-bold text-heading-1 text-2xl">
+        <div className="font-outfit font-bold text-heading-1 text-lg md:text-2xl">
           {grant?.title || "Grant Details"}
         </div>
       }
@@ -78,16 +77,14 @@ const GrantsModal = ({ open, onClose, grant }) => {
       width={800}
       className={`custom-modal${closing ? " closing" : ""}`}
       maskClosable
-      // Remove destroyOnClose if you want content to stay mounted
       destroyOnClose={false}
     >
-      {/* Scrollable Content */}
       <div className="modal-content font-outfit">
         {/* Description Box */}
         {grant?.description !== null && grant?.description !== '' && (
-           <div className="bg-[rgb(0,0,0,0.07)] p-4 rounded-xl mt-5">
-           <h1 className="font-semibold text-lg text-heading-1">Description:</h1>
-           <p className="text-heading-1 text-base whitespace-pre-wrap">
+           <div className="bg-[rgb(0,0,0,0.07)] p-4 rounded-xl mt-3 md:mt-5">
+           <h1 className="font-semibold text-base md:text-lg text-heading-1">Description:</h1>
+           <p className="text-heading-1 text-sm md:text-base whitespace-pre-wrap">
              {expanded || !isLong ? grant.description : preview}
            </p>
            {isLong && (
@@ -101,12 +98,12 @@ const GrantsModal = ({ open, onClose, grant }) => {
          </div>
         )}
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-2 md:gap-5">
           {/* Amount Box */}
           {grant?.total_fund !== null && grant?.total_fund !== '' && (
-            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-5">
-              <h1 className="font-semibold text-lg text-heading-1">Grant Amount:</h1>
-              <p className="text-heading-1 text-base">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3 md:mt-5">
+              <h1 className="font-semibold text-base md:text-lg text-heading-1">Grant Amount:</h1>
+              <p className="text-heading-1 text-xs md:text-base">
                 {grant.total_fund}
               </p>
             </div>
@@ -115,9 +112,9 @@ const GrantsModal = ({ open, onClose, grant }) => {
 
           {/* Opening Date */}
           {(grant?.posted_date || grant?.opening_date) && (
-            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-5">
-              <h1 className="font-semibold text-lg text-heading-1">Opening Date:</h1>
-              <p className="text-heading-1 text-base">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3 md:mt-5">
+              <h1 className="font-semibold text-base md:text-lg text-heading-1">Opening Date:</h1>
+              <p className="text-heading-1 text-xs md:text-base">
                 {grant?.posted_date ? `${grant.posted_date}` : `${grant.opening_date}`}
               </p>
             </div>
@@ -125,9 +122,9 @@ const GrantsModal = ({ open, onClose, grant }) => {
 
           {/* Closing Date */}
           {(grant?.due_date || grant?.closing_date) && (
-            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-5">
-              <h1 className="font-semibold text-lg text-heading-1">Closing Date:</h1>
-              <p className="text-heading-1 text-base">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3 md:mt-5">
+              <h1 className="font-semibold text-base md:text-lg text-heading-1">Closing Date:</h1>
+              <p className="text-heading-1 text-xs md:text-base">
                 {grant?.due_date ? `${grant.due_date}` : `${grant.closing_date}`}
               </p>
             </div>
@@ -135,10 +132,10 @@ const GrantsModal = ({ open, onClose, grant }) => {
         </div>
         {/* Scope Section */}
         {grant?.scope && (
-          <div className="mt-5 bg-[rgb(0,0,0,0.07)] p-4 rounded-xl">
+          <div className="mt-3 md:mt-5 bg-[rgb(0,0,0,0.07)] p-4 rounded-xl">
             <button
               onClick={() => setIsScopeOpen(!isScopeOpen)}
-              className="flex justify-between items-center w-full py-2 text-left text-lg font-semibold text-heading-1"
+              className="flex justify-between items-center w-full py-2 text-left text-base md:text-lg font-semibold text-heading-1"
             >
               Scope: {isScopeOpen ? <FaChevronUp /> : <FaChevronDown />}
             </button>
@@ -147,13 +144,13 @@ const GrantsModal = ({ open, onClose, grant }) => {
               className={`transition-all duration-300 ease-in-out transform origin-top ${isScopeOpen ? "scale-100 opacity-100 mt-2" : "scale-95 opacity-0 h-0 overflow-hidden"
                 }`}
             >
-              <p className="text-base">
+              <p className="text-sm md:text-base">
                 {showFullScope ? grant.scope : truncateText(grant.scope)}
               </p>
               {grant.scope.split(" ").length > 20 && (
                 <button
                   onClick={() => setShowFullScope(!showFullScope)}
-                  className="text-blue-600 underline mt-2"
+                  className="text-blue-600  mt-2 text-sm md:text-base"
                 >
                   {showFullScope ? "Show Less" : "Show More"}
                 </button>
@@ -164,19 +161,19 @@ const GrantsModal = ({ open, onClose, grant }) => {
 
         {/* Who Can Apply Section */}
         {grant?.who_can_apply && (
-          <div className="mt-5 bg-[rgb(0,0,0,0.07)] p-4 rounded-xl">
+          <div className="mt-3 md:mt-5 bg-[rgb(0,0,0,0.07)] p-4 rounded-xl">
             <button
               onClick={() => setIsWhoCanApplyOpen(!isWhoCanApplyOpen)}
-              className="flex justify-between items-center w-full py-2 text-left text-lg font-semibold text-heading-1"
+              className="flex justify-between items-center w-full py-2 text-left text-base md:text-lg font-semibold text-heading-1"
             >
               Who Can Apply: {isWhoCanApplyOpen ? <FaChevronUp /> : <FaChevronDown />}
             </button>
 
             <div
-              className={`transition-all duration-300 ease-in-out transform origin-top ${isWhoCanApplyOpen ? "scale-100 opacity-100 mt-2" : "scale-95 opacity-0 h-0 overflow-hidden"
+              className={`transition-all  duration-300 ease-in-out transform origin-top ${isWhoCanApplyOpen ? "scale-100 opacity-100 mt-2" : "scale-95 opacity-0 h-0 overflow-hidden"
                 }`}
             >
-              <p className="text-base">
+              <p className="text-sm md:text-base">
                 {showFullWhoCanApply
                   ? grant.who_can_apply
                   : truncateText(grant.who_can_apply)}
@@ -184,7 +181,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
               {grant.who_can_apply.split(" ").length > 20 && (
                 <button
                   onClick={() => setShowFullWhoCanApply(!showFullWhoCanApply)}
-                  className="text-blue-600 underline mt-2"
+                  className="text-blue-600  mt-2 text-sm md:text-base"
                 >
                   {showFullWhoCanApply ? "Show Less" : "Show More"}
                 </button>

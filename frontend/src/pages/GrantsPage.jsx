@@ -178,7 +178,7 @@ const GrantsPage = () => {
 
   if (loading) {
     return (
-      <div className="m-24 p-6">
+      <div className="m-5 xs:mt-24  xl:m-24 p-6">
         <Skeleton active paragraph={{ rows: 15, width: ["60%", "80%", "100%"] }} />
       </div>
     );
@@ -288,13 +288,12 @@ const GrantsPage = () => {
 
 
   return (
-    <div>
-      <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)]">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
+    <div className="xs:mt-16">
+      <div className=" xl:m-24 p-4 xl:p-6 rounded-xl xl:bg-[rgb(0,0,0,0.07)]">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6">
+          <div className="xl:flex items-start sm:items-center gap-2 w-full xl:w-auto">
             {!showingSaved ? (
               <>
-
                 {/* Search Input */}
                 <SearchInput
                   placeholder="Search by title"
@@ -302,41 +301,46 @@ const GrantsPage = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onSearch={handleSearch}
                 />
-                {/* Filters Dropdown */}
-                <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
-                <OpportunityStatusSelect
-                  onChange={handleOpportunityStatusChange}
-                  value={opportunityStatus}
-                  counts={opportunityStatusCounts}
-                />
 
-                <RecommendationButton onClick={recommendedGrantsPage} />
+                {/* Filters Dropdown */}
+                <div className="flex items-center gap-2 mt-3 xl:mt-0">
+                  <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
+                  <OpportunityStatusSelect
+                    onChange={handleOpportunityStatusChange}
+                    value={opportunityStatus}
+                    counts={opportunityStatusCounts}
+                  />
+
+                  <RecommendationButton onClick={recommendedGrantsPage} />
+                </div>
               </>
             ) : (
-              <div className="text-2xl font-outfit text-heading-1 font-semibold flex items-center gap-2"><FaBookmark/>Saved Grants</div>
+              <div className="text-2xl font-outfit text-heading-1 font-semibold flex items-center gap-2"><FaBookmark />Saved Grants</div>
             )}
 
           </div>
 
-          <div className="flex items-center gap-4">
-            <button
-              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
-              onClick={toggleSavedGrantsView}
-            >
-              {showingSaved ? (
-                <>
-                  <FaArrowLeft />
-                  Back to All Grants
-                </>
-              ) : (
-                <>
-                  <FaBookmark />
-                  View Saved Grants
-                </>
-              )}
-            </button>
-            <ExportCsv onClick={handleExportCSV} />
-            <div className="font-semibold text-heading-1 font-outfit select-none">
+          <div className="xl:flex items-center w-full xl:w-auto justify-between mt-3 xl:mt-0 xl:gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-xs xl:text-sm text-white font-medium font-outfit hover:bg-gray-800"
+                onClick={toggleSavedGrantsView}
+              >
+                {showingSaved ? (
+                  <>
+                    <FaArrowLeft />
+                    Back to All Grants
+                  </>
+                ) : (
+                  <>
+                    <FaBookmark />
+                    View Saved Grants
+                  </>
+                )}
+              </button>
+              <ExportCsv onClick={handleExportCSV} />
+            </div>
+            <div className="font-semibold text-heading-1 font-outfit select-none flex justify-end xl:block mt-3 xl:mt-0 ">
               Total Grants: {totalGrants}
             </div>
           </div>
@@ -345,7 +349,7 @@ const GrantsPage = () => {
         {(showingSaved ? savedGrants : grants).length > 0 ? (
           (showingSaved ? savedGrants : grants).map((grant, index) => (
 
-            <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
+            <div key={index} className="bg-white rounded-xl p-3 xl:px-4 py-2 mb-6 border xl:border-none">
               <GrantItem grant={grant} onUnsaveSuccess={(grantId) => {
                 setSavedGrants(prev => prev.filter(g => g._id !== grantId));
                 setTotalGrants(prev => prev - 1);
@@ -359,10 +363,10 @@ const GrantsPage = () => {
 
         {/* Pagination */}
         <PaginationControls
-  currentPage={currentPage}
-  totalPages={Math.ceil(totalGrants / itemsPerPage)}
-  setCurrentPage={setCurrentPage}
-/>
+          currentPage={currentPage}
+          totalPages={Math.ceil(totalGrants / itemsPerPage)}
+          setCurrentPage={setCurrentPage}
+        />
 
 
 

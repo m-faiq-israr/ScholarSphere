@@ -32,30 +32,30 @@ const ConferencesPage = () => {
   const [savedConferences, setSavedConferences] = useState([]);
 
   const fetchConferences = async () => {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    let endpoint = "";
-    const baseUrl = "http://localhost:4000/api/conferences";
+      let endpoint = "";
+      const baseUrl = "http://localhost:4000/api/conferences";
 
-    if (searchQuery) {
-      endpoint = `${baseUrl}/search?q=${encodeURIComponent(searchQuery)}&page=${currentPage}&limit=${itemsPerPage}`;
-    } else if (startDate || endDate || location) {
-      endpoint = `${baseUrl}/filter?startDate=${startDate || ""}&endDate=${endDate || ""}&location=${location || ""}&page=${currentPage}&limit=${itemsPerPage}`;
-    } else {
-      endpoint = `${baseUrl}?page=${currentPage}&limit=${itemsPerPage}`;
+      if (searchQuery) {
+        endpoint = `${baseUrl}/search?q=${encodeURIComponent(searchQuery)}&page=${currentPage}&limit=${itemsPerPage}`;
+      } else if (startDate || endDate || location) {
+        endpoint = `${baseUrl}/filter?startDate=${startDate || ""}&endDate=${endDate || ""}&location=${location || ""}&page=${currentPage}&limit=${itemsPerPage}`;
+      } else {
+        endpoint = `${baseUrl}?page=${currentPage}&limit=${itemsPerPage}`;
+      }
+
+      const response = await axios.get(endpoint);
+
+      setConferences(response.data.conferences || []);
+      setTotalConferences(response.data.total || 0);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    const response = await axios.get(endpoint);
-
-    setConferences(response.data.conferences || []);
-    setTotalConferences(response.data.total || 0);
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   useEffect(() => {
     fetchConferences();
@@ -172,27 +172,56 @@ const ConferencesPage = () => {
 
   return (
     <div>
-      <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)]">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
+      <div className="mt-24 md:m-24 p-4 md:p-6 rounded-xl md:bg-[rgb(0,0,0,0.07)]">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
+          <div className="md:flex items-center gap-4 w-full md:w-auto">
             {!showingSaved ? (
               <>
+
                 <SearchInput
                   placeholder="Search by title"
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onSearch={handleSearch}
                 />
-                <ConferenceFilterDropdown onApply={applyFilters} onClear={clearFilters} />
-                <RecommendationButton onClick={recommendedConferencesPage} />
+                <div className="mt-3 md:mt-0 flex items-center gap-3 ">
+                  <ConferenceFilterDropdown onApply={applyFilters} onClear={clearFilters} />
+                  <RecommendationButton onClick={recommendedConferencesPage} />
+                  <button
+                    className="md:hidden flex items-center gap-2  px-3 py-2 rounded-xl bg-heading-1 text-xs md:text-sm text-white font-medium font-outfit hover:bg-gray-800"
+                    onClick={toggleSavedConferencesView}
+                  >
+                    {showingSaved ? (
+                      <>
+                        <FaArrowLeft />
+                        Back 
+                      </>
+                    ) : (
+                      <>
+                        <FaBookmark />
+                        Saved Items
+                      </>
+                    )}
+                  </button>
+                </div>
               </>
             ) : (
-              <div className="text-2xl font-outfit font-semibold text-heading-1 flex items-center gap-2"><FaBookmark/>Saved Conferences</div>
+              <div className="text-2xl font-outfit font-semibold text-heading-1 flex items-center gap-2"><FaBookmark />Saved Conferences</div>
             )}
           </div>
-          <div className="flex items-center gap-4">
+          {showingSaved && (
             <button
-              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              className="md:hidden mt-2 flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-xs  md:text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              onClick={toggleSavedConferencesView}
+            >
+                  <FaArrowLeft />
+                  Back to All Conferences
+              
+            </button>
+          )}
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <button
+              className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
               onClick={toggleSavedConferencesView}
             >
               {showingSaved ? (
@@ -207,7 +236,8 @@ const ConferencesPage = () => {
                 </>
               )}
             </button>
-            <div className="font-semibold text-heading-1 font-outfit select-none">
+
+            <div className="font-semibold text-heading-1 font-outfit select-none flex justify-end md:block w-full md:w-auto mt-3 md:mt-0">
               Total Conferences: {totalConferences}
             </div>
           </div>
@@ -216,7 +246,7 @@ const ConferencesPage = () => {
         {(showingSaved ? savedConferences : conferences).length > 0 ? (
           (showingSaved ? savedConferences : conferences).map((conference, index) => (
 
-            <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
+            <div key={index} className="bg-white rounded-xl px-3 md:px-4 py-2 mb-6 border md:border-none">
               <ConferenceItem
                 conference={conference}
                 onUnsaveSuccess={(id) => {
@@ -231,11 +261,11 @@ const ConferencesPage = () => {
           <div className="text-center text-gray-500">No conferences found.</div>
         )}
 
-<PaginationControls
-  currentPage={currentPage}
-  totalPages={Math.ceil(totalConferences / itemsPerPage)}
-  setCurrentPage={setCurrentPage}
-/>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={Math.ceil(totalConferences / itemsPerPage)}
+          setCurrentPage={setCurrentPage}
+        />
 
       </div>
     </div>

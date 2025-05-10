@@ -81,20 +81,20 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
 
       <div className="w-[70%]">
         {normalizedStatus === "forecasted" && (
-          <div className="bg-cyan-500 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Forecasted</div>
+          <div className="bg-cyan-500 rounded-sm font-medium text-white text-xs md:text-sm px-2 py-1 inline-block">Forecasted</div>
         )}
         {normalizedStatus === "upcoming" && (
-          <div className="bg-orange-500 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Upcoming</div>
+          <div className="bg-orange-500 rounded-sm font-medium text-white text-xs md:text-sm px-2 py-1 inline-block">Upcoming</div>
         )}
         {isOpenStatus && (
-          <div className="bg-teal-500 rounded-sm font-medium text-white text-sm px-2 py-1 inline-block">Applications Open</div>
+          <div className="bg-teal-500 rounded-sm font-medium text-white text-xs md:text-sm px-2 py-1 inline-block">Applications Open</div>
         )}
 
-        <h1 className="font-semibold text-heading-1 pb-1 text-lg">{grant.title}</h1>
+        <h1 className="font-semibold text-heading-1 pb-1 text-base md:text-lg">{grant.title}</h1>
         {grant?.description !== null && grant?.description !== '' ? (
-          <p className="text-gray-600 line-clamp-2">{grant?.description}</p>
+          <p className="text-gray-600 line-clamp-2 text-sm md:text-base">{grant?.description}</p>
         ) : (
-          <p className='text-gray-600 line-clamp-2 '>
+          <p className='text-gray-600 line-clamp-2 text-sm md:text-base '>
             <span className='font-semibold'>Description:</span>
             N/A
           </p>
@@ -103,7 +103,7 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
 
       <div className="w-[30%] flex flex-col justify-between items-end">
         <div
-          className="text-xl text-gray-600 hover:text-heading-1 cursor-pointer"
+          className="md:text-xl text-gray-600 hover:text-heading-1 cursor-pointer"
           onClick={saved ? handleUnsave : handleSave}
         >
           {saved ? <FaBookmark className="text-heading-1" /> : <FaRegBookmark />}

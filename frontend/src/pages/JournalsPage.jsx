@@ -8,8 +8,6 @@ import SearchInput from '../components/InputFields/SearchInput';
 import { AppContext } from '../contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from "react-hot-toast";
-import RecommendationButton from '../components/Buttons/RecommendationButton';
-import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "../components/ui/pagination"
 import { getAuth } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { FaArrowLeft, FaBookmark } from 'react-icons/fa';
@@ -107,15 +105,6 @@ const JournalsPage = () => {
     return <div>Error: {error}</div>;
   }
 
-  const recommendedJournalsPage = () => {
-    if (!interests || interests.length === 0) {
-      toast.error('Complete user profile to get recommendations')
-    }
-    else {
-      navigate('/journals/recommended-journals');
-    }
-  }
-
   const recommendedJournalsByAbstract = () => {
     navigate('/journals/recommend-by-abstract')
   }
@@ -166,9 +155,9 @@ const JournalsPage = () => {
 
   return (
     <div>
-      <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)]">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
+      <div className="mt-24 md:m-24 p-4 md:p-6 rounded-xl md:bg-[rgb(0,0,0,0.07)]">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
+          <div className="md:flex items-center gap-4 w-full md:w-auto">
             {!showingSaved ? (
               <>
                 <SearchInput
@@ -177,23 +166,50 @@ const JournalsPage = () => {
                   onChange={handleSearchChange}
                   onSearch={handleSearch}
                 />
+                <div className="mt-3 md:mt-0 flex items-center gap-3 ">
 
-                <JournalsFilterDropdown
-                  onApplyFilters={handleApplyFilters}
-                  onClearFilters={handleClearFilters}
-                />
-                <button className="inline-flex font-outfit select-none items-center gap-2 rounded-xl bg-heading-1 py-2 px-3 text-sm font-medium text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
-                  onClick={recommendedJournalsByAbstract}>Search through abstract <BsStars /></button>
-
+                  <JournalsFilterDropdown
+                    onApplyFilters={handleApplyFilters}
+                    onClearFilters={handleClearFilters}
+                  />
+                  <button className="inline-flex font-outfit select-none items-center gap-2 rounded-xl bg-heading-1 py-2 px-3 text-xs md:text-sm font-medium text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
+                    onClick={recommendedJournalsByAbstract}>Search through abstract <BsStars /></button>
+                  <button
+                    className="md:hidden flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 
+                    text-xs md:text-sm text-white font-medium font-outfit hover:bg-gray-800"
+                    onClick={toggleSavedJournalsView}
+                  >
+                    {showingSaved ? (
+                      <>
+                        <FaArrowLeft />
+                        Back to All Journals
+                      </>
+                    ) : (
+                      <>
+                        <FaBookmark />
+                        View Saved Journals
+                      </>
+                    )}
+                  </button>
+                </div>
               </>
             ) : (
               <div className='font-outfit text-heading-1 text-2xl font-semibold flex items-center gap-2'><FaBookmark />  Saved Journals</div>
             )}
+              {showingSaved && (
+            <button
+              className="md:hidden mt-3 flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-xs md:text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              onClick={toggleSavedJournalsView}
+            >
+                  <FaArrowLeft />
+                  Back to All Journals
+            </button>
+              )}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 w-full md:w-auto mt-3 md:mt-0">
             <button
-              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
               onClick={toggleSavedJournalsView}
             >
               {showingSaved ? (
@@ -208,9 +224,10 @@ const JournalsPage = () => {
                 </>
               )}
             </button>
-            <div className="font-semibold text-heading-1 font-outfit select-none">
+            <div className="font-semibold text-heading-1 font-outfit select-none flex justify-end w-full md:block md:w-auto">
               Total Journals: {totalJournals}
             </div>
+
           </div>
         </div>
 
@@ -218,7 +235,7 @@ const JournalsPage = () => {
         {(showingSaved ? savedJournals : journals).length > 0 ? (
           (showingSaved ? savedJournals : journals).map((journal, index) => (
 
-            <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
+            <div key={index} className="bg-white rounded-xl px-3 md:px-4 border md:border-none py-2 mb-6">
               <JournalItem
                 journal={journal}
                 onUnsaveSuccess={(id) => {

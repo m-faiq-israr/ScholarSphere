@@ -73,14 +73,14 @@ const JournalItem = ({ journal, onUnsaveSuccess }) => {
       
       {/* Left side */}
       <div className='w-[70%]'>
-        <h1 className='font-semibold text-heading-1 pb-1 line-clamp-1 text-lg'>{journal.title}</h1>
+        <h1 className='font-semibold text-heading-1 pb-1 line-clamp-1 text-base md:text-lg'>{journal.title}</h1>
         
-        <p className='text-gray-600 line-clamp-2 '>
+        <p className='text-gray-600 line-clamp-2 text-sm md:text-base'>
           <span className='font-semibold'>Description:&nbsp;</span>
           {journal.scope ? journal.scope : 'N/A'}
         </p>
 
-        <p className='text-gray-600 line-clamp-2 mb-3 '>
+        <p className='text-gray-600 line-clamp-2 mb-3 text-sm md:text-base'>
           <span className='font-semibold'>Publisher:&nbsp;</span>
           {journal.publisher ? journal.publisher : 'N/A'}
         </p>
@@ -93,7 +93,7 @@ const JournalItem = ({ journal, onUnsaveSuccess }) => {
         
         {/* Save Icon at bottom right */}
         <div 
-          className='text-xl text-gray-600 hover:text-heading-1 cursor-pointer'
+          className='md:text-xl text-gray-600 hover:text-heading-1 cursor-pointer'
           onClick={saved ? handleUnsave : handleSave}
         >
           {saved ? <FaBookmark className="text-heading-1" /> : <FaRegBookmark />}

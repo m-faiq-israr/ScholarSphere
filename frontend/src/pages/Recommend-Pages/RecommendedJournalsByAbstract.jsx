@@ -11,9 +11,9 @@ const RecommendedJournalsByAbstract = () => {
   const [journals, setJournals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [submitted, setSubmitted] = useState(false); 
+  const [submitted, setSubmitted] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(10);
 
 
   const fetchRecommendations = async () => {
@@ -34,7 +34,7 @@ const [itemsPerPage] = useState(10);
 
 
       setJournals(response.data || []);
-      setCurrentPage(1); 
+      setCurrentPage(1);
 
     } catch (err) {
       console.error(err);
@@ -45,22 +45,22 @@ const [itemsPerPage] = useState(10);
   };
 
   const totalJournals = journals.length;
-const totalPages = Math.ceil(totalJournals / itemsPerPage);
-const paginatedJournals = journals.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = Math.ceil(totalJournals / itemsPerPage);
+  const paginatedJournals = journals.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
 
   return (
-    <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)] font-outfit">
-      <div className="text-heading-1 font-bold mb-4 text-3xl flex items-center gap-2">
+    <div className="mt-24 m-4 md:m-24 p-3 md:p-6 rounded-xl bg-[rgb(0,0,0,0.07)] font-outfit">
+      <div className="text-heading-1 font-bold mb-4 text-lg md:text-3xl flex items-center gap-2">
         Find the best Journals for your Research Paper
         {/* <BsStars /> */}
-        <img src={recomJournals} className="size-14"/>
+        <img src={recomJournals} className="size-8 md:size-14" />
 
       </div>
 
       {/* Text Area Input */}
       <textarea
-        className="w-full h-32 p-3 rounded-xl resize-none  text-sm focus:outline-none text-heading-1"
+        className="w-full h-32 p-2 md:p-3 rounded-xl resize-none text-xs md:text-sm focus:outline-none text-heading-1"
         placeholder="Paste your research abstract here..."
         value={abstract}
         onChange={(e) => setAbstract(e.target.value)}
@@ -68,14 +68,14 @@ const paginatedJournals = journals.slice((currentPage - 1) * itemsPerPage, curre
 
       <button
         onClick={fetchRecommendations}
-        className="mt-4 mb-6 px-6 py-2 bg-teal-500 hover:bg-opacity-90 text-white font-medium rounded-lg flex items-center gap-1"
+        className="mt-4 mb-6 px-3 md:px-5 py-2 text-sm md:text-base bg-teal-500 hover:bg-opacity-90 text-white font-medium rounded-lg flex items-center gap-1"
       >
         Get Recommendations
         <BsStars />
       </button>
-      <div className="font-semibold text-heading-1 font-outfit select-none flex justify-end">
-            Recommended Journals: {totalJournals}
-          </div>
+      <div className="font-semibold text-heading-1 text-sm md:text-base font-outfit select-none flex justify-end">
+        Recommended Journals: {totalJournals}
+      </div>
 
       {/* Loading & Error */}
       {loading && <Skeleton active paragraph={{ rows: 10 }} />}
@@ -85,18 +85,18 @@ const paginatedJournals = journals.slice((currentPage - 1) * itemsPerPage, curre
       {submitted && !loading && journals.length > 0 && (
         <div className="mt-6">
           {paginatedJournals.map((j, index) => (
-            <div key={index} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
+            <div key={index} className="bg-white rounded-xl px-3 md:px-4 py-2 mb-6">
               <JournalItem journal={j.journal} />
               <div className="mt-1 text-sm text-heading-1 font-outfit">
                 <strong>Score:</strong> {j.score.toFixed(2)}
               </div>
             </div>
           ))}
-           <PaginationControls
-      currentPage={currentPage}
-      totalPages={totalPages}
-      setCurrentPage={setCurrentPage}
-    />
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
+          />
         </div>
       )}
 

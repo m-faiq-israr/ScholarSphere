@@ -35,7 +35,7 @@ const RecommendedGrantsPage = () => {
       const token = await user.getIdToken();
 
       const response = await axios.post(
-        "http://localhost:4000/api/grants/recommended-grants", // 👈 Your grant route
+        "http://localhost:4000/api/grants/recommended-grants", 
         {},
         {
           headers: {
@@ -99,16 +99,16 @@ const RecommendedGrantsPage = () => {
 
 
   return (
-    <div className="m-24 p-6 rounded-xl bg-[rgb(0,0,0,0.07)]">
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-heading-1 font-outfit font-bold text-3xl flex items-center ">
+    <div className="mt-20 md:m-24 p-4 md:p-6 rounded-xl md:bg-[rgb(0,0,0,0.07)]">
+      <div className="md:flex items-center justify-between mb-4">
+        <div className="text-heading-1 font-outfit font-bold text-xl md:text-3xl flex items-center ">
           {/* <BsStars /> */}
           Recommended Grants
-          <img src={recomGrants} className="size-14" />
+          <img src={recomGrants} className="size-8 md:size-14" />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between md:justify-normal gap-2 mt-3 md:mt-0">
           {allGrants.length > 0 && <ExportCsv onClick={handleExportCSV} />}
-          <div className="font-semibold text-heading-1 font-outfit select-none">
+          <div className="font-semibold text-heading-1 font-outfit select-none text-sm md:text-base">
             Recommended Grants: {totalGrants}
           </div>
         </div>
@@ -116,8 +116,7 @@ const RecommendedGrantsPage = () => {
 
       {paginatedGrants.length > 0 ? (
         paginatedGrants.map((item, idx) => (
-
-          <div key={idx} className="bg-white rounded-xl pl-4 pr-8 py-2 mb-6">
+          <div key={idx} className="bg-white rounded-xl px-3 md:px-4 border md:border-none py-2 mb-6">
             <GrantItem grant={{ ...item.grant }} />
 
             <div className="mt-2 text-sm text-heading-1 font-outfit">

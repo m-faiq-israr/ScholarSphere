@@ -44,10 +44,10 @@ const JournalsFilterDropdown = ({ onApplyFilters, onClearFilters }) => {
       {/* Dropdown Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex select-none items-center gap-2 rounded-xl bg-heading-1 py-1.5 px-3 text-sm/6 font-medium text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
+        className="inline-flex select-none items-center gap-2 rounded-xl bg-heading-1 py-2 px-3 text-xs md:text-sm font-medium text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
       >
         Filters
-        <FunnelIcon className="size-4 fill-white" /> 
+        <FunnelIcon className="size-3 md:size-4 fill-white" /> 
       </button>
 
       {/* Dropdown Menu */}

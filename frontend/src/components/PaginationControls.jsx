@@ -33,11 +33,11 @@ const PaginationControls = ({ currentPage, totalPages, setCurrentPage }) => {
   return (
     <div className="flex justify-center mt-6 font-outfit">
       <Pagination>
-        <PaginationContent className="flex items-center gap-2">
+        <PaginationContent className="flex items-center md:gap-2">
           <PaginationItem>
             <PaginationPrevious
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+              className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer text-xs md:text-sm" : "cursor-pointer text-xs md:text-sm"}
             />
           </PaginationItem>
 
@@ -46,7 +46,7 @@ const PaginationControls = ({ currentPage, totalPages, setCurrentPage }) => {
               {typeof page === "number" ? (
                 <button
                   onClick={() => setCurrentPage(page)}
-                  className={`px-3 py-1 rounded-md text-sm font-semibold ${
+                  className={`px-3 py-1 rounded-md text-xs md:text-sm font-semibold ${
                     currentPage === page
                       ? "bg-heading-1 text-white"
                       : "bg-[rgb(0,0,0,0.05)] text-heading-1 hover:bg-[rgb(0,0,0,0.07)]"
@@ -55,7 +55,7 @@ const PaginationControls = ({ currentPage, totalPages, setCurrentPage }) => {
                   {page}
                 </button>
               ) : (
-                <span className="px-3 py-1 text-sm text-gray-500 select-none">...</span>
+                <span className="px-3 py-1 text-xs md:text-sm text-gray-500 select-none">...</span>
               )}
             </PaginationItem>
           ))}
@@ -65,7 +65,7 @@ const PaginationControls = ({ currentPage, totalPages, setCurrentPage }) => {
               onClick={() =>
                 setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
               }
-              className={currentPage === totalPages ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
+              className={currentPage === totalPages ? "pointer-events-none opacity-50 cursor-pointer text-xs md:text-sm" : "cursor-pointer text-xs md:text-sm"}
             />
           </PaginationItem>
         </PaginationContent>
