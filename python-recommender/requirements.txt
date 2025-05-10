@@ -1,4 +1,6 @@
+torch
+sentence-transformers
+scikit-learn
+pandas
 fastapi
 uvicorn
-scikit-learn
-pydantic
