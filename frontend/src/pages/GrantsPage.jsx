@@ -44,7 +44,7 @@ const GrantsPage = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://scholarsphere-backend.onrender.com/api/grants?page=${currentPage}&limit=${itemsPerPage}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/grants?page=${currentPage}&limit=${itemsPerPage}`
       );
       setGrants(response.data.grants || []);
       setTotalGrants(response.data.total || 0);
@@ -62,7 +62,7 @@ const GrantsPage = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://scholarsphere-backend.onrender.com/api/grants/filter?page=${currentPage}&limit=${itemsPerPage}&minAmount=${minAmount || ""}&maxAmount=${maxAmount || ""}&descriptionFilter=${descriptionFilter || ""}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/grants/filter?page=${currentPage}&limit=${itemsPerPage}&minAmount=${minAmount || ""}&maxAmount=${maxAmount || ""}&descriptionFilter=${descriptionFilter || ""}`
       );
       setGrants(response.data.grants || []);
       setTotalGrants(response.data.total || response.data.grants.length || 0); // Ensure total is set
@@ -81,7 +81,7 @@ const GrantsPage = () => {
       if (!appliedSearchTerm) return fetchAllGrants();
       setLoading(true);
       const response = await axios.get(
-        `https://scholarsphere-backend.onrender.com/api/grants/search?search=${appliedSearchTerm}&page=${currentPage}&limit=${itemsPerPage}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/grants/search?search=${appliedSearchTerm}&page=${currentPage}&limit=${itemsPerPage}`
       );
       setGrants(response.data.grants || []);
       setTotalGrants(response.data.total || response.data.grants.length || 0); // Ensure total is set
@@ -108,7 +108,7 @@ const GrantsPage = () => {
   const fetchGrantsByOpportunityStatus = async (status) => {
     try {
       setLoading(true);
-      const response = await axios.get(`https://scholarsphere-backend.onrender.com/api/grants/by-opportunity-status?status=${status}&page=${currentPage}&limit=${itemsPerPage}`);
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/grants/by-opportunity-status?status=${status}&page=${currentPage}&limit=${itemsPerPage}`);
       setGrants(response.data.grants || []);
       setTotalGrants(response.data.total || 0);
     } catch (err) {
@@ -120,7 +120,7 @@ const GrantsPage = () => {
 
   const fetchOpportunityStatusCounts = async () => {
     try {
-      const response = await axios.get("https://scholarsphere-backend.onrender.com/api/grants/opportunity-status-counts");
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/grants/opportunity-status-counts`);
       setOpportunityStatusCounts(response.data || {});
     } catch (err) {
       console.error("Error fetching opportunity status counts:", err);
@@ -237,7 +237,7 @@ const GrantsPage = () => {
             return;
           }
 
-          const response = await axios.post("https://scholarsphere-backend.onrender.com/api/grants/by-ids", {
+          const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/grants/by-ids`, {
             ids: savedIds,
           });
 

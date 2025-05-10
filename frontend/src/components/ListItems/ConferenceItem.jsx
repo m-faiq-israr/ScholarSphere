@@ -40,7 +40,7 @@ const ConferenceItem = ({ conference, onUnsaveSuccess }) => {
   const handleSave = () => {
     setSaved(true);
 
-    axios.post("https://scholarsphere-backend.onrender.com/api/items/save-item", {
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/items/save-item`, {
       userId,
       itemId: conference._id,
       itemType: "conference",
@@ -53,7 +53,7 @@ const ConferenceItem = ({ conference, onUnsaveSuccess }) => {
   const handleUnsave = () => {
     setSaved(false);
 
-    axios.post("https://scholarsphere-backend.onrender.com/api/items/unsave-item", {
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/items/unsave-item`, {
       userId,
       itemId: conference._id,
       itemType: "conference",

@@ -36,7 +36,8 @@ const ConferencesPage = () => {
       setLoading(true);
 
       let endpoint = "";
-      const baseUrl = "https://scholarsphere-backend.onrender.com/api/conferences";
+      const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/api/conferences`;
+      
 
       if (searchQuery) {
         endpoint = `${baseUrl}/search?q=${encodeURIComponent(searchQuery)}&page=${currentPage}&limit=${itemsPerPage}`;
@@ -147,7 +148,7 @@ const ConferencesPage = () => {
             return;
           }
 
-          const response = await axios.post("https://scholarsphere-backend.onrender.com/api/conferences/by-ids", {
+          const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/conferences/by-ids`, {
             ids: savedIds,
           });
 

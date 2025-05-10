@@ -33,7 +33,7 @@ const RecommendedConferencesPage = () => {
       const token = await user.getIdToken();
 
       const response = await axios.post(
-        "https://scholarsphere-backend.onrender.com/api/conferences/recommended-conferences",
+        `${import.meta.env.VITE_BACKEND_URL}/api/conferences/recommended-conferences`,
         {},
         {
           headers: {

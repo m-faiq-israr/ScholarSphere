@@ -27,7 +27,7 @@ const RecommendedJournalsByAbstract = () => {
       setError(null);
       setSubmitted(true);
 
-      const response = await axios.post('https://scholarsphere-backend.onrender.com/api/journals/recommend-by-abstract', {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/journals/recommend-by-abstract`, {
         abstract
       });
 

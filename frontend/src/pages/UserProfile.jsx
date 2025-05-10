@@ -273,7 +273,7 @@ const UserProfile = () => {
         formData.orcidId !== originalData.orcidId // only if changed
       ) {
         try {
-          const response = await axios.post('https://scholarsphere-backend.onrender.com/api/publications/fetch-publications', {
+          const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/publications/fetch-publications`, {
             uid: user.uid,
           });
           console.log('orcid is called')
