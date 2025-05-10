@@ -7,6 +7,8 @@ import grantRoutes from './Routes/grantRoutes.js';
 import journalRoutes from './Routes/journalRoutes.js';
 import publicationsRoutes from './Routes/publicationsRoutes.js'
 import saveItemRoutes from './Routes/saveItemRoutes.js'
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 app.use(cors());
