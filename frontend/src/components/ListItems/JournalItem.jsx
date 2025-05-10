@@ -40,7 +40,7 @@ const JournalItem = ({ journal, onUnsaveSuccess }) => {
   const handleSave = () => {
     setSaved(true);
 
-    axios.post("http://localhost:4000/api/items/save-item", {
+    axios.post("https://scholarsphere-backend.onrender.com/api/items/save-item", {
       userId,
       itemId: journal._id,
       itemType: "journal",
@@ -53,7 +53,7 @@ const JournalItem = ({ journal, onUnsaveSuccess }) => {
   const handleUnsave = () => {
     setSaved(false);
   
-    axios.post("http://localhost:4000/api/items/unsave-item", {
+    axios.post("https://scholarsphere-backend.onrender.com/api/items/unsave-item", {
       userId,
       itemId: journal._id,
       itemType: "journal",

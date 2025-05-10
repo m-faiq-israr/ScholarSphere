@@ -36,7 +36,7 @@ const ConferencesPage = () => {
       setLoading(true);
 
       let endpoint = "";
-      const baseUrl = "http://localhost:4000/api/conferences";
+      const baseUrl = "https://scholarsphere-backend.onrender.com/api/conferences";
 
       if (searchQuery) {
         endpoint = `${baseUrl}/search?q=${encodeURIComponent(searchQuery)}&page=${currentPage}&limit=${itemsPerPage}`;
@@ -147,7 +147,7 @@ const ConferencesPage = () => {
             return;
           }
 
-          const response = await axios.post("http://localhost:4000/api/conferences/by-ids", {
+          const response = await axios.post("https://scholarsphere-backend.onrender.com/api/conferences/by-ids", {
             ids: savedIds,
           });
 

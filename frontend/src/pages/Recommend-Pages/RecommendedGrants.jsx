@@ -35,7 +35,7 @@ const RecommendedGrantsPage = () => {
       const token = await user.getIdToken();
 
       const response = await axios.post(
-        "http://localhost:4000/api/grants/recommended-grants", 
+        "https://scholarsphere-backend.onrender.com/api/grants/recommended-grants", 
         {},
         {
           headers: {

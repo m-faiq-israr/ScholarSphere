@@ -45,15 +45,15 @@ const JournalsPage = () => {
         const hasFilters = filters.country || filters.publisher || filters.subjectArea;
 
         if (hasSearch) {
-          url = `http://localhost:4000/api/journals/search`;
+          url = `https://scholarsphere-backend.onrender.com/api/journals/search`;
           params.append("search", searchQuery);
         } else if (hasFilters) {
-          url = `http://localhost:4000/api/journals/filter`;
+          url = `https://scholarsphere-backend.onrender.com/api/journals/filter`;
           if (filters.country) params.append("country", filters.country);
           if (filters.publisher) params.append("publisher", filters.publisher);
           if (filters.subjectArea) params.append("subject_area", filters.subjectArea);
         } else {
-          url = `http://localhost:4000/api/journals`;
+          url = `https://scholarsphere-backend.onrender.com/api/journals`;
         }
 
         const response = await axios.get(`${url}?${params.toString()}`);
@@ -136,7 +136,7 @@ const JournalsPage = () => {
             return;
           }
 
-          const response = await axios.post("http://localhost:4000/api/journals/by-ids", {
+          const response = await axios.post("https://scholarsphere-backend.onrender.com/api/journals/by-ids", {
             ids: savedIds,
           });
 
