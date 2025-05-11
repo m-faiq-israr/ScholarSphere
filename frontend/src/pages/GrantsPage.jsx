@@ -178,7 +178,7 @@ const GrantsPage = () => {
 
   if (loading) {
     return (
-      <div className="m-5 xs:mt-24  xl:m-24 p-6">
+      <div className="mt-16 md:m-24 p-6">
         <Skeleton active paragraph={{ rows: 15, width: ["60%", "80%", "100%"] }} />
       </div>
     );
@@ -334,7 +334,7 @@ const GrantsPage = () => {
                 ) : (
                   <>
                     <FaBookmark />
-                    View Saved Grants
+                    Saved Grants
                   </>
                 )}
               </button>

@@ -18,6 +18,7 @@ import { doSignOut } from "@/firebase/auth";
 import { HiOutlineLogout } from "react-icons/hi";
 import EducationSelect from "@/components/InputFields/EducationSelect";
 import AffiliationSelect from "@/components/InputFields/AffiliationSelect";
+import PaginationControls from "@/components/PaginationControls";
 
 
 const UserProfile = () => {
@@ -258,19 +259,17 @@ const UserProfile = () => {
 
     setLoading(true);
     try {
-      // 1. Save user profile (first step)
       await setDoc(doc(db, "user_profile", user.uid), {
         ...formData,
-        fetched_publications: [] // ✅ Ensure this field is cleared if user deleted all pubs
+        fetched_publications: [] 
       });
       
       notify(hasData ? "Data updated successfully!" : "Data saved successfully!");
 
-      // 2. If ORCID ID is provided, call backend to fetch publications
       if (
         formData.orcidId &&
         formData.orcidId.trim() !== "" &&
-        formData.orcidId !== originalData.orcidId // only if changed
+        formData.orcidId !== originalData.orcidId 
       ) {
         try {
           const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/publications/fetch-publications`, {
@@ -327,15 +326,15 @@ const UserProfile = () => {
 
 
   return (
-    <div className="mt-24 px-12 pb-5 pt-8 m-20 rounded-xl bg-[rgb(0,0,0,0.07)]">
+    <div className="mt-24 px-4 lg:px-12 pb-5 pt-8 m-4 lg:m-20 rounded-xl bg-[rgb(0,0,0,0.07)]">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <div className='cursor-pointer bg-heading-1 hover:bg-gray-700 rounded-full p-1.5'>
             <FaUserGraduate className="text-white size-5 font-outfit" />
           </div>
-          <h1 className="text-heading-1 text-2xl font-outfit font-semibold">User Profile</h1>
+          <h1 className="text-heading-1 text-xl lg:text-2xl font-outfit font-semibold">User Profile</h1>
         </div>
-        <div onClick={handleLogout} className="flex items-center gap-1 font-outfit font-medium text-red-600 cursor-pointer">
+        <div onClick={handleLogout} className="flex items-center gap-1 text-sm lg:text-base font-outfit font-medium text-red-600 cursor-pointer">
           <HiOutlineLogout />
           Logout
         </div>
@@ -343,7 +342,7 @@ const UserProfile = () => {
 
       {/* Personal Information */}
       <div className="bg-white p-6 rounded-xl">
-        <h1 className="font-outfit font-semibold text-xl text-heading-1 mb-4">
+        <h1 className="font-outfit font-semibold text-lg lg:text-xl text-heading-1 mb-4">
           Personal Information:
         </h1>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -369,14 +368,14 @@ const UserProfile = () => {
             onChange={(e) => setFormData({ ...formData, orcidId: e.target.value })}
           />
           <div className="flex flex-col gap-1">
-            <div className='text-heading-1 font-outfit font-medium pl-1 select-none'>Education Level</div>
+            <div className='text-heading-1 text-sm md:text-base font-outfit font-medium pl-1 select-none'>Education Level</div>
             <EducationSelect
               value={formData.educationLevel}
               onChange={(val) => setFormData({ ...formData, educationLevel: val })}
             />
           </div>
           <div className="flex flex-col gap-1">
-            <div className='text-heading-1 font-outfit font-medium pl-1 select-none'>Current Affiliation</div>
+            <div className='text-heading-1 font-outfit text-sm md:text-base font-medium pl-1 select-none'>Current Affiliation</div>
             <AffiliationSelect
               value={formData.currentAffiliation}
               onChange={(val) => setFormData({ ...formData, currentAffiliation: val })}
@@ -390,12 +389,12 @@ const UserProfile = () => {
       <div className="bg-white p-6 rounded-xl mt-4">
         <div className="flex items-center gap-4 justify-between mb-4">
 
-          <h1 className="font-outfit font-semibold text-xl text-heading-1 ">
+          <h1 className="font-outfit font-semibold text-lg lg:text-xl text-heading-1 ">
             Fields of Interest:
           </h1>
           <button
             onClick={addInputField}
-            className="px-3 py-2 font-outfit  text-sm flex items-center gap-1 font-medium bg-heading-1  text-white rounded-xl hover:bg-gray-800"
+            className="px-3 py-2 font-outfit text-xs md:text-sm flex items-center gap-1 font-medium bg-heading-1  text-white rounded-xl hover:bg-gray-800"
           >
             Add Field <FiPlus size={15} />
           </button>
@@ -426,21 +425,21 @@ const UserProfile = () => {
 
       {/* Publications */}
       <div className="bg-white p-6 rounded-xl mt-4 font-outfit">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="font-outfit font-semibold text-xl text-heading-1">
+        <div className="flex flex-wrap items-center  justify-between mb-4">
+          <h1 className="font-outfit font-semibold text-lg lg:text-xl text-heading-1">
             Publications:
           </h1>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center flex-wrap gap-6">
             <UserPageInput
               placeholder="Search through title or keywords..."
-              width="w-72"
+              width="w-full md:w-72"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <button
               onClick={addPublication}
-              className="px-3 py-2 flex items-center gap-1 font-medium bg-heading-1 text-sm text-white rounded-xl hover:bg-gray-800"
+              className="px-3 py-2 flex items-center gap-1 font-medium bg-heading-1 text-xs md:text-sm text-white rounded-xl hover:bg-gray-800"
             >
               Add Publication <FiPlus size={15} />
             </button>
@@ -457,7 +456,7 @@ const UserProfile = () => {
                 onClick={() => togglePublication(pubIndex)}
               >
                 <h2
-                  className={`font-medium  text-heading-1 ${expandedPubs[pubIndex]
+                  className={`font-medium text-sm md:text-base  text-heading-1 ${expandedPubs[pubIndex]
                     ? "whitespace-normal break-words"
                     : "truncate"
                     } max-w-full`}
@@ -465,15 +464,15 @@ const UserProfile = () => {
                   {pub.title ? pub.title : "Untitled Publication"}
                 </h2>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 md:gap-4">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       removePublication(pubIndex);
                     }}
-                    className="text-red-600"
+                    className="text-red-600 "
                   >
-                    <TiMinus size={22} />
+                    <TiMinus className="size-5 md:size-6" />
                   </button>
                   <svg
                     className={`w-5 h-5 transition-transform duration-300 ${expandedPubs[pubIndex] ? "rotate-90" : ""
@@ -611,79 +610,12 @@ const UserProfile = () => {
             No publications matched your search.
           </div>
         )}
-        <div className="flex justify-center mt-6 font-outfit">
-          <Pagination>
-            <PaginationContent className="flex items-center gap-2">
-              {/* Previous Button */}
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
-                />
-              </PaginationItem>
-
-              {/* Page Numbers */}
-              {(() => {
-                const totalPages = Math.ceil(totalPublications / itemsPerPage);
-                const visiblePages = [];
-
-                if (totalPages <= 7) {
-                  for (let i = 1; i <= totalPages; i++) {
-                    visiblePages.push(i);
-                  }
-                } else {
-                  visiblePages.push(1);
-
-                  if (currentPage > 4) {
-                    visiblePages.push("dots-1");
-                  }
-
-                  for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-                    if (i > 1 && i < totalPages) {
-                      visiblePages.push(i);
-                    }
-                  }
-
-                  if (currentPage < totalPages - 3) {
-                    visiblePages.push("dots-2");
-                  }
-
-                  visiblePages.push(totalPages);
-                }
-
-                return visiblePages.map((page, index) => (
-                  <PaginationItem key={index}>
-                    {typeof page === "number" ? (
-                      <button
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-1 rounded-md text-sm font-semibold
-                ${currentPage === page
-                            ? "bg-heading-1 text-white"
-                            : "bg-[rgb(0,0,0,0.07)] text-heading-1 hover:bg-gray-300"}`}
-                      >
-                        {page}
-                      </button>
-                    ) : (
-                      <span className="px-3 py-1 text-sm text-gray-500 select-none ">...</span>
-                    )}
-                  </PaginationItem>
-                ));
-              })()}
-
-              {/* Next Button */}
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() =>
-                    setCurrentPage((prev) =>
-                      prev * itemsPerPage < totalPublications ? prev + 1 : prev
-                    )
-                  }
-                  className={currentPage * itemsPerPage >= totalPublications ? "pointer-events-none opacity-50 cursor-pointer" : "cursor-pointer"}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
+        {/* Pagination */}
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={Math.ceil(totalPublications / itemsPerPage)}
+          setCurrentPage={setCurrentPage}
+        />
         {filteredPublications.length > 0 && (
           <div className="m flex justify-end text-sm text-gray-600 font-outfit">
             Total Publications: {filteredPublications.length}
@@ -700,7 +632,7 @@ const UserProfile = () => {
         <button
           onClick={handleSubmit}
           disabled={loading || !hasChanges}
-          className={`mt-4 px-6 py-2 flex items-center gap-2 text-white rounded-xl font-outfit font-medium 
+          className={`mt-4 px-6 py-2 flex items-center gap-2 text-sm md:text-base text-white rounded-xl font-outfit font-medium 
             ${loading || !hasChanges ? "bg-gray-500 cursor-not-allowed" : "bg-heading-1 hover:bg-gray-800"}
           `}
         >

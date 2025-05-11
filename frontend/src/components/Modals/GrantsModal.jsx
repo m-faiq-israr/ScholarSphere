@@ -98,10 +98,10 @@ const GrantsModal = ({ open, onClose, grant }) => {
          </div>
         )}
 
-        <div className="flex items-center gap-2 md:gap-5">
+        <div className="flex flex-wrap gap-2 md:gap-5 mt-3 md:mt-5">
           {/* Amount Box */}
           {grant?.total_fund !== null && grant?.total_fund !== '' && (
-            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3 md:mt-5">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block ">
               <h1 className="font-semibold text-base md:text-lg text-heading-1">Grant Amount:</h1>
               <p className="text-heading-1 text-xs md:text-base">
                 {grant.total_fund}
@@ -112,7 +112,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
 
           {/* Opening Date */}
           {(grant?.posted_date || grant?.opening_date) && (
-            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3 md:mt-5">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block ">
               <h1 className="font-semibold text-base md:text-lg text-heading-1">Opening Date:</h1>
               <p className="text-heading-1 text-xs md:text-base">
                 {grant?.posted_date ? `${grant.posted_date}` : `${grant.opening_date}`}
@@ -122,7 +122,7 @@ const GrantsModal = ({ open, onClose, grant }) => {
 
           {/* Closing Date */}
           {(grant?.due_date || grant?.closing_date) && (
-            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3 md:mt-5">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block ">
               <h1 className="font-semibold text-base md:text-lg text-heading-1">Closing Date:</h1>
               <p className="text-heading-1 text-xs md:text-base">
                 {grant?.due_date ? `${grant.due_date}` : `${grant.closing_date}`}

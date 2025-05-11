@@ -108,23 +108,23 @@ const JournalsModal = ({ open, onClose, journal }) => {
           </div>
         )}
 
-        <div className="flex items-center gap-3 mb-1">
+        <div className="flex flex-wrap gap-3 mt-3">
           {journal.coverage && (
-            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block ">
               <h1 className="font-semibold text-base md:text-lg text-heading-1">Coverage:</h1>
               <p className="text-heading-1 text-xs md:text-base ">{journal.coverage}</p>
             </div>
           )}
 
           {journal.country && (
-            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block ">
               <h1 className="font-semibold text-base md:text-lg text-heading-1">Country:</h1>
               <p className="text-heading-1 text-xs md:text-base ">{journal.country}</p>
             </div>
           )}
 
           {journal.contact_email && (
-            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block mt-3">
+            <div className="bg-[rgb(0,0,0,0.07)] rounded-xl p-4 inline-block ">
               <h1 className="font-semibold text-base md:text-lg text-heading-1">Contact Email:</h1>
               <p className="text-heading-1 text-xs md:text-base ">{journal.contact_email}</p>
             </div>

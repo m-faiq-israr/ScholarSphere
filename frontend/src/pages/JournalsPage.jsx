@@ -95,7 +95,7 @@ const JournalsPage = () => {
 
   if (loading) {
     return (
-      <div className="m-24 p-6">
+      <div className="mt-16 md:m-24 p-6">
         <Skeleton active paragraph={{ rows: 15, width: ['60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '100%', '60%', '80%', '100%', '60%', '80%', '100%'] }} />
       </div>
     );
@@ -187,7 +187,7 @@ const JournalsPage = () => {
                     ) : (
                       <>
                         <FaBookmark />
-                        View Saved Journals
+                        Saved Journals
                       </>
                     )}
                   </button>
@@ -220,7 +220,7 @@ const JournalsPage = () => {
               ) : (
                 <>
                   <FaBookmark />
-                  View Saved Journals
+                  Saved Journals
                 </>
               )}
             </button>

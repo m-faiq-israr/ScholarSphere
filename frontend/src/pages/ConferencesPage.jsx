@@ -89,7 +89,7 @@ const ConferencesPage = () => {
 
   if (loading) {
     return (
-      <div className="m-24 p-6">
+      <div className="mt-16 md:m-24 p-6">
         <Skeleton active paragraph={{ rows: 15, width: ['60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '60%', '80%', '100%', '100%', '60%', '80%', '100%', '60%', '80%', '100%'] }} />
       </div>
     );
@@ -200,7 +200,7 @@ const ConferencesPage = () => {
                     ) : (
                       <>
                         <FaBookmark />
-                        Saved Items
+                        Saved Conferences
                       </>
                     )}
                   </button>
@@ -233,7 +233,7 @@ const ConferencesPage = () => {
               ) : (
                 <>
                   <FaBookmark />
-                  View Saved Conferences
+                  Saved Conferences
                 </>
               )}
             </button>

@@ -13,7 +13,7 @@ const EducationSelect = ({ value, onChange }) => {
     <SelectTrigger className="!bg-[rgb(0,0,0,0.07)] shadow-none !border-none rounded-xl font-outfit focus:ring-0 focus:outline-none focus:border-none">
       <SelectValue placeholder="Select education level" />
     </SelectTrigger>
-    <SelectContent className='font-outfit shadow-none text-heading-1 rounded-xl'>
+    <SelectContent className='font-outfit shadow-none text-sm md:text-base text-heading-1 rounded-xl'>
       <SelectItem value="undergraduate student">Undergraduate Student</SelectItem>
       <SelectItem  value="graduate student">Graduate Student (Master's)</SelectItem>
       <SelectItem value="PhD student">PhD Student</SelectItem>

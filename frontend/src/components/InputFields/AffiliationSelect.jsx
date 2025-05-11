@@ -13,7 +13,7 @@ const AffiliationSelect = ({ value, onChange }) => {
       <SelectTrigger className="!bg-[rgb(0,0,0,0.07)] shadow-none !border-none rounded-xl font-outfit focus:ring-0 focus:outline-none focus:border-none">
         <SelectValue placeholder="Select affiliation type" />
       </SelectTrigger>
-      <SelectContent className="font-outfit shadow-none text-heading-1 rounded-xl">
+      <SelectContent className="font-outfit shadow-none text-sm md:text-base text-heading-1 rounded-xl">
         <SelectItem value="university or college">University / College</SelectItem>
         <SelectItem value="independent research institute">Independent Research Institute</SelectItem>
         <SelectItem value="government research lab">Government Research Lab</SelectItem>
