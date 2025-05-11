@@ -12,7 +12,7 @@ const OpportunityStatusSelect = ({ onChange, value, counts = {} }) => {
   return (
     <div className="w-48">
       <Select onValueChange={onChange} value={value}>
-        <SelectTrigger className="!bg-heading-1 w-full text-xs md:text-sm !text-white font-medium shadow-none !border-none rounded-xl font-outfit md:px-3  focus:ring-0 focus:outline-none focus:border-none ring-0 focus-visible:ring-0 data-[state=open]:ring-0">
+        <SelectTrigger className="!bg-heading-1 w-full text-sm !text-white font-medium shadow-none !border-none rounded-xl font-outfit md:px-3  focus:ring-0 focus:outline-none focus:border-none ring-0 focus-visible:ring-0 data-[state=open]:ring-0">
           <SelectValue className="!text-white" />
         </SelectTrigger>
         <SelectContent className="font-outfit shadow-none text-heading-1 rounded-xl">

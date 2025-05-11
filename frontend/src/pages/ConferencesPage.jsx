@@ -173,7 +173,7 @@ const ConferencesPage = () => {
 
   return (
     <div>
-      <div className="mt-24 md:m-24 p-4 md:p-6 rounded-xl md:bg-[rgb(0,0,0,0.07)]">
+      <div className="mt-16 md:m-24 p-4 md:p-6 rounded-xl md:bg-[rgb(0,0,0,0.07)]">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
           <div className="md:flex items-center gap-4 w-full md:w-auto">
             {!showingSaved ? (
@@ -185,11 +185,11 @@ const ConferencesPage = () => {
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onSearch={handleSearch}
                 />
-                <div className="mt-3 md:mt-0 flex items-center gap-3 ">
+                <div className="mt-3 md:mt-0 flex flex-wrap gap-3 ">
                   <ConferenceFilterDropdown onApply={applyFilters} onClear={clearFilters} />
                   <RecommendationButton onClick={recommendedConferencesPage} />
                   <button
-                    className="md:hidden flex items-center gap-2  px-3 py-2 rounded-xl bg-heading-1 text-xs md:text-sm text-white font-medium font-outfit hover:bg-gray-800"
+                    className="md:hidden whitespace-nowrap flex items-center gap-2  px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
                     onClick={toggleSavedConferencesView}
                   >
                     {showingSaved ? (
@@ -212,7 +212,7 @@ const ConferencesPage = () => {
           </div>
           {showingSaved && (
             <button
-              className="md:hidden mt-2 flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-xs  md:text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              className="md:hidden mt-2 whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
               onClick={toggleSavedConferencesView}
             >
                   <FaArrowLeft />
@@ -222,7 +222,7 @@ const ConferencesPage = () => {
           )}
           <div className="flex items-center gap-4 w-full md:w-auto">
             <button
-              className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              className="hidden whitespace-nowrap md:flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
               onClick={toggleSavedConferencesView}
             >
               {showingSaved ? (

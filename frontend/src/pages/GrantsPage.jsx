@@ -303,7 +303,7 @@ const GrantsPage = () => {
                 />
 
                 {/* Filters Dropdown */}
-                <div className="flex items-center gap-2 mt-3 xl:mt-0">
+                <div className="flex flex-wrap gap-2 mt-3 xl:mt-0">
                   <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
                   <OpportunityStatusSelect
                     onChange={handleOpportunityStatusChange}
@@ -323,7 +323,7 @@ const GrantsPage = () => {
           <div className="xl:flex items-center w-full xl:w-auto justify-between mt-3 xl:mt-0 xl:gap-3">
             <div className="flex items-center gap-3">
               <button
-                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-xs xl:text-sm text-white font-medium font-outfit hover:bg-gray-800"
+                className="flex  items-center whitespace-nowrap gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
                 onClick={toggleSavedGrantsView}
               >
                 {showingSaved ? (
