@@ -53,7 +53,7 @@ const recommendConferences = async (req, res) => {
     }));
     
 
-    const response = await axios.post('http://127.0.0.1:8000/recommend/conferences', {
+    const response = await axios.post('https://python-recommender-production-53bf.up.railway.app/recommend/conferences', {
       user_interests: interests,
       publications,
       fetched_publications: fetchedPublications,

@@ -25,7 +25,7 @@ const recommendJournalsByAbstract = async (req, res) => {
       link: j.link || ''
     }));
 
-    const response = await axios.post('http://127.0.0.1:8000/recommend/journals/by-abstract', {
+    const response = await axios.post('https://python-recommender-production-53bf.up.railway.app/recommend/journals/by-abstract', {
       abstract,
       journals: formattedJournals
     });

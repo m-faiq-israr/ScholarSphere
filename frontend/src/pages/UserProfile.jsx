@@ -3,12 +3,10 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { TiMinus } from "react-icons/ti";
-import { FiEdit, FiPlus, FiSave } from "react-icons/fi";
+import { FiPlus, FiSave } from "react-icons/fi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import UserPageInput from "../components/InputFields/UserPageInput";
 import { AppContext } from "../contexts/AppContext";
-import { FaUser } from 'react-icons/fa';
-import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "../components/ui/pagination"
 import { toast } from "../hooks/use-toast";
 import axios from "axios";
 import { GrUpdate } from "react-icons/gr";
@@ -75,7 +73,6 @@ const UserProfile = () => {
       if (userDoc.exists()) {
         const userData = userDoc.data();
 
-        // Combine manual and fetched publications
         const manualPubs = userData.publications || [];
         const fetchedPubs = userData.fetched_publications || [];
 
@@ -174,7 +171,7 @@ const UserProfile = () => {
         },
       ],
     }));
-    setExpandedPubs((prev) => [...prev, true]); // open new one
+    setExpandedPubs((prev) => [...prev, true]); 
   };
 
 

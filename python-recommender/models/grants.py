@@ -6,14 +6,12 @@ from pydantic import BaseModel
 from typing import List, Optional
 from sentence_transformers import SentenceTransformer, util
 
-# Load the model once
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 json_path = os.path.join(current_dir, "grants_with_embeddings.json")
 print(f"Looking for grants_with_embeddings.json at: {json_path}")
 
-# Load precomputed grants once
 with open(json_path, "r") as f:
     precomputed_grants = json.load(f)
 
@@ -39,8 +37,8 @@ class Publication(BaseModel):
 
 class RecommendRequest(BaseModel):
     user_interests: List[str]
-    educationLevel: Optional[str] = ""  # Changed from education_level
-    currentAffiliation: Optional[str] = ""  # Changed from affiliation
+    educationLevel: Optional[str] = "" 
+    currentAffiliation: Optional[str] = ""  
     publications: Optional[List[Publication]] = []
     fetched_publications: Optional[List[Publication]] = []
     grants: List[Grant]
@@ -55,7 +53,6 @@ def recommend_grants(data: RecommendRequest, top_n: int = Query(10)):
     ]) if all_publications else None
     
 
-    # Batch encode user data
     user_embeddings = {}
     if interest_text:
         user_embeddings['interest'] = model.encode(interest_text, convert_to_tensor=True, normalize_embeddings=True)
@@ -92,7 +89,7 @@ def recommend_grants(data: RecommendRequest, top_n: int = Query(10)):
             interest_score = float(util.cos_sim(user_embeddings['interest'], title_embedding)[0])
             if interest_score > 0.3:
                     interest_based.append({
-                    "reason": "Based on your research interests",
+                    "reason": "Matches your Topics of Interests",
                     "grant": base_grant_info,
                     "score": interest_score
                 })
@@ -101,7 +98,7 @@ def recommend_grants(data: RecommendRequest, top_n: int = Query(10)):
             qualification_score = float(util.cos_sim(user_embeddings['qualification'], apply_embedding)[0])
             if qualification_score > 0.3:
                 qualification_based.append({
-                    "reason": "Based on your qualifications",
+                    "reason": "Matches your Qualifications",
                     "grant": base_grant_info,
                     "score": qualification_score
                 })
@@ -110,13 +107,12 @@ def recommend_grants(data: RecommendRequest, top_n: int = Query(10)):
             publication_score = float(util.cos_sim(user_embeddings['publication'], grant_embedding)[0])
             if publication_score > 0.3:
                 publication_based.append({
-                    "reason": "Based on your publication history",
+                    "reason": "Matches your Publication History",
                     "grant": base_grant_info,
                     "score": publication_score
                 })
     
 
-    # Sort each list by descending score and limit to top N
     interest_based.sort(key=lambda x: x["score"], reverse=True)
     publication_based.sort(key=lambda x: x["score"], reverse=True)
     qualification_based.sort(key=lambda x: x["score"], reverse=True)

@@ -30,7 +30,6 @@ const affiliation = userData.currentAffiliation || "";
       return res.status(400).json({ message: 'No interests found in user profile' });
     }
 
-    // ✅ Fetch grants from allGrants collection
     const grantsFromDB = await Grants.find();
     const formattedGrants = grantsFromDB.map(g => ({
       title: g.title || '',
@@ -46,7 +45,7 @@ const affiliation = userData.currentAffiliation || "";
 
     }));
 
-    const response = await axios.post('http://127.0.0.1:8000/recommend/grants', {
+    const response = await axios.post('https://python-recommender-production-53bf.up.railway.app/recommend/grants', {
       user_interests: interests,
       publications,
       educationLevel,

@@ -35,7 +35,7 @@ const RecommendedGrantsPage = () => {
       const token = await user.getIdToken();
 
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/grants/recommended-grants`, 
+        `${import.meta.env.VITE_BACKEND_URL}/api/grants/recommended-grants`,
         {},
         {
           headers: {
@@ -115,25 +115,36 @@ const RecommendedGrantsPage = () => {
       </div>
 
       {paginatedGrants.length > 0 ? (
-        paginatedGrants.map((item, idx) => (
+        paginatedGrants.map((item, idx) => {
+          const bgColor =
+  item.reason === 'Matches your Topics of Interests'
+    ? 'bg-cyan-500'
+    : item.reason === 'Matched your Qualifications'
+    ? 'bg-amber-500'
+    : 'bg-teal-500';
+
+
+          return(
           <div key={idx} className="bg-white rounded-xl px-3 md:px-4 border md:border-none py-2 mb-6">
             <GrantItem grant={{ ...item.grant }} />
 
             <div className="mt-2 text-sm text-heading-1 font-outfit">
-              <strong>{item.reason}</strong> (Score: {item.score.toFixed(2)})
+              <p className={`${bgColor} font-outfit font-medium text-white rounded py-1 px-2 inline-flex items-center gap-1`}>{item.reason} <BsStars /></p>
+
             </div>
           </div>
-        ))
+          );
+})
       ) : (
         <div className="text-center text-gray-500">No recommended grants found.</div>
       )}
 
       {/* Pagination */}
       <PaginationControls
-  currentPage={currentPage}
-  totalPages={totalPages}
-  setCurrentPage={setCurrentPage}
-/>
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
 
   );

@@ -8,6 +8,7 @@ import ExportCsv from "@/components/Buttons/ExportCsv";
 import { convertToCSV, downloadCSV } from "@/utils/exportCsv";
 import recomConferences from '../../assets/images/recomConferences.png'
 import PaginationControls from "@/components/PaginationControls";
+import { MdBatteryCharging20 } from "react-icons/md";
 
 
 const RecommendedConferencesPage = () => {
@@ -93,7 +94,7 @@ const RecommendedConferencesPage = () => {
   const paginatedConfs = allConfs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-   <div className="mt-20 md:m-24 p-4 md:p-6 rounded-xl md:bg-[rgb(0,0,0,0.07)]">
+    <div className="mt-20 md:m-24 p-4 md:p-6 rounded-xl md:bg-[rgb(0,0,0,0.07)]">
       <div className="md:flex items-center justify-between mb-4">
         <div className="text-heading-1 font-outfit font-bold text-xl md:text-3xl flex items-center gap-2">
           {/* <BsStars /> */}
@@ -101,34 +102,39 @@ const RecommendedConferencesPage = () => {
           <img src={recomConferences} className="size-8 md:size-14" />
         </div>
         <div className="flex items-center justify-between md:justify-normal gap-2 mt-3 md:mt-0">
-        {allConfs.length > 0 && <ExportCsv onClick={handleExportCSV} />}
-        <div className="font-semibold text-heading-1 font-outfit select-none text-sm md:text-base">
+          {allConfs.length > 0 && <ExportCsv onClick={handleExportCSV} />}
+          <div className="font-semibold text-heading-1 font-outfit select-none text-sm md:text-base">
             Recommended Conferences: {totalConfs}
           </div>
         </div>
       </div>
 
       {paginatedConfs.length > 0 ? (
-        paginatedConfs.map((item, idx) => (
+        paginatedConfs.map((item, idx) => {
+          const bgColor = item.reason === 'Matches your Topics of Interests'
+            ? 'bg-cyan-500'
+            : 'bg-teal-500';
 
-          <div key={idx} className="bg-white rounded-xl px-3 md:px-4 border md:border-none py-2 mb-6">
-            <ConferenceItem conference={item.conference} />
-            <div className="mt-2 text-sm text-heading-1 font-outfit">
-              <strong>{item.reason}</strong> (Score: {item.score.toFixed(2)})
+          return (
+            <div key={idx} className="bg-white rounded-xl px-3 md:px-4 border md:border-none py-2 mb-6">
+              <ConferenceItem conference={item.conference} />
+              <div className="mt-2 text-sm text-heading-1 font-outfit">
+                <p className={`${bgColor} font-outfit font-medium text-white rounded py-1 px-2 inline-flex items-center gap-1`}>{item.reason} <BsStars /></p>
+              </div>
             </div>
-          </div>
+          );
 
-        ))
+        })
 
       ) : (
         <div className="text-center text-gray-500">No recommended conferences found.</div>
       )}
       {/* Pagination */}
       <PaginationControls
-  currentPage={currentPage}
-  totalPages={totalPages}
-  setCurrentPage={setCurrentPage}
-/>
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
+      />
 
 
     </div>

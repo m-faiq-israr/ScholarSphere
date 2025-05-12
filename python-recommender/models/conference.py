@@ -6,10 +6,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 from sentence_transformers import SentenceTransformer, util
 
-# Load model globally
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# Load precomputed embeddings
 current_dir = os.path.dirname(os.path.abspath(__file__))
 json_path = os.path.join(current_dir, "conferences_with_embeddings.json")
 
@@ -20,7 +18,7 @@ router = APIRouter()
 
 class Conference(BaseModel):
     title: str
-    topics: Optional[str] = ""  # topics is stored as string
+    topics: Optional[str] = "" 
     start_date: str = ""
     end_date: str = ""
     location: str = ""
@@ -80,14 +78,14 @@ def recommend_conferences(data: RecommendConferenceRequest, top_n: int = Query(3
 
         if interest_score > 0.3:
             interest_based.append({
-                "reason": "Based on your research interests",
+                "reason": "Matches your Topics of Interests",
                 "conference": base_conf_info,
                 "score": interest_score
             })
 
         if publication_score > 0.3:
             publication_based.append({
-                "reason": "Based on your publication history",
+                "reason": "Matches your Publication History",
                 "conference": base_conf_info,
                 "score": publication_score
             })
