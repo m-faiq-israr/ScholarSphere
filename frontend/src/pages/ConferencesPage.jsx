@@ -39,7 +39,7 @@ const ConferencesPage = () => {
 
       let endpoint = "";
       const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/api/conferences`;
-      
+
 
       if (searchQuery) {
         endpoint = `${baseUrl}/search?q=${encodeURIComponent(searchQuery)}&page=${currentPage}&limit=${itemsPerPage}`;
@@ -173,51 +173,51 @@ const ConferencesPage = () => {
   };
 
   const handleExportCSV = async () => {
-  let exportData = [];
+    let exportData = [];
 
-  if (showingSaved) {
-    exportData = savedConferences;
-  } else {
-    try {
-      const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/api/conferences`;
-      let endpoint = "";
+    if (showingSaved) {
+      exportData = savedConferences;
+    } else {
+      try {
+        const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/api/conferences`;
+        let endpoint = "";
 
-      if (searchQuery) {
-        endpoint = `${baseUrl}/search?q=${encodeURIComponent(searchQuery)}&page=1&limit=${totalConferences}`;
-      } else if (startDate || endDate || location) {
-        endpoint = `${baseUrl}/filter?startDate=${startDate || ""}&endDate=${endDate || ""}&location=${location || ""}&page=1&limit=${totalConferences}`;
-      } else {
-        endpoint = `${baseUrl}?page=1&limit=${totalConferences}`;
+        if (searchQuery) {
+          endpoint = `${baseUrl}/search?q=${encodeURIComponent(searchQuery)}&page=1&limit=${totalConferences}`;
+        } else if (startDate || endDate || location) {
+          endpoint = `${baseUrl}/filter?startDate=${startDate || ""}&endDate=${endDate || ""}&location=${location || ""}&page=1&limit=${totalConferences}`;
+        } else {
+          endpoint = `${baseUrl}?page=1&limit=${totalConferences}`;
+        }
+
+        const response = await axios.get(endpoint);
+        exportData = response.data.conferences || [];
+      } catch (err) {
+        console.error("Error fetching all conferences for export:", err);
+        toast({
+          title: "❌ Failed to fetch all conferences for export.",
+          description: err.message,
+          variant: "default",
+          duration: 4000,
+        });
+        return;
       }
-
-      const response = await axios.get(endpoint);
-      exportData = response.data.conferences || [];
-    } catch (err) {
-      console.error("Error fetching all conferences for export:", err);
-      toast({
-        title: "❌ Failed to fetch all conferences for export.",
-        description: err.message,
-        variant: "default",
-        duration: 4000,
-      });
-      return;
     }
-  }
 
-  const csvContent = convertToCSV(
-    exportData.map(({ _id, title, description, location, start_date, end_date, link }) => ({
-      _id,
-      title,
-      description,
-      location,
-      start_date,
-      end_date,
-      link,
-    }))
-  );
+    const csvContent = convertToCSV(
+      exportData.map(({ _id, title, description, location, start_date, end_date, link }) => ({
+        _id,
+        title,
+        description,
+        location,
+        start_date,
+        end_date,
+        link,
+      }))
+    );
 
-  downloadCSV(csvContent, showingSaved ? "saved_conferences.csv" : "all_conferences.csv");
-};
+    downloadCSV(csvContent, showingSaved ? "saved_conferences.csv" : "all_conferences.csv");
+  };
 
 
   return (
@@ -244,7 +244,7 @@ const ConferencesPage = () => {
                     {showingSaved ? (
                       <>
                         <FaArrowLeft />
-                        Back 
+                        Back
                       </>
                     ) : (
                       <>
@@ -253,6 +253,11 @@ const ConferencesPage = () => {
                       </>
                     )}
                   </button>
+                  <div className='xl:hidden'>
+                    <ExportCsv onClick={handleExportCSV} />
+
+                  </div>
+
                 </div>
               </>
             ) : (
@@ -260,16 +265,20 @@ const ConferencesPage = () => {
             )}
           </div>
           {showingSaved && (
+            <div className='flex items-center mt-3 gap-3'>
             <button
               className="xl:hidden mt-2 whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
               onClick={toggleSavedConferencesView}
             >
-                  <FaArrowLeft />
-                  Back to All Conferences
-              
+              <FaArrowLeft />
+              Back to All Conferences
+
             </button>
+            <ExportCsv onClick={handleExportCSV} />
+              </div>
           )}
-          <div className="flex items-center gap-4 w-full xl:w-auto">
+          <div className="xl:flex  items-center w-full xl:w-auto justify-between mt-3 xl:mt-0 xl:gap-3">
+            <div className="flex items-center gap-3">
             <button
               className="hidden whitespace-nowrap xl:flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
               onClick={toggleSavedConferencesView}
@@ -287,8 +296,11 @@ const ConferencesPage = () => {
               )}
 
             </button>
-                  <ExportCsv onClick={handleExportCSV} />
+             <div className='hidden xl:block'>
 
+                <ExportCsv onClick={handleExportCSV} />
+              </div>
+            </div>
             <div className="font-semibold text-heading-1 font-outfit select-none flex justify-end xl:block w-full xl:w-auto mt-3 md:mt-0">
               Total Conferences: {totalConferences}
             </div>

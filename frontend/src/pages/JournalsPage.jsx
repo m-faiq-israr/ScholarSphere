@@ -157,53 +157,53 @@ const JournalsPage = () => {
   };
 
   const handleExportCSV = async () => {
-  let exportData = [];
+    let exportData = [];
 
-  if (showingSaved) {
-    exportData = savedJournals;
-  } else {
-    try {
-      const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/api/journals`;
-      const params = new URLSearchParams();
-      params.append("page", 1);
-      params.append("limit", totalJournals);
+    if (showingSaved) {
+      exportData = savedJournals;
+    } else {
+      try {
+        const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/api/journals`;
+        const params = new URLSearchParams();
+        params.append("page", 1);
+        params.append("limit", totalJournals);
 
-      if (searchQuery) {
-        params.append("search", searchQuery);
-        const response = await axios.get(`${baseUrl}/search?${params.toString()}`);
-        exportData = response.data.journals || [];
-      } else if (filters.country || filters.publisher || filters.subjectArea) {
-        if (filters.country) params.append("country", filters.country);
-        if (filters.publisher) params.append("publisher", filters.publisher);
-        if (filters.subjectArea) params.append("subject_area", filters.subjectArea);
-        const response = await axios.get(`${baseUrl}/filter?${params.toString()}`);
-        exportData = response.data.journals || [];
-      } else {
-        const response = await axios.get(`${baseUrl}?${params.toString()}`);
-        exportData = response.data.journals || [];
+        if (searchQuery) {
+          params.append("search", searchQuery);
+          const response = await axios.get(`${baseUrl}/search?${params.toString()}`);
+          exportData = response.data.journals || [];
+        } else if (filters.country || filters.publisher || filters.subjectArea) {
+          if (filters.country) params.append("country", filters.country);
+          if (filters.publisher) params.append("publisher", filters.publisher);
+          if (filters.subjectArea) params.append("subject_area", filters.subjectArea);
+          const response = await axios.get(`${baseUrl}/filter?${params.toString()}`);
+          exportData = response.data.journals || [];
+        } else {
+          const response = await axios.get(`${baseUrl}?${params.toString()}`);
+          exportData = response.data.journals || [];
+        }
+      } catch (err) {
+        console.error("Error fetching journals for export:", err);
+        toast.error("Failed to export journals.");
+        return;
       }
-    } catch (err) {
-      console.error("Error fetching journals for export:", err);
-      toast.error("Failed to export journals.");
-      return;
     }
-  }
 
-  const csvContent = convertToCSV(
-    exportData.map(({title, publisher, country, scope}) => ({
-      title,
-      publisher,
-      country,
-      scope
-    }))
-  );
+    const csvContent = convertToCSV(
+      exportData.map(({ title, publisher, country, scope }) => ({
+        title,
+        publisher,
+        country,
+        scope
+      }))
+    );
 
-  downloadCSV(csvContent, showingSaved ? "saved_journals.csv" : "all_journals.csv");
-};
-
+    downloadCSV(csvContent, showingSaved ? "saved_journals.csv" : "all_journals.csv");
+  };
 
 
-  
+
+
   return (
     <div>
       <div className="mt-16 md:m-24 p-4 md:p-6 rounded-xl xl:bg-[rgb(0,0,0,0.07)]">
@@ -242,40 +242,52 @@ const JournalsPage = () => {
                       </>
                     )}
                   </button>
+                  <div className='xl:hidden'>
+                    <ExportCsv onClick={handleExportCSV} />
+
+                  </div>
                 </div>
               </>
             ) : (
               <div className='font-outfit text-heading-1 text-2xl font-semibold flex items-center gap-2'><FaBookmark />  Saved Journals</div>
             )}
-              {showingSaved && (
-            <button
-              className="xl:hidden mt-3 whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
-              onClick={toggleSavedJournalsView}
-            >
+            {showingSaved && (
+              <div className='flex items-center mt-3 gap-3'>
+                <button
+                  className="xl:hidden  whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+                  onClick={toggleSavedJournalsView}
+                >
                   <FaArrowLeft />
                   Back to All Journals
-            </button>
-              )}
+                </button>
+                <ExportCsv onClick={handleExportCSV} />
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center gap-4 w-full xl:w-auto mt-3 md:mt-0">
-            <button
-              className="hidden whitespace-nowrap xl:flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
-              onClick={toggleSavedJournalsView}
-            >
-              {showingSaved ? (
-                <>
-                  <FaArrowLeft />
-                  Back to All Journals
-                </>
-              ) : (
-                <>
-                  <FaBookmark />
-                  Saved Journals
-                </>
-              )}
-            </button>
-            <ExportCsv onClick={handleExportCSV} />
+          <div className="xl:flex  items-center w-full xl:w-auto justify-between mt-3 xl:mt-0 xl:gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                className="hidden whitespace-nowrap xl:flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+                onClick={toggleSavedJournalsView}
+              >
+                {showingSaved ? (
+                  <>
+                    <FaArrowLeft />
+                    Back to All Journals
+                  </>
+                ) : (
+                  <>
+                    <FaBookmark />
+                    Saved Journals
+                  </>
+                )}
+              </button>
+              <div className='hidden xl:block'>
+
+                <ExportCsv onClick={handleExportCSV} />
+              </div>
+            </div>
             <div className="font-semibold text-heading-1 font-outfit select-none flex justify-end w-full xl:block xl:w-auto">
               Total Journals: {totalJournals}
             </div>

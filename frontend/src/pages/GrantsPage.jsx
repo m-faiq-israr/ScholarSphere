@@ -324,7 +324,7 @@ const GrantsPage = () => {
     <div className="xs:mt-16">
       <div className=" xl:m-24 p-4 xl:p-6 rounded-xl xl:bg-[rgb(0,0,0,0.07)]">
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6">
-          <div className="xl:flex flex-wrap items-start sm:items-center gap-2 w-full xl:w-auto">
+          <div className="2xl:flex  flex-wrap items-start sm:items-center gap-2 w-full xl:w-auto">
             {!showingSaved ? (
               <>
                 {/* Search Input */}
@@ -336,7 +336,7 @@ const GrantsPage = () => {
                 />
 
                 {/* Filters Dropdown */}
-                <div className="flex flex-wrap gap-2 mt-3 xl:mt-0">
+                <div className="flex flex-wrap gap-2 mt-3 2xl:mt-0">
                   <GrantFilterDropdown onApply={applyFilters} onClear={clearFilters} />
                   <OpportunityStatusSelect
                     onChange={handleOpportunityStatusChange}
