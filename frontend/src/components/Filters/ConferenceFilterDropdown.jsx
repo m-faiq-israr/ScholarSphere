@@ -5,18 +5,18 @@ const ConferenceFilterDropdown = ({ onApply, onClear }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [location, setLocation] = useState(""); 
+  const [location, setLocation] = useState("");
   const dropdownRef = useRef(null);
 
   const handleApplyFilters = () => {
-    onApply(startDate, endDate, location); 
+    onApply(startDate, endDate, location);
     setIsOpen(false);
   };
 
   const handleClearFilters = () => {
     setStartDate("");
     setEndDate("");
-    setLocation(""); 
+    setLocation("");
     onClear();
     setIsOpen(false);
   };
@@ -45,8 +45,7 @@ const ConferenceFilterDropdown = ({ onApply, onClear }) => {
 
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-56 origin-top-right rounded-xl border border-gray bg-white p-1 text-sm text-white transition duration-100 ease-out focus:outline-none"
-          style={{ zIndex: 1000 }}
+          className="absolute left-0 md:right-0 mt-2 w-[90vw] md:w-56 origin-top-right rounded-xl border border-gray bg-white p-1 text-sm text-heading-1 transition duration-100 ease-out focus:outline-none shadow-lg z-50" style={{ zIndex: 1000 }}
         >
           <div className="space-y-4 p-2">
             <div>

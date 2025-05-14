@@ -34,7 +34,7 @@ const GrantFilterDropdown = ({ onApply, onClear }) => {
   }, []);
 
   return (
-    <div className="relative inline-block text-left font-outfit" ref={dropdownRef}>
+    <div className="relative inline-block text-left font-outfit " ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="inline-flex select-none items-center gap-1 md:gap-2 rounded-xl bg-heading-1 py-2 px-3  text-sm font-medium text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
@@ -45,7 +45,7 @@ const GrantFilterDropdown = ({ onApply, onClear }) => {
 
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-56 origin-top-right rounded-xl border border-gray bg-white p-3 text-sm text-heading-1 transition duration-100 ease-out focus:outline-none"
+          className="absolute left-0 md:right-0 mt-2 w-[90vw] md:w-56 origin-top-right rounded-xl border border-gray bg-white p-3 text-sm text-heading-1 transition duration-100 ease-out focus:outline-none shadow-lg z-50"
           style={{ zIndex: 1000 }}
         >
           <div className="space-y-4">

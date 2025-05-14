@@ -268,30 +268,63 @@ const GrantsPage = () => {
 
 
 
-  const handleExportCSV = () => {
-    const exportData = (showingSaved ? savedGrants : grants).map(({ _id, title, description, scope, total_fund, opening_date, closing_date, who_can_apply, link, contact_email }) => ({
-      _id,
+ const handleExportCSV = async () => {
+  let exportData = [];
+
+  if (showingSaved) {
+    exportData = savedGrants;
+  } else {
+    try {
+      const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/api/grants`;
+      let endpoint = "";
+      const limitParam = `limit=${totalGrants}&page=1`;
+
+      if (isSearched && appliedSearchTerm) {
+        endpoint = `${baseUrl}/search?search=${encodeURIComponent(appliedSearchTerm)}&${limitParam}`;
+      } else if (isFiltered) {
+        endpoint = `${baseUrl}/filter?minAmount=${minAmount || ""}&maxAmount=${maxAmount || ""}&descriptionFilter=${encodeURIComponent(descriptionFilter || "")}&${limitParam}`;
+      } else if (opportunityStatus !== "all") {
+        endpoint = `${baseUrl}/by-opportunity-status?status=${opportunityStatus}&${limitParam}`;
+      } else {
+        endpoint = `${baseUrl}?${limitParam}`;
+      }
+
+      const response = await axios.get(endpoint);
+      exportData = response.data.grants || [];
+    } catch (err) {
+      console.error("Error fetching grants for export:", err);
+      toast({
+        title: "❌ Failed to export grants.",
+        description: err.message,
+        variant: "default",
+        duration: 4000,
+      });
+      return;
+    }
+  }
+
+  const csvContent = convertToCSV(
+    exportData.map(({title, description, total_fund, opening_date, closing_date, who_can_apply, link}) => ({
       title,
       description,
-      scope,
       total_fund,
       opening_date,
       closing_date,
       who_can_apply,
       link,
-      contact_email
-    }));
+    }))
+  );
 
-    const csvContent = convertToCSV(exportData);
-    downloadCSV(csvContent, showingSaved ? "saved_grants.csv" : "all_grants.csv");
-  };
+  downloadCSV(csvContent, showingSaved ? "saved_grants.csv" : "all_grants.csv");
+};
+
 
 
   return (
     <div className="xs:mt-16">
       <div className=" xl:m-24 p-4 xl:p-6 rounded-xl xl:bg-[rgb(0,0,0,0.07)]">
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6">
-          <div className="xl:flex items-start sm:items-center gap-2 w-full xl:w-auto">
+          <div className="xl:flex flex-wrap items-start sm:items-center gap-2 w-full xl:w-auto">
             {!showingSaved ? (
               <>
                 {/* Search Input */}
@@ -320,7 +353,7 @@ const GrantsPage = () => {
 
           </div>
 
-          <div className="xl:flex items-center w-full xl:w-auto justify-between mt-3 xl:mt-0 xl:gap-3">
+          <div className="xl:flex  items-center w-full xl:w-auto justify-between mt-3 xl:mt-0 xl:gap-3">
             <div className="flex items-center gap-3">
               <button
                 className="flex  items-center whitespace-nowrap gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
@@ -349,11 +382,12 @@ const GrantsPage = () => {
         {(showingSaved ? savedGrants : grants).length > 0 ? (
           (showingSaved ? savedGrants : grants).map((grant, index) => (
 
-            <div key={index} className="bg-white rounded-xl p-3 xl:px-4 py-2 mb-6 border xl:border-none">
+            <div key={index} className="bg-white rounded-xl  pt-3 pb-4  mb-6 border xl:border-none">
               <GrantItem grant={grant} onUnsaveSuccess={(grantId) => {
                 setSavedGrants(prev => prev.filter(g => g._id !== grantId));
                 setTotalGrants(prev => prev - 1);
-              }} />
+              }} reason={'nothing'} />
+
 
             </div>
           ))

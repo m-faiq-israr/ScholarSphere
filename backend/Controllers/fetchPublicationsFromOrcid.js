@@ -34,7 +34,7 @@ const fetchPublicationsFromOrcid = async (req, res) => {
 
     const publications = response.data.results.map(pub => ({
       title: pub.title || '',
-      journal: pub.host_venue?.display_name || '',
+      journal: pub.primary_location?.source?.display_name || 'Unknown Journal',
       year: pub.publication_year?.toString() || '',
       authors: pub.authorships?.map(a => a.author.display_name) || [],
       keywords: pub.concepts?.slice(0, 3).map(c => c.display_name) || ["", "", ""],

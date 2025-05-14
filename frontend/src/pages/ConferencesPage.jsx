@@ -8,11 +8,13 @@ import RecommendationButton from "../components/Buttons/RecommendationButton";
 import { AppContext } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "../hooks/use-toast";
-import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "../components/ui/pagination"
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { FaBookmark, FaArrowLeft } from "react-icons/fa";
 import PaginationControls from "@/components/PaginationControls";
+import { convertToCSV, downloadCSV } from "@/utils/exportCsv";
+import ExportCsv from "@/components/Buttons/ExportCsv";
+
 
 const ConferencesPage = () => {
   const [conferences, setConferences] = useState([]);
@@ -170,12 +172,59 @@ const ConferencesPage = () => {
     }
   };
 
+  const handleExportCSV = async () => {
+  let exportData = [];
+
+  if (showingSaved) {
+    exportData = savedConferences;
+  } else {
+    try {
+      const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/api/conferences`;
+      let endpoint = "";
+
+      if (searchQuery) {
+        endpoint = `${baseUrl}/search?q=${encodeURIComponent(searchQuery)}&page=1&limit=${totalConferences}`;
+      } else if (startDate || endDate || location) {
+        endpoint = `${baseUrl}/filter?startDate=${startDate || ""}&endDate=${endDate || ""}&location=${location || ""}&page=1&limit=${totalConferences}`;
+      } else {
+        endpoint = `${baseUrl}?page=1&limit=${totalConferences}`;
+      }
+
+      const response = await axios.get(endpoint);
+      exportData = response.data.conferences || [];
+    } catch (err) {
+      console.error("Error fetching all conferences for export:", err);
+      toast({
+        title: "❌ Failed to fetch all conferences for export.",
+        description: err.message,
+        variant: "default",
+        duration: 4000,
+      });
+      return;
+    }
+  }
+
+  const csvContent = convertToCSV(
+    exportData.map(({ _id, title, description, location, start_date, end_date, link }) => ({
+      _id,
+      title,
+      description,
+      location,
+      start_date,
+      end_date,
+      link,
+    }))
+  );
+
+  downloadCSV(csvContent, showingSaved ? "saved_conferences.csv" : "all_conferences.csv");
+};
+
 
   return (
     <div>
-      <div className="mt-16 md:m-24 p-4 md:p-6 rounded-xl md:bg-[rgb(0,0,0,0.07)]">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
-          <div className="md:flex items-center gap-4 w-full md:w-auto">
+      <div className="mt-16 md:m-24 p-4 md:p-6 rounded-xl xl:bg-[rgb(0,0,0,0.07)]">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6">
+          <div className="xl:flex items-start sm:items-center gap-2 w-full xl:w-auto">
             {!showingSaved ? (
               <>
 
@@ -185,11 +234,11 @@ const ConferencesPage = () => {
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onSearch={handleSearch}
                 />
-                <div className="mt-3 md:mt-0 flex flex-wrap gap-3 ">
+                <div className="mt-3 xl:mt-0 flex flex-wrap gap-3 ">
                   <ConferenceFilterDropdown onApply={applyFilters} onClear={clearFilters} />
                   <RecommendationButton onClick={recommendedConferencesPage} />
                   <button
-                    className="md:hidden whitespace-nowrap flex items-center gap-2  px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+                    className="xl:hidden whitespace-nowrap flex items-center gap-2  px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
                     onClick={toggleSavedConferencesView}
                   >
                     {showingSaved ? (
@@ -212,7 +261,7 @@ const ConferencesPage = () => {
           </div>
           {showingSaved && (
             <button
-              className="md:hidden mt-2 whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              className="xl:hidden mt-2 whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
               onClick={toggleSavedConferencesView}
             >
                   <FaArrowLeft />
@@ -220,9 +269,9 @@ const ConferencesPage = () => {
               
             </button>
           )}
-          <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="flex items-center gap-4 w-full xl:w-auto">
             <button
-              className="hidden whitespace-nowrap md:flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              className="hidden whitespace-nowrap xl:flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
               onClick={toggleSavedConferencesView}
             >
               {showingSaved ? (
@@ -236,9 +285,11 @@ const ConferencesPage = () => {
                   Saved Conferences
                 </>
               )}
-            </button>
 
-            <div className="font-semibold text-heading-1 font-outfit select-none flex justify-end md:block w-full md:w-auto mt-3 md:mt-0">
+            </button>
+                  <ExportCsv onClick={handleExportCSV} />
+
+            <div className="font-semibold text-heading-1 font-outfit select-none flex justify-end xl:block w-full xl:w-auto mt-3 md:mt-0">
               Total Conferences: {totalConferences}
             </div>
           </div>
@@ -247,13 +298,14 @@ const ConferencesPage = () => {
         {(showingSaved ? savedConferences : conferences).length > 0 ? (
           (showingSaved ? savedConferences : conferences).map((conference, index) => (
 
-            <div key={index} className="bg-white rounded-xl px-3 md:px-4 py-2 mb-6 border md:border-none">
+            <div key={index} className="bg-white rounded-xl px-1 pt-3 pb-4  mb-6 border xl:border-none">
               <ConferenceItem
                 conference={conference}
                 onUnsaveSuccess={(id) => {
                   setSavedConferences(prev => prev.filter(c => c._id !== id));
                   setTotalConferences(prev => prev - 1);
                 }}
+                reason={'nothing'}
               />
 
             </div>

@@ -13,6 +13,9 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { FaArrowLeft, FaBookmark } from 'react-icons/fa';
 import { BsStars } from "react-icons/bs";
 import PaginationControls from '@/components/PaginationControls';
+import { convertToCSV, downloadCSV } from "@/utils/exportCsv";
+import ExportCsv from "@/components/Buttons/ExportCsv";
+
 
 
 const JournalsPage = () => {
@@ -153,11 +156,59 @@ const JournalsPage = () => {
     }
   };
 
+  const handleExportCSV = async () => {
+  let exportData = [];
+
+  if (showingSaved) {
+    exportData = savedJournals;
+  } else {
+    try {
+      const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/api/journals`;
+      const params = new URLSearchParams();
+      params.append("page", 1);
+      params.append("limit", totalJournals);
+
+      if (searchQuery) {
+        params.append("search", searchQuery);
+        const response = await axios.get(`${baseUrl}/search?${params.toString()}`);
+        exportData = response.data.journals || [];
+      } else if (filters.country || filters.publisher || filters.subjectArea) {
+        if (filters.country) params.append("country", filters.country);
+        if (filters.publisher) params.append("publisher", filters.publisher);
+        if (filters.subjectArea) params.append("subject_area", filters.subjectArea);
+        const response = await axios.get(`${baseUrl}/filter?${params.toString()}`);
+        exportData = response.data.journals || [];
+      } else {
+        const response = await axios.get(`${baseUrl}?${params.toString()}`);
+        exportData = response.data.journals || [];
+      }
+    } catch (err) {
+      console.error("Error fetching journals for export:", err);
+      toast.error("Failed to export journals.");
+      return;
+    }
+  }
+
+  const csvContent = convertToCSV(
+    exportData.map(({title, publisher, country, scope}) => ({
+      title,
+      publisher,
+      country,
+      scope
+    }))
+  );
+
+  downloadCSV(csvContent, showingSaved ? "saved_journals.csv" : "all_journals.csv");
+};
+
+
+
+  
   return (
     <div>
-      <div className="mt-16 md:m-24 p-4 md:p-6 rounded-xl md:bg-[rgb(0,0,0,0.07)]">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6">
-          <div className="md:flex items-center gap-4 w-full md:w-auto">
+      <div className="mt-16 md:m-24 p-4 md:p-6 rounded-xl xl:bg-[rgb(0,0,0,0.07)]">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6">
+          <div className="xl:flex items-start sm:items-center gap-2 w-full xl:w-auto">
             {!showingSaved ? (
               <>
                 <SearchInput
@@ -166,7 +217,7 @@ const JournalsPage = () => {
                   onChange={handleSearchChange}
                   onSearch={handleSearch}
                 />
-                <div className="mt-3 md:mt-0 flex flex-wrap gap-3  ">
+                <div className="mt-3 xl:mt-0 flex flex-wrap gap-3  ">
 
                   <JournalsFilterDropdown
                     onApplyFilters={handleApplyFilters}
@@ -175,7 +226,7 @@ const JournalsPage = () => {
                   <button className="inline-flex whitespace-nowrap font-outfit select-none items-center gap-2 rounded-xl bg-heading-1 py-2 px-3 text-sm font-medium text-white shadow-inner shadow-white/10 focus:outline-none hover:bg-gray-700"
                     onClick={recommendedJournalsByAbstract}>Search through abstract <BsStars /></button>
                   <button
-                    className="md:hidden whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 
+                    className="xl:hidden whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 
                     text-sm text-white font-medium font-outfit hover:bg-gray-800"
                     onClick={toggleSavedJournalsView}
                   >
@@ -198,7 +249,7 @@ const JournalsPage = () => {
             )}
               {showingSaved && (
             <button
-              className="md:hidden mt-3 whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              className="xl:hidden mt-3 whitespace-nowrap flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
               onClick={toggleSavedJournalsView}
             >
                   <FaArrowLeft />
@@ -207,9 +258,9 @@ const JournalsPage = () => {
               )}
           </div>
 
-          <div className="flex items-center gap-4 w-full md:w-auto mt-3 md:mt-0">
+          <div className="flex items-center gap-4 w-full xl:w-auto mt-3 md:mt-0">
             <button
-              className="hidden whitespace-nowrap md:flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
+              className="hidden whitespace-nowrap xl:flex items-center gap-2 px-3 py-2 rounded-xl bg-heading-1 text-sm text-white font-medium font-outfit hover:bg-gray-800"
               onClick={toggleSavedJournalsView}
             >
               {showingSaved ? (
@@ -224,7 +275,8 @@ const JournalsPage = () => {
                 </>
               )}
             </button>
-            <div className="font-semibold text-heading-1 font-outfit select-none flex justify-end w-full md:block md:w-auto">
+            <ExportCsv onClick={handleExportCSV} />
+            <div className="font-semibold text-heading-1 font-outfit select-none flex justify-end w-full xl:block xl:w-auto">
               Total Journals: {totalJournals}
             </div>
 
@@ -235,7 +287,7 @@ const JournalsPage = () => {
         {(showingSaved ? savedJournals : journals).length > 0 ? (
           (showingSaved ? savedJournals : journals).map((journal, index) => (
 
-            <div key={index} className="bg-white rounded-xl px-3 md:px-4 border md:border-none py-2 mb-6">
+            <div key={index} className="bg-white rounded-xl px-3 md:px-4 border xl:border-none py-2 mb-6">
               <JournalItem
                 journal={journal}
                 onUnsaveSuccess={(id) => {

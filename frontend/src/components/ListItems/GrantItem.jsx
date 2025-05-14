@@ -6,13 +6,20 @@ import { db } from "../../firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import SeeDetails from "../Buttons/SeeDetails";
 import axios from "axios";
+import { BsStars } from "react-icons/bs";
 
-const GrantItem = ({ grant, onUnsaveSuccess }) => {
+const GrantItem = ({ grant, onUnsaveSuccess, reason }) => {
   const [open, setOpen] = useState(false);
   const [saved, setSaved] = useState(false);
   const currentUser = auth.currentUser;
   const userId = currentUser?.uid;
   const normalizedStatus = grant.opportunity_status?.toLowerCase?.() || "";
+   const bgColor =
+    reason === 'Matches your Topics of Interests'
+      ? 'bg-cyan-500'
+      : reason === 'Matches your Qualifications'
+      ? 'bg-cyan-500'
+      : 'bg-cyan-500';
 
   const isOpenStatus = [
     "open",
@@ -77,7 +84,8 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
   };
 
   return (
-    <div className="flex justify-between font-outfit p-1 h-full bg-white rounded-md">
+    <div>
+    <div className="flex justify-between font-outfit px-4  h-full bg-white rounded-md">
 
       <div className="w-[70%]">
         {normalizedStatus === "forecasted" && (
@@ -111,7 +119,10 @@ const GrantItem = ({ grant, onUnsaveSuccess }) => {
 
         <SeeDetails onclick={() => setOpen(true)} text={"See details"} />
       </div>
-
+      </div>
+ {reason !== 'nothing' && (
+        <p className={`${bgColor} text-sm font-outfit  text-white rounded-bl-xl mt-4 rounded-tr-xl py-1 px-2 inline-flex items-center gap-1`}>{reason} <BsStars/></p>
+      )}
       <GrantsModal open={open} onClose={() => setOpen(false)} grant={grant} />
     </div>
   );

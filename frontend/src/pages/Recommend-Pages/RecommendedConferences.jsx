@@ -9,6 +9,8 @@ import { convertToCSV, downloadCSV } from "@/utils/exportCsv";
 import recomConferences from '../../assets/images/recomConferences.png'
 import PaginationControls from "@/components/PaginationControls";
 import { MdBatteryCharging20 } from "react-icons/md";
+import loadingConf from '../../assets/images/loadingConf.png'
+
 
 
 const RecommendedConferencesPage = () => {
@@ -58,8 +60,18 @@ const RecommendedConferencesPage = () => {
 
   if (loading) {
     return (
-      <div className="m-24 p-6">
-        <Skeleton active paragraph={{ rows: 15, width: ["60%", "80%", "100%"] }} />
+      <div className="mt-16 md:mt-24 p-6 flex flex-col items-center justify-center text-center space-y-6">
+        <img
+          src={loadingConf}
+          alt="Loading illustration"
+          className="w-full max-w-md"
+        />
+        <div className="flex items-center gap-4">
+        <h2 className="text-xl md:text-2xl font-bold text-heading-1 font-outfit">
+         "Hold on — your personalized conference recommendations are on the way!"
+        </h2>
+        <div className="w-8 h-8 border-[8px] border-heading-1 border-t-transparent rounded-full animate-spin"></div>
+        </div>
       </div>
     );
   }
@@ -96,7 +108,7 @@ const RecommendedConferencesPage = () => {
   return (
     <div className="mt-20 md:m-24 p-4 md:p-6 rounded-xl md:bg-[rgb(0,0,0,0.07)]">
       <div className="md:flex items-center justify-between mb-4">
-        <div className="text-heading-1 font-outfit font-bold text-xl md:text-3xl flex items-center gap-2">
+        <div className="text-heading-1 font-outfit font-bold text-2xl md:text-3xl flex items-center gap-2">
           {/* <BsStars /> */}
           Recommended Conferences
           <img src={recomConferences} className="size-8 md:size-14" />
@@ -111,16 +123,12 @@ const RecommendedConferencesPage = () => {
 
       {paginatedConfs.length > 0 ? (
         paginatedConfs.map((item, idx) => {
-          const bgColor = item.reason === 'Matches your Topics of Interests'
-            ? 'bg-cyan-500'
-            : 'bg-teal-500';
-
           return (
-            <div key={idx} className="bg-white rounded-xl px-3 md:px-4 border md:border-none py-2 mb-6">
-              <ConferenceItem conference={item.conference} />
-              <div className="mt-2 text-sm text-heading-1 font-outfit">
+            <div key={idx} className="bg-white rounded-xl  border md:border-none pt-3 mb-6">
+              <ConferenceItem conference={item.conference} reason={item.reason} />
+              {/* <div className="mt text-sm text-heading-1 font-outfit">
                 <p className={`${bgColor} font-outfit font-medium text-white rounded py-1 px-2 inline-flex items-center gap-1`}>{item.reason} <BsStars /></p>
-              </div>
+              </div> */}
             </div>
           );
 

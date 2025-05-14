@@ -5,6 +5,7 @@ import JournalItem from "../../components/ListItems/JournalItem";
 import { BsStars } from "react-icons/bs";
 import recomJournals from '../../assets/images/recomJournals.png'
 import PaginationControls from "@/components/PaginationControls";
+import landing1 from '../../assets/images/landing1.png'
 
 const RecommendedJournalsByAbstract = () => {
   const [abstract, setAbstract] = useState("");
@@ -73,12 +74,26 @@ const RecommendedJournalsByAbstract = () => {
         Get Recommendations
         <BsStars />
       </button>
-      <div className="font-semibold text-heading-1 text-sm md:text-base font-outfit select-none flex justify-end">
-        Recommended Journals: {totalJournals}
-      </div>
+      {totalJournals !== 0 && (
+        <div className="font-semibold text-heading-1 text-sm md:text-base font-outfit select-none flex justify-end">
+          Recommended Journals: {totalJournals}
+        </div>
+      )}
 
       {/* Loading & Error */}
-      {loading && <Skeleton active paragraph={{ rows: 10 }} />}
+      {loading && <div className=" p-6 flex flex-col items-center justify-center text-center space-y-6">
+        <img
+          src={landing1}
+          alt="Loading illustration"
+          className="w-full max-w-md"
+        />
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl md:text-2xl font-semibold text-heading-1 font-outfit">
+        "Hold on! We’re scanning for the most relevant journals."
+          </h2>
+          <div className=" w-8 h-8 border-[8px] border-heading-1 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>}
       {error && <div className="text-red-600 mb-4">{error}</div>}
 
       {/* Show results only after button is clicked */}
@@ -87,9 +102,7 @@ const RecommendedJournalsByAbstract = () => {
           {paginatedJournals.map((j, index) => (
             <div key={index} className="bg-white rounded-xl px-3 md:px-4 py-2 mb-6">
               <JournalItem journal={j.journal} />
-              <div className="mt-1 text-sm text-heading-1 font-outfit">
-                <strong>Score:</strong> {j.score.toFixed(2)}
-              </div>
+
             </div>
           ))}
           <PaginationControls

@@ -31,8 +31,8 @@ const LandingPage = () => {
                 <h1 className='text-3xl md:hidden md:text-6xl font-bold text-heading-1'>Welcome to ScholarSphere:</h1>
                 <div className='md:mt-14 md:w-[60%]'>
                     <h1 className='hidden md:block text-3xl md:text-6xl font-bold text-heading-1'>Welcome to ScholarSphere:</h1>
-                    <h1 className='text-2xl md:text-5xl font-bold mt-1 text-heading-1'>Your Academic Compass</h1>
-                    <p className='mt-6 font-medium text-xl md:text-2xl text-heading-1 mb-5 md:mb-8'>Navigate Your Research Journey with Confidence. Unlock funding, conferences, and publication opportunities all in one platform designed for academic professionals.</p>
+                    <h1 className='text-2xl md:text-5xl font-bold mt-1 text-heading-1'>Explore International Research Opportunities</h1>
+                    <p className='mt-6 font-medium text-xl md:text-2xl text-heading-1 mb-5 md:mb-8'>Navigate Your Research Journey with Confidence. Unlock Research Grants, Conferences, and Research Journals all in one platform designed for academic professionals.</p>
                     <LandingPageButton text={"Get Started - It's Free"} onClick={() => navigate("/signup")} logo={gradHat} />
                 </div>
                 <div className=' md:w-[40%] flex justify-center w-full md:block '>
@@ -58,8 +58,8 @@ const LandingPage = () => {
                         <div className='bg-black/5 p-1 rounded-lg inline-block'>
                             <img src={gradHat} className='size-8 md:size-16 ' />
                         </div>
-                        <h1 className='text-lg md:text-2xl font-bold mt-2 mb-4 text-heading-1'>Streamlined Application Tracking</h1>
-                        <p className='text-sm md:text-lg font-medium'>Easily manage and track your grant applications all in one place, ensuring you never miss a deadline. 80% of researchers find our grant recommendations highly relevant (2024 internal survey).</p>
+                        <h1 className='text-lg md:text-2xl font-bold mt-2 mb-4 text-heading-1'>Global Grant Opportunities for Scholars</h1>
+                        <p className='text-sm md:text-lg font-medium'>Discover and track funding opportunities from around the world — tailored to your research interests and academic profile. ScholarSphere connects scholars everywhere with grants that matter.</p>
                     </div>
 
                 </div>
@@ -78,8 +78,7 @@ const LandingPage = () => {
                                     <img src={searchBot} className='size-8 md:size-16' />
                                 </div>
                                 <h1 className='text-lg md:text-2xl font-bold mt-2 mb-4 text-heading-1'>AI-Powered Matching</h1>
-                                <p className='text-sm md:text-lg font-medium'>ScholarSphere suggests conferences based on your research interests, providing details on location, deadlines, and speaker lineups via AI analysis.</p>
-                                <p className='text-sm md:text-lg font-medium'>Research shows conference attendance boosts citation rates by 30% (PLOS One, 2022).</p>
+                                <p className='text-sm md:text-lg font-medium'>ScholarSphere suggests conferences based on your research interests and publication history providing details on location, deadlines, and speaker lineups.</p>
                             </div>
 
                             <div className='border md:border-none p-4 md:p-0 rounded-xl mt-2 md:mt-0'>
@@ -87,7 +86,7 @@ const LandingPage = () => {
                                     <img src={globeIcon} className='size-8 md:size-16' />
                                 </div>
                                 <h1 className='text-lg md:text-2xl font-bold mt-2 mb-4 text-heading-1'>Global Event Exploration</h1>
-                                <p className='text-sm md:text-lg font-medium'>Explore upcoming academic events globally with our interactive map and tailored suggestions to expand your research network.</p>
+                                <p className='text-sm md:text-lg font-medium'>Discover research grants from around the world with personalized recommendations to support your academic journey and fuel your next breakthrough.</p>
                             </div>
 
                         </div>
@@ -109,14 +108,14 @@ const LandingPage = () => {
                             <img src={research} className='size-8 md:size-16 ' />
                         </div>
                         <h1 className='text-lg md:text-2xl font-bold mt-2 mb-4 text-heading-1'>Maximize Your Research Impact</h1>
-                        <p className='text-sm md:text-lg font-medium'>Our AI analyzes your paper's abstract to recommend journals by impact factor, acceptance rate, and publication speed.</p>
+                        <p className='text-sm md:text-lg font-medium'>Our AI analyzes your abstract to recommend the most relevant journals based on impact factor, scope, and publication speed.</p>
                     </div>
                     <div className='shadow p-4 rounded-xl mt-2 md:mt-0'>
                         <div className='bg-black/5 p-1 rounded-lg inline-block'>
                             <img src={badge} className='size-8 md:size-16  ' />
                         </div>
-                        <h1 className='text-lg md:text-2xl font-bold mt-2 mb-4 text-heading-1'>Trusted Success</h1>
-                        <p className='text-sm md:text-lg font-medium'>Professor Chen published in Nature after ScholarSphere identified the perfect journal match for his work.</p>
+                        <h1 className='text-lg md:text-2xl font-bold mt-2 mb-4 text-heading-1'>From Insight to Publication</h1>
+                        <p className='text-sm md:text-lg font-medium'>Turn your research into published success with targeted journal suggestions powered by AI.</p>
                     </div>
                 </div>
                 <LandingPageButton text={"Get Journal Recommendation"} onClick={() => navigate('/journals')} logo={recomJournals} />
@@ -130,22 +129,22 @@ const LandingPage = () => {
                     <div className="flex items-center gap-2">
                         <div><img src={conferenceIntl} className='size-20 md:size-28' /></div>
                         <div>
-                            <h1 className='text-lg md:text-2xl font-bold mt-2 md:mb-2 text-heading-1'>Exclusive Webinars</h1>
-                            <p className='text-sm md:text-lg font-medium'>Learn from research leaders on topics like grant writing and peer review navigation.</p>
+                            <h1 className='text-lg md:text-2xl font-bold mt-2 md:mb-2 text-heading-1'>Global Conference Matching</h1>
+                            <p className='text-sm md:text-lg font-medium'>Explore upcoming academic events worldwide with suggestions based on your field and publication history.</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 mb-5 md:mb-0">
                         <div><img src={Grants} className='size-20 md:size-28' /></div>
                         <div>
-                            <h1 className='text-lg md:text-2xl font-bold mt-2 md:mb-2 text-heading-1'>Networking Opportunities</h1>
-                            <p className='text-sm md:text-lg font-medium'>Connect with fellow academics through forums and discussion groups tailored to your interests.</p>
+                            <h1 className='text-lg md:text-2xl font-bold mt-2 md:mb-2 text-heading-1'>Personalized Grant Discovery</h1>
+                            <p className='text-sm md:text-lg font-medium'>Find funding opportunities that align with your research interests, career stage, and eligibility — all in one place.</p>
                         </div>
                     </div>
                     <div className="hidden md:flex items-center gap-2 mb-8 ">
                         <div><img src={Journals} className='size-20 md:size-28' /></div>
                         <div>
-                            <h1 className='text-lg md:text-2xl font-bold mt-2 md:mb-2 text-heading-1'>Early Feature Access</h1>
-                            <p className='text-sm md:text-lg font-medium'>Be the first to try new tools and research resources.</p>
+                            <h1 className='text-lg md:text-2xl font-bold mt-2 md:mb-2 text-heading-1'>AI-Powered Journal Recommendations</h1>
+                            <p className='text-sm md:text-lg font-medium'>Get smart journal matches based on your abstract, scope, and keywords — helping you publish where it matters most.</p>
                         </div>
                     </div>
                     <LandingPageButton text={"Create Your Free Account - No Credit Card Required"} onClick={() => navigate('/signup')} logo={creditCard} />
@@ -159,7 +158,7 @@ const LandingPage = () => {
                 <div className='flex items-start gap-12 mt-8'>
                     <div>
                         <p className='text-base md:text-lg font-medium mb-4'>Our mission is to democratize access to research resources through cutting-edge AI technology and expert knowledge.</p>
-                        <p className='text-base md:text-lg  font-medium'>Over 10,000 researchers worldwide trust ScholarSphere to advance their academic careers.</p>
+                        <p className='text-base md:text-lg  font-medium'>Your companion in research discovery — trusted by academics across disciplines and borders.</p>
                     </div>
                     <div>
                         <p className='text-base md:text-lg  font-medium mb-4'>Meet the team: Experts from academic and AI fields dedicated to enhancing the research landscape.</p>

@@ -5,13 +5,17 @@ import { auth } from '../../firebase/firebase';
 import { doc, getDoc } from "firebase/firestore";
 import { db } from '../../firebase/firebase';
 import { FaLink } from "react-icons/fa";
+import { BsStars } from "react-icons/bs";
 
 
-const ConferenceItem = ({ conference, onUnsaveSuccess }) => {
+const ConferenceItem = ({ conference, onUnsaveSuccess, reason }) => {
 
   const [saved, setSaved] = useState(false);
   const currentUser = auth.currentUser;
   const userId = currentUser?.uid;
+   const bgColor = reason === 'Matches your Topics of Interests'
+            ? 'bg-teal-500'
+            : 'bg-teal-500';
 
   useEffect(() => {
     const checkIfSaved = async () => {
@@ -69,52 +73,56 @@ const ConferenceItem = ({ conference, onUnsaveSuccess }) => {
 
 
   return (
-    <div className="relative bg-white rounded-xl p-1 text-heading-1">
+    <div className="relative bg-white rounded-xl  text-heading-1">
 
       {/* Save Icon Top Right */}
       <div
-        className="absolute hidden md:block top-3 right-3 cursor-pointer text-xl text-gray-600 hover:text-heading-1"
+        className="absolute hidden md:block top-3 right-3 cursor-pointer mx-4 text-xl text-gray-600 hover:text-heading-1"
         onClick={saved ? handleUnsave : handleSave}
       >
         {saved ? <FaBookmark className="text-heading-1" /> : <FaRegBookmark />}
       </div>
 
-      <h2 className="text-base md:text-lg font-semibold font-outfit mb-1">{conference.title}</h2>
+      <h2 className="text-base md:text-lg font-semibold font-outfit mb-1 mx-4">{conference.title}</h2>
 
-      <p className="mb-1 font-outfit text-gray-600 text-sm md:text-base">
+      <p className=" font-outfit text-gray-600 text-sm md:text-base mx-4">
         <span className="font-semibold">Date: </span>
         {conference.start_date}
         {conference.end_date && ` - ${conference.end_date}`}
       </p>
 
-      <p className="mb-1 font-outfit text-gray-600 text-sm md:text-base">
+      <p className="mb-1 font-outfit text-gray-600 text-sm md:text-base mx-4">
         <span className="font-semibold">Location: </span>
         {conference.location || "N/A"}
       </p>
 
-      <div className="flex items-center justify-between">
-      <button
-        className="flex gap-2 select-none items-center justify-center mt-3 text-xs md:text-sm  bg-emerald-500 text-white px-4 md:px-5 py-1  rounded-md hover:bg-emerald-600 font-outfit transition-colors"
-        onClick={() => {
-          if (conference.link) {
-            window.open(conference.link, "_blank");
-          } else if (conference.url) {
-            window.open(conference.url, "_blank");
-          } else {
-            console.warn("No link available for this conference");
-          }
-        }}
-      >
-        Apply
-        <FaLink/>
-      </button>
-      <div
-        className=" md:hidden  cursor-pointer text-gray-600 hover:text-heading-1"
-        onClick={saved ? handleUnsave : handleSave}
-      >
-        {saved ? <FaBookmark className="text-heading-1" /> : <FaRegBookmark />}
+      <div className="flex items-center justify-between mx-4">
+        <button
+          className="flex gap-2 select-none items-center justify-center mt-3 text-xs md:text-sm  bg-emerald-500 text-white px-4 md:px-5 py-1  rounded-md hover:bg-emerald-600 font-outfit transition-colors"
+          onClick={() => {
+            if (conference.link) {
+              window.open(conference.link, "_blank");
+            } else if (conference.url) {
+              window.open(conference.url, "_blank");
+            } else {
+              console.warn("No link available for this conference");
+            }
+          }}
+        >
+          Apply
+          <FaLink />
+        </button>
+        <div
+          className=" md:hidden  cursor-pointer text-gray-600 hover:text-heading-1"
+          onClick={saved ? handleUnsave : handleSave}
+        >
+          {saved ? <FaBookmark className="text-heading-1" /> : <FaRegBookmark />}
+        </div>
       </div>
-      </div>
+      {reason !== 'nothing' && (
+        <p className={`${bgColor} text-sm font-outfit  text-white rounded-bl-xl mt-4 rounded-tr-xl py-1 pl-4 pr-2 inline-flex items-center gap-1`}>{reason} <BsStars  /></p>
+      )}
+
     </div>
   );
 };
