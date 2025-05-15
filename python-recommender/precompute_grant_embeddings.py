@@ -1,20 +1,15 @@
-# MONGO_URI = "mongodb+srv://scholarspherefyp:GQwYK0t2FkqpUzyt@scholarsphere.0segx.mongodb.net/"
 from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
 import json
 
-# 🔹 1. Connect to MongoDB
-client = MongoClient("mongodb+srv://scholarspherefyp:GQwYK0t2FkqpUzyt@scholarsphere.0segx.mongodb.net/")  # Replace with your Mongo URI if needed
-db = client["Grants"]  # Replace with your DB name
-grants_collection = db["allGrants"]  # Replace with your collection
+client = MongoClient("mongodb+srv://scholarspherefyp:GQwYK0t2FkqpUzyt@scholarsphere.0segx.mongodb.net/") 
+db = client["Grants"] 
+grants_collection = db["allGrants"]  
 
-# 🔹 2. Load the SentenceTransformer model
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-# 🔹 3. Fetch grants
 grants = list(grants_collection.find())
 
-# 🔹 4. Prepare data and compute embeddings
 precomputed = []
 for grant in grants:
     grant_text = f"{grant.get('title', '')} {grant.get('description', '')} {grant.get('scope', '')}".strip()
@@ -24,7 +19,6 @@ for grant in grants:
     grant_embedding = model.encode(grant_text, normalize_embeddings=True).tolist()
     apply_embedding = model.encode(apply_text, normalize_embeddings=True).tolist()
 
-    # Keep original fields + embeddings
     grant_data = {
         "_id": str(grant["_id"]),
         "title": grant.get("title", ""),
@@ -44,7 +38,6 @@ for grant in grants:
 
     precomputed.append(grant_data)
 
-# 🔹 5. Save to JSON
 with open("grants_with_embeddings.json", "w") as f:
     json.dump(precomputed, f)
 

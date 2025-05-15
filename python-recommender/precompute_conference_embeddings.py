@@ -20,7 +20,7 @@ for conf in collection.find():
     conference_data.append({
         "_id": str(conf["_id"]),
         "title": title,
-        "topics": topics_str,  # Store original string
+        "topics": topics_str,  
         "start_date": conf.get("start_date", ""),
         "end_date": conf.get("end_date", ""),
         "location": conf.get("location", ""),
