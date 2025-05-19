@@ -75,7 +75,6 @@ const ConferenceItem = ({ conference, onUnsaveSuccess, reason }) => {
   return (
     <div className="relative bg-white rounded-xl  text-heading-1">
 
-      {/* Save Icon Top Right */}
       <div
         className="absolute hidden md:block top-3 right-3 cursor-pointer mx-4 text-xl text-gray-600 hover:text-heading-1"
         onClick={saved ? handleUnsave : handleSave}

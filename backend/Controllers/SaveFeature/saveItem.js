@@ -8,7 +8,6 @@ const saveItem = async (req, res) => {
     const userSnap = await userRef.get();
 
     if (!userSnap.exists) {
-      // If user profile doesn't exist, create it with an empty structure
       await userRef.set({
         savedGrants: [],
         savedConferences: [],

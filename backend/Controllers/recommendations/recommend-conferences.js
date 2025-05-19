@@ -41,7 +41,6 @@ const recommendConferences = async (req, res) => {
       return res.status(400).json({ message: 'No interests found in user profile' });
     }
 
-    // ✅ Fetch from only one model now
     const allConferences = await Conferences.find();
 
     const formattedConferences = allConferences.map(c => ({

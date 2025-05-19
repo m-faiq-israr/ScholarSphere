@@ -159,7 +159,6 @@ const opportunity_filter = async (req, res) => {
     const results = await Grants.find(query).skip(skip).limit(Number(limit));
     const total = await Grants.countDocuments(query);
 
-    // Optional: normalize numeric_fund for frontend compatibility
     const processed = results.map(grant => ({
       ...grant.toObject(),
       numeric_fund: parseAmount(grant.total_fund)

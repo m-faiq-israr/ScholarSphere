@@ -13,8 +13,7 @@ const grantSchema = new mongoose.Schema({
   opportunity_status: {type: String, default: null},
   contact_email: {type: String, default: null},
 
-  // Add additional optional fields you expect from other collections
-}, { strict: false }); // allows storing fields not explicitly defined
+}, { strict: false }); 
 
 
 const Grants = GrantsDB.model('grants', grantSchema, 'allGrants');

@@ -1,4 +1,3 @@
-// OpportunityStatusSelect.jsx or .tsx
 import React from 'react'
 import {
   Select,

@@ -13,7 +13,7 @@ const getAllConferences = async (req, res) => {
     const total = await Conferences.countDocuments(filter);
 
     const conferences = await Conferences.find(filter)
-      .sort({ start_date: 1 }) // Optional: sort by date
+      .sort({ start_date: 1 }) 
       .skip(skip)
       .limit(limit)
       .lean();
@@ -95,7 +95,6 @@ const searchConferencesByTitle = async (req, res) => {
   
       let filtered = allConferences;
   
-      // ✅ Filter by date range
       if (parsedStart && parsedEnd) {
         filtered = filtered.filter(conf => {
           const confDate = new Date(conf.start_date);
@@ -103,7 +102,6 @@ const searchConferencesByTitle = async (req, res) => {
         });
       }
   
-      // ✅ Filter by location
       if (location) {
         filtered = filtered.filter(conf =>
           conf.location?.toLowerCase().includes(location.toLowerCase())
